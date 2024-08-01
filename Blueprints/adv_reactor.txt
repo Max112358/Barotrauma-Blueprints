@@ -133,7 +133,7 @@
       <Label id="4" color="#7ED3E0" position="-725.7146,470.5841" size="256,256" header="clamp div" body="clamp min to 0.1" />
       <Label id="5" color="#7ED3E0" position="-256.385,536.5554" size="256,256" header="clamp mul" body="clamp max to 2500" />
       <Label id="6" color="#7ED3E0" position="1477.678,319.79688" size="256,256" header="clamp div" body="clamp max to 80" />
-      <Label id="7" color="#FFFF00" position="-804.8865,1224.527" size="256,256" header="PURPOSE" body="This is the most efficient and fastest automatic reactor controller available. It can handle an unlimited number of rods." />
+      <Label id="7" color="#FFFF00" position="-804.8865,1224.527" size="256,256" header="PURPOSE" body="This is the most efficient and fastest automatic reactor controller available. It can handle an unlimited number of rods. Design by Lammert." />
     </CircuitBox>
     <itemstats />
   </Item>

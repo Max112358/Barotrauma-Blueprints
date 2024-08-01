@@ -1,4 +1,2 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<contentpackage name="Blueprints" modversion="1.0.0" corepackage="False">
-  <Other file="%ModDir%/basic_reactor.txt" />
-</contentpackage>
+<contentpackage name="Blueprints" modversion="1.0.0" corepackage="False" steamworkshopid="3301014847" gameversion="1.5.9.1" />

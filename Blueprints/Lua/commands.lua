@@ -1,18 +1,27 @@
 if SERVER then return end --prevents it from running on the server
 
 
-
-
 local configDescriptions = {}
 configDescriptions["commands"] = "you can use blueprints or bp"
 configDescriptions["load"] = "load a blueprint. EX: bp load reactor_controller.txt"
 configDescriptions["save"] = "save a blueprint. EX: bp save reactor_controller.txt"
 configDescriptions["list"] = "list all saved files. EX: bp list"
 
+
 local most_recent_circuitbox = nil 
 LuaUserData.RegisterType("Barotrauma.NetLimitedString")
 local net_limited_string_type = LuaUserData.CreateStatic("Barotrauma.NetLimitedString", true)
-local time_delay_between_loops = 50
+local time_delay_between_loops = 100
+local number_of_tolerated_components = 30
+
+
+--TODO list
+--move the input output windows. This is being blocked because I cant figure out how to get a IReadOnlyCollection<CircuitBoxNode> type for the final call
+--get clear_circuitbox working. same problem as above.
+--resize labels. This is doable, but low priority in my opinion.
+--set values inside components set somehow (impossible? its not even in the save file, and also no function for it)
+--add buttons to control the mod instead of the text interface
+
 
 local function print_all_saved_files()
 
@@ -141,26 +150,6 @@ function removeKeyFromTable(tbl, keyToRemove)
     return newTable
 end
 
-
-
-local function are_all_entries_zero_or_nil(tbl)
-    for _, value in pairs(tbl) do
-        if value ~= 0 and value ~= nil then
-            return false
-        end
-    end
-    return true
-end
-
-
-local function shallow_copy(original)
-    local copy = {}
-    for key, value in pairs(original) do
-        copy[key] = value
-    end
-    return copy
-end
-
 function hexToRGBA(hex)
     -- Remove the '#' if present
     hex = hex:gsub("#", "")
@@ -199,7 +188,7 @@ end
 --local prefab = ItemPrefab.GetItemPrefab("string")
 
 
-local function clear_circuitbox() --this does not work, the types are not correct
+local function clear_circuitbox() --this does not work. I cant figure out how to get a IReadOnlyCollection<CircuitBoxNode> type for the final call
 	if most_recent_circuitbox == nil then print("no circuitbox detected") return end
 	local components = most_recent_circuitbox.GetComponentString("CircuitBox").Components
 	most_recent_circuitbox.GetComponentString("CircuitBox").RemoveComponents(components)
@@ -322,6 +311,8 @@ local function add_labels_to_circuitbox_recursive(labels, index)
 	Timer.Wait(function() add_labels_to_circuitbox_recursive(labels, index + 1) end, time_delay_between_loops)
 end
 
+
+
 local function rename_all_labels_in_circuitbox(labels)
 	if most_recent_circuitbox == nil then print("no circuitbox detected") return end
 
@@ -339,12 +330,34 @@ local function rename_all_labels_in_circuitbox(labels)
 		local label_node = getNthValue(label_nodes, i)
 		local label_header = net_limited_string_type(tostring(label.header))
 		local label_body = net_limited_string_type(tostring(label.body))
-		--local label_color = Color(255, 0 ,0 , 255)
-		
 		local label_color = hexToRGBA(label.color)
 		
 		most_recent_circuitbox.GetComponentString("CircuitBox").RenameLabel(label_node, label_color, label_header, label_body)
     end
+end
+
+
+
+local function move_input_output_nodes() --this does not work. I cant figure out how to get a IReadOnlyCollection<CircuitBoxNode> type for the final call
+	if most_recent_circuitbox == nil then print("no circuitbox detected") return end
+
+	local input_output_nodes = most_recent_circuitbox.GetComponentString("CircuitBox").InputOutputNodes 
+	local input_connection_node = getNthValue(input_output_nodes, 1)
+	local output_connection_node = getNthValue(input_output_nodes, 2)
+		
+		
+	--local read_only_component = i_read_only_collection_type(tostring(label.body))
+	--local read_only_component_input = i_read_only_collection_type(input_connection_node)
+	--local read_only_component_output = i_read_only_collection_type(output_connection_node)
+	--local read_only_component_input = immutable_array_type(input_connection_node)
+	
+	LuaUserData.RegisterType("System.Collections.Immutable.ImmutableHashSet")
+	local immutable_hashset_type = LuaUserData.CreateStatic("System.Collections.Immutable.ImmutableHashSet", false)
+	local read_only_component_input = immutable_hashset_type.Create(input_connection_node)
+	
+	local component_position = Vector2(800, 800)
+		
+	most_recent_circuitbox.GetComponentString("CircuitBox").MoveComponent(component_position, read_only_component_input) 
 end
 
 
@@ -373,10 +386,8 @@ local function check_inventory_for_requirements(components)
     return missing_components
 end
 
-
 	
-	
-local function checkStringAgainstTags(targetString, tags)
+local function checkStringAgainstTags(targetString, tags) --this is needed to run the command line args
     for tag, _ in pairs(tags) do
         if targetString == tag then
             return true  -- Match found
@@ -451,9 +462,9 @@ local function construct_blueprint(provided_path)
 		if all_needed_items_are_present then
 			print("All required components are present!")
 			add_all_components_to_circuitbox(components)
-			Timer.Wait(function() add_labels_to_circuitbox_recursive(labels, 1) end, 25)
-			Timer.Wait(function() add_wires_to_circuitbox_recursive(wires, 1) end, 1500)
-			Timer.Wait(function() rename_all_labels_in_circuitbox(labels) end, 1525)
+			Timer.Wait(function() add_labels_to_circuitbox_recursive(labels, 1) end, 50)
+			Timer.Wait(function() add_wires_to_circuitbox_recursive(wires, 1) end, number_of_tolerated_components * time_delay_between_loops)
+			Timer.Wait(function() rename_all_labels_in_circuitbox(labels) end, number_of_tolerated_components * time_delay_between_loops + 50)
 			change_input_output_labels(inputs, outputs)
 			
 		else
@@ -569,11 +580,12 @@ Hook.Add("item.interact", "tagPrinter", function(item, characterPicker, ignoreRe
    
 	local myTags = item.GetTags()
 
-
 	print("-------------")
+	print("Item:----------")
 	print(item.Prefab.Identifier)
-	print("-------------")
 
+
+	print("Tags:---------")
 	for tag in myTags do
 		print(tag)
 	end
