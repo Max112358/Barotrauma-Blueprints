@@ -12,7 +12,6 @@ local most_recent_circuitbox = nil
 LuaUserData.RegisterType("Barotrauma.NetLimitedString")
 local net_limited_string_type = LuaUserData.CreateStatic("Barotrauma.NetLimitedString", true)
 local time_delay_between_loops = 100
-local number_of_tolerated_components = 30
 
 
 --TODO list
@@ -446,7 +445,10 @@ local function construct_blueprint(provided_path)
 		end
 		--]]
 
-
+		local number_of_components = #components
+		local number_of_labels = #labels
+		local time_delay_for_components_labeling = (number_of_components + 1) * time_delay_between_loops + 50
+		local time_delay_for_labels_labeling = (number_of_labels + 1) * time_delay_between_loops + 50
 
 		-- Check inventory for required components
 		local missing_components = check_inventory_for_requirements(components)
@@ -463,8 +465,8 @@ local function construct_blueprint(provided_path)
 			print("All required components are present!")
 			add_all_components_to_circuitbox(components)
 			Timer.Wait(function() add_labels_to_circuitbox_recursive(labels, 1) end, 50)
-			Timer.Wait(function() add_wires_to_circuitbox_recursive(wires, 1) end, number_of_tolerated_components * time_delay_between_loops)
-			Timer.Wait(function() rename_all_labels_in_circuitbox(labels) end, number_of_tolerated_components * time_delay_between_loops + 50)
+			Timer.Wait(function() add_wires_to_circuitbox_recursive(wires, 1) end, time_delay_for_components_labeling)
+			Timer.Wait(function() rename_all_labels_in_circuitbox(labels) end, time_delay_for_labels_labeling)
 			change_input_output_labels(inputs, outputs)
 			
 		else
