@@ -5,6 +5,7 @@ local configDescriptions = {}
 configDescriptions["commands"] = "you can use blueprints or bp"
 configDescriptions["load"] = "load a blueprint. EX: bp load reactor_controller.txt"
 configDescriptions["save"] = "save a blueprint. EX: bp save reactor_controller.txt"
+configDescriptions["delete"] = "delete a blueprint. EX: bp delete reactor_controller.txt"
 configDescriptions["list"] = "list all saved files. EX: bp list"
 
 
@@ -24,11 +25,12 @@ local time_delay_between_loops = 100
 
 local function print_all_saved_files()
 
-    local saved_files = File.GetFiles(blue_prints.path)
+    local saved_files = File.GetFiles(blue_prints.save_path)
     
     for name, value in pairs(saved_files) do
         if string.match(value, "%.txt$") then
-            print(string.format("  %s: %s", name, value))
+			local filename = value:match("([^\\]+)$")
+            print(filename)
         end
     end
 end
@@ -44,9 +46,9 @@ local function readFile(path)
     return content
 end
 
+
+
 local function parseXML(xmlString)
-
-
 	local inputs = {}
 	local outputs = {}
 	local components = {}
@@ -400,7 +402,7 @@ end
 local function construct_blueprint(provided_path)
 	if Character.Controlled == nil then print("you dont have a character") return end
 
-	local file_path = (blue_prints.path .. "/" .. provided_path)
+	local file_path = (blue_prints.save_path .. "/" .. provided_path)
 	local xmlContent, err = readFile(file_path)
 
 	if xmlContent then
@@ -489,7 +491,7 @@ local function save_blueprint(provided_path)
 	if Character.Controlled == nil then print("you dont have a character") return end
 	if most_recent_circuitbox == nil then print("no circuitbox detected") return end
 
-	local file_path = (blue_prints.path .. "/" .. provided_path)
+	local file_path = (blue_prints.save_path .. "/" .. provided_path)
 	
 	local character = Character.Controlled
     
@@ -513,6 +515,27 @@ local function save_blueprint(provided_path)
 	else
 		print("Error: Could not open file for writing")
 	end
+end
+
+
+
+local function delete_blueprint(provided_path)
+
+	local file_path = (blue_prints.save_path .. "/" .. provided_path)
+
+	if File.Exists(file_path) then
+		local result, err = os.remove(file_path)
+		if result then
+			print("File deleted successfully.")
+		else
+			print("Error deleting file: " .. err)
+		end
+	else
+		print("file not found")
+		print("saved designs:")
+		print_all_saved_files()
+	end
+
 end
 
 
@@ -541,6 +564,15 @@ local function runCommand(command)
 			save_blueprint(command[2])
 		else
 			print("No filename given. EX: bp save file_name.txt")
+		end
+	end
+	
+	if command[1] == "delete" then
+		if command[2] ~= nil then
+			print("Attempting to delete blueprint")
+			delete_blueprint(command[2])
+		else
+			print("No filename given. EX: bp delete file_name.txt")
 		end
 	end
 	

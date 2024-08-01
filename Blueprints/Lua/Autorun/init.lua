@@ -8,8 +8,8 @@
 --get the local path and save it as a global. only autorun files can get the path in this way!
 blue_prints = {}
 blue_prints.path = ...
-
-blue_prints.reactor_path = (blue_prints.path .. "/basic_reactor.txt")
+blue_prints.save_path = "LocalMods/Blueprints_saved_blueprints"
 
 --run the rest of the files
+dofile(blue_prints.path .. "/Lua/first_time_setup.lua")
 dofile(blue_prints.path .. "/Lua/commands.lua")
