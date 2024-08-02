@@ -19,7 +19,7 @@ local time_delay_between_loops = 100
 --move the input output windows. This is being blocked because I cant figure out how to get a IReadOnlyCollection<CircuitBoxNode> type for the final call
 --get clear_circuitbox working. same problem as above.
 --resize labels. This is doable, but low priority in my opinion.
---set values inside components set somehow (impossible? its not even in the save file, and also no function for it)
+--set values inside components somehow (impossible? its not even in the save file, and also no function for it)
 --add buttons to control the mod instead of the text interface
 
 
@@ -449,8 +449,8 @@ local function construct_blueprint(provided_path)
 
 		local number_of_components = #components
 		local number_of_labels = #labels
-		local time_delay_for_components_labeling = (number_of_components + 1) * time_delay_between_loops + 50
-		local time_delay_for_labels_labeling = (number_of_labels + 1) * time_delay_between_loops + 50
+		local time_delay_for_components_labeling = (number_of_components + 10) * time_delay_between_loops + 50
+		local time_delay_for_labels_labeling = (number_of_labels + 10) * time_delay_between_loops + 50
 
 		-- Check inventory for required components
 		local missing_components = check_inventory_for_requirements(components)
