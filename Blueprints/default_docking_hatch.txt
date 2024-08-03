@@ -1,0 +1,143 @@
+<Root>
+  <Item name="" identifier="circuitbox" ID="864" markedfordeconstruction="false" rect="-208,375,32,32" NonInteractable="False" NonPlayerTeamInteractable="False" AllowSwapping="True" Rotation="0" Scale="0.5" SpriteColor="255,255,255,255" InventoryIconColor="255,255,255,255" ContainerColor="255,255,255,255" InvulnerableToDamage="False" Tags="smallitem" DisplaySideBySideWhenLinked="False" DisallowedUpgrades="" SpriteDepth="0.8" HiddenInGame="False" conditionpercentage="100">
+    <Holdable Attached="True" SpriteDepthWhenDropped="0.55" PickingTime="5" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgDetachWrench">
+      <requireditem items="wrench" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
+    </Holdable>
+    <ConnectionPanel Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgRewireScrewdriver">
+      <requireditem items="screwdriver" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
+      <input name="signal_in1">
+        <link w="573" i="1" />
+      </input>
+      <input name="signal_in2">
+        <link w="885" i="1" />
+      </input>
+      <input name="signal_in3">
+        <link w="883" i="1" />
+      </input>
+      <input name="signal_in4">
+        <link w="881" i="1" />
+      </input>
+      <input name="signal_in5">
+        <link w="886" i="1" />
+      </input>
+      <input name="signal_in6" />
+      <input name="signal_in7" />
+      <input name="signal_in8" />
+      <output name="signal_out1">
+        <link w="882" i="0" />
+      </output>
+      <output name="signal_out2">
+        <link w="884" i="0" />
+      </output>
+      <output name="signal_out3" />
+      <output name="signal_out4" />
+      <output name="signal_out5" />
+      <output name="signal_out6" />
+      <output name="signal_out7" />
+      <output name="signal_out8" />
+    </ConnectionPanel>
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="865,866,867,868,869,870,871,872,873,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="874;875;876;877;878;879,,,,,,,,," ExtraStackSize="0" />
+    <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
+      <InputNode pos="-835.7718,23.269592" />
+      <OutputNode pos="1023.63257,-13.268066" />
+      <Component id="0" position="-248.01807,-182.78967" backingitemid="0,0" usedresource="fpgacircuit"  Class="NotComponent"  ContinuousOutput="false"  item="notcomponent" />
+      <Component id="1" position="-255.4137,389.89362" backingitemid="1,0" usedresource="fpgacircuit"  Class="BooleanOperatorComponent"  Output="1"  FalseOutput="0"  TimeFrame="0"  item="andcomponent" />
+      <Component id="2" position="331.19507,-172.23822" backingitemid="2,0" usedresource="fpgacircuit"  Class="BooleanOperatorComponent"  Output="1"  FalseOutput="0"  TimeFrame="0"  item="andcomponent" />
+      <Component id="3" position="240.42834,114.33356" backingitemid="3,0" usedresource="fpgacircuit"  Class="BooleanOperatorComponent"  Output="1"  FalseOutput="0"  TimeFrame="0"  item="andcomponent" />
+      <Component id="4" position="642.3832,379.5412" backingitemid="4,0" usedresource="fpgacircuit"  Class="DelayComponent"  Delay="0.6000000238418579"  ResetWhenSignalReceived="false"  ResetWhenDifferentSignalReceived="false"  item="delaycomponent" />
+      <Component id="5" position="-175.65363,-570.88617" backingitemid="5,0" usedresource="fpgacircuit"  Class="DelayComponent"  Delay="1"  ResetWhenSignalReceived="true"  ResetWhenDifferentSignalReceived="true"  item="delaycomponent" />
+      <Component id="6" position="-213.05652,-747.5011" backingitemid="6,0" usedresource="fpgacircuit"  Class="NotComponent"  ContinuousOutput="false"  item="notcomponent" />
+      <Component id="7" position="434.4729,-627.523" backingitemid="7,0" usedresource="fpgacircuit"  Class="BooleanOperatorComponent"  Output="1"  FalseOutput="0"  TimeFrame="0"  item="andcomponent" />
+      <Component id="8" position="779.35266,-362.37183" backingitemid="8,0" usedresource="fpgacircuit"  Class="BooleanOperatorComponent"  Output="1"  FalseOutput="0"  TimeFrame="0"  item="andcomponent" />
+      <Wire id="1" backingitemid="" prefab="greenwire">
+        <From name="signal_in1" target="" />
+        <To name="signal_in1" target="1" />
+      </Wire>
+      <Wire id="2" backingitemid="" prefab="greenwire">
+        <From name="signal_in1" target="" />
+        <To name="signal_in1" target="2" />
+      </Wire>
+      <Wire id="3" backingitemid="0,0" prefab="bluewire">
+        <From name="signal_out" target="0" />
+        <To name="signal_in2" target="2" />
+      </Wire>
+      <Wire id="5" backingitemid="" prefab="orangewire">
+        <From name="signal_in2" target="" />
+        <To name="signal_in2" target="3" />
+      </Wire>
+      <Wire id="8" backingitemid="0,1" prefab="bluewire">
+        <From name="signal_out" target="1" />
+        <To name="signal_in" target="4" />
+      </Wire>
+      <Wire id="7" backingitemid="" prefab="redwire">
+        <From name="signal_out" target="3" />
+        <To name="signal_out2" target="" />
+      </Wire>
+      <Wire id="11" backingitemid="" prefab="orangewire">
+        <From name="signal_in2" target="" />
+        <To name="signal_in" target="6" />
+      </Wire>
+      <Wire id="12" backingitemid="0,2" prefab="bluewire">
+        <From name="signal_out" target="6" />
+        <To name="signal_in2" target="7" />
+      </Wire>
+      <Wire id="9" backingitemid="" prefab="wire">
+        <From name="signal_out" target="4" />
+        <To name="signal_out1" target="" />
+      </Wire>
+      <Wire id="10" backingitemid="" prefab="wire">
+        <From name="signal_out" target="2" />
+        <To name="signal_out1" target="" />
+      </Wire>
+      <Wire id="0" backingitemid="" prefab="brownwire">
+        <From name="signal_in3" target="" />
+        <To name="signal_in" target="0" />
+      </Wire>
+      <Wire id="4" backingitemid="" prefab="brownwire">
+        <From name="signal_in3" target="" />
+        <To name="signal_in2" target="1" />
+      </Wire>
+      <Wire id="14" backingitemid="0,3" prefab="bluewire">
+        <From name="signal_out" target="5" />
+        <To name="signal_in1" target="7" />
+      </Wire>
+      <Wire id="13" backingitemid="0,4" prefab="bluewire">
+        <From name="signal_out" target="1" />
+        <To name="signal_in1" target="3" />
+      </Wire>
+      <Wire id="15" backingitemid="" prefab="bluewire">
+        <From name="signal_in4" target="" />
+        <To name="signal_in" target="5" />
+      </Wire>
+      <Wire id="16" backingitemid="" prefab="bluewire">
+        <From name="signal_in5" target="" />
+        <To name="signal_in1" target="3" />
+      </Wire>
+      <Wire id="6" backingitemid="" prefab="redwire">
+        <From name="signal_out" target="8" />
+        <To name="signal_out2" target="" />
+      </Wire>
+      <Wire id="17" backingitemid="0,5" prefab="bluewire">
+        <From name="signal_out" target="7" />
+        <To name="signal_in2" target="8" />
+      </Wire>
+      <Wire id="18" backingitemid="" prefab="brownwire">
+        <From name="signal_in3" target="" />
+        <To name="signal_in1" target="8" />
+      </Wire>
+      <Label id="0" color="#37FF37" position="-1095.7781,193.0738" size="302.96008,169.78787" header="SIGNAL_IN_1" body="label.automateddockinghatch.signal1" />
+      <Label id="1" color="#FFC200" position="-1089.1138,103.08121" size="298.7047,116.850464" header="SIGNAL_IN_2" body="label.automateddockinghatch.signal2" />
+      <Label id="2" color="#DDA056" position="-1088.8595,-84.467285" size="301.21704,256" header="SIGNAL_IN_3" body="label.automateddockinghatch.signal3" />
+      <Label id="5" color="#FFFFFF" position="1287.7076,135.15805" size="289.4015,179.89081" header="SIGNAL_OUT_1" body="label.automateddockinghatch.signalout1" />
+      <Label id="6" color="#FF0000" position="1289.746,21.7706" size="287.40137,184.91278" header="SIGNAL_OUT_2" body="label.automateddockinghatch.signalout2" />
+      <Label id="7" color="#7ED3E0" position="181.04877,273.6013" size="1275.2518,504.48193" header="Undocking" body="" />
+      <Label id="8" color="#7ED3E0" position="183.04108,-430.71362" size="1266.661,818.60425" header="Docking" body="" />
+      <Label id="9" color="#7ED3E0" position="252.9654,177.9591" size="432.09314,250.0816" header="Close Hatch" body="label.automateddockinghatch.closehatch" />
+      <Label id="10" color="#7ED3E0" position="42.05957,-622.9738" size="756.9265,426.7776" header="Open Hatch" body="label.automateddockinghatch.openhatch" />
+      <Label id="3" color="#7ED3E0" position="-1091.6986,-201.80768" size="284.01074,256" header="SIGNAL_IN_4" body="ON_DOCK" />
+      <Label id="4" color="#7ED3E0" position="-1086.1448,-293.88" size="282.21948,223.72986" header="SIGNAL_IN_5" body="ON_UNDOCK" />
+    </CircuitBox>
+    <itemstats />
+  </Item>
+</Root>

@@ -22,58 +22,58 @@
       <output name="signal_out7" />
       <output name="signal_out8" />
     </ConnectionPanel>
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1035,1036,1037,1038,1039,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1040;1041;1042;1043,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1048,1035,1036,1037,1046,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1047;1049;1050;1051,,,,,,,,," ExtraStackSize="0" />
     <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
-      <InputNode pos="-1111.2057,21.33075">
+      <InputNode pos="-1143.4368,7.9938354">
         <ConnectionLabelOverride name="signal_in1" value="FROM LOAD VALUE OUT" />
         <ConnectionLabelOverride name="signal_in2" value="FROM FUEL OUT" />
       </InputNode>
       <OutputNode pos="1024.689,0.0009765625">
-        <ConnectionLabelOverride name="signal_out2" value="TO SET FISSION RATE" />
-        <ConnectionLabelOverride name="signal_out1" value="TO SET TURBINE OUTPUT" />
+        <ConnectionLabelOverride name="signal_out2" value="TO SET TURBINE OUTPUT" />
+        <ConnectionLabelOverride name="signal_out1" value="TO SET FISSION RATE" />
       </OutputNode>
-      <Component id="0" position="125,296" backingitemid="0,0" usedresource="dividecomponent" />
-      <Component id="1" position="128.67065,92.14044" backingitemid="1,0" usedresource="dividecomponent" />
-      <Component id="2" position="128.67139,-103.11401" backingitemid="2,0" usedresource="dividecomponent" />
-      <Component id="3" position="-514.80115,295.8852" backingitemid="3,0" usedresource="memorycomponent" />
-      <Component id="4" position="-503.59045,-104.34363" backingitemid="4,0" usedresource="memorycomponent" />
+      <Component id="0" position="239.59521,460.6076" backingitemid="0,0" usedresource="fpgacircuit"  Class="ArithmeticComponent"  ClampMax="100"  ClampMin="0"  TimeFrame="0"  item="dividecomponent" />
+      <Component id="1" position="236.26465,266.33496" backingitemid="1,0" usedresource="fpgacircuit"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
+      <Component id="2" position="238.4851,63.18152" backingitemid="2,0" usedresource="fpgacircuit"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
+      <Component id="3" position="-485.31665,446.17322" backingitemid="3,0" usedresource="memorycomponent"  Class="MemoryComponent"  Value="30"  item="memorycomponent" />
+      <Component id="4" position="-464.22363,70.95068" backingitemid="4,0" usedresource="memorycomponent"  Class="MemoryComponent"  Value="75"  item="memorycomponent" />
       <Wire id="0" backingitemid="0,0" prefab="redwire">
-        <From name="signal_out" target="3" />
-        <To name="signal_in2" target="0" />
-      </Wire>
-      <Wire id="1" backingitemid="0,1" prefab="redwire">
         <From name="signal_out" target="4" />
         <To name="signal_in2" target="2" />
       </Wire>
-      <Wire id="2" backingitemid="0,2" prefab="redwire">
-        <From name="signal_out" target="2" />
-        <To name="signal_in2" target="1" />
+      <Wire id="1" backingitemid="0,1" prefab="redwire">
+        <From name="signal_out" target="3" />
+        <To name="signal_in2" target="0" />
       </Wire>
-      <Wire id="3" backingitemid="0,3" prefab="redwire">
+      <Wire id="2" backingitemid="0,2" prefab="redwire">
         <From name="signal_out" target="0" />
         <To name="signal_in1" target="1" />
       </Wire>
-      <Wire id="4" backingitemid="" prefab="redwire">
-        <From name="signal_in1" target="" />
-        <To name="signal_in1" target="0" />
+      <Wire id="3" backingitemid="0,3" prefab="redwire">
+        <From name="signal_out" target="2" />
+        <To name="signal_in2" target="1" />
       </Wire>
-      <Wire id="5" backingitemid="" prefab="redwire">
+      <Wire id="4" backingitemid="" prefab="redwire">
         <From name="signal_in2" target="" />
         <To name="signal_in1" target="2" />
       </Wire>
+      <Wire id="5" backingitemid="" prefab="redwire">
+        <From name="signal_in1" target="" />
+        <To name="signal_in1" target="0" />
+      </Wire>
       <Wire id="6" backingitemid="" prefab="redwire">
-        <From name="signal_out" target="1" />
+        <From name="signal_out" target="0" />
         <To name="signal_out2" target="" />
       </Wire>
       <Wire id="7" backingitemid="" prefab="redwire">
-        <From name="signal_out" target="0" />
+        <From name="signal_out" target="1" />
         <To name="signal_out1" target="" />
       </Wire>
-      <Label id="0" color="#7ED3E0" position="-1140.0958,397.10907" size="398.2605,242.66345" header="Purpose" body="This is an automatic reactor controller. It can handle and unlimited number of rods." />
-      <Label id="1" color="#C80000" position="-513.4857,591.4594" size="256,256" header="mem value" body="max reactor output divided by 100 in top mem component" />
-      <Label id="2" color="#C80000" position="-525.708,-404.36633" size="256,256" header="mem Value" body="put 75 in the lower mem component" />
-      <Label id="3" color="#7ED3E0" position="60.006348,593.68195" size="256,256" header="div clamp" body="clamp max to 100, clamp min to 0" />
+      <Label id="0" color="#7ED3E0" position="-1059.5713,515.92584" size="256,256" header="PURPOSE" body="This is an automatic reactor controller. It can handle an unlimited number of rods and run at perfect efficiency." />
+      <Label id="1" color="#FF0000" position="-555.19824,746.0366" size="256,256" header="Upper MEM" body="This should hold max reactor output / 100. Lower this value to overclock the reactor." />
+      <Label id="2" color="#FF0000" position="-568.5731,-182.43762" size="256,256" header="lower mem" body="This is a constant. Keep it at 75." />
+      <Label id="3" color="#7ED3E0" position="202.03345,728.64307" size="256,256" header="Upper Div" body="Clamp max to 100, min to 0" />
     </CircuitBox>
     <itemstats />
   </Item>
