@@ -274,7 +274,10 @@ function add_labels_to_circuitbox_recursive(labels, index)
     
     -- Process the current label
     local label = labels[index]
-    local label_position = Vector2(label.position.x, label.position.y)
+	local x_offset_for_resizing = label.position.x - (label.size.width/2) + 128
+	local y_offset_for_resizing = label.position.y + (label.size.height/2) - 128
+	
+    local label_position = Vector2(x_offset_for_resizing, y_offset_for_resizing)
     blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").AddLabel(label_position)
     
     -- Recursive call to process the next label
@@ -297,6 +300,9 @@ function rename_all_labels_in_circuitbox(labels)
         --print(string.format("    Header: %s", label.header))
         --print(string.format("    Body: %s", label.body))
 		
+		if label.header == nil then label.header = "" end
+		if label.body == nil then label.body = "" end
+		
 		local label_node = getNthValue(label_nodes, i)
 		local label_header = blue_prints.net_limited_string_type(tostring(label.header))
 		local label_body = blue_prints.net_limited_string_type(tostring(label.body))
@@ -308,8 +314,36 @@ function rename_all_labels_in_circuitbox(labels)
 	print("All labels added.")
 end
 
+local function resize_label(label_node, direction, resize_vector)
+	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
+	
+	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").ResizeNode(label_node, direction, resize_vector)
+end
 
 
+function resize_labels(labels_from_blueprint)
+	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
+
+	local label_nodes_in_box = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Labels 
+
+	 for i, label_in_blueprint in ipairs(labels_from_blueprint) do
+		
+		local label_node = getNthValue(label_nodes_in_box, i)
+		
+		local amount_to_expand_x = label_in_blueprint.size.width - label_node.size.X
+		amount_to_expand_x = amount_to_expand_x
+		local resize_amount_right = Vector2(amount_to_expand_x, 256) --the 256 doesnt do anything, but if you send a 0 it doesnt work
+		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").ResizeNode(label_node, 2, resize_amount_right) --2 is expand right
+		
+		local amount_to_expand_y = label_in_blueprint.size.height - label_node.size.Y
+		local resize_amount_y = Vector2(256, -amount_to_expand_y)
+		
+		Timer.Wait(function() resize_label(label_node, 1, resize_amount_y) end, 200) --the commands override each other if sent too fast. 1 is expand down.
+		
+    end
+	
+	print("All labels repositioned.")
+end
 
 
 
@@ -547,8 +581,8 @@ function construct_blueprint(provided_path)
 
 		local number_of_components = #components
 		local number_of_labels = #labels
-		local time_delay_for_components_wiring = (number_of_components + 10) * blue_prints.time_delay_between_loops + 50
-		local time_delay_for_labels_labeling = (number_of_labels + 40) * blue_prints.time_delay_between_loops + 50 --labels seem to take a long time in game
+		local time_delay_for_components = (number_of_components + 10) * blue_prints.time_delay_between_loops + 50
+		local time_delay_for_labels = (number_of_labels + 40) * blue_prints.time_delay_between_loops + 50 --labels seem to take a long time in game
 
 		-- Check inventory for required components
 		local missing_components = check_inventory_for_requirements(components)
@@ -565,10 +599,11 @@ function construct_blueprint(provided_path)
 			print("All required components are present!")
 			add_all_components_to_circuitbox(components)
 			Timer.Wait(function() add_labels_to_circuitbox_recursive(labels, 1) end, 50)
-			Timer.Wait(function() add_wires_to_circuitbox_recursive(wires, 1) end, time_delay_for_components_wiring)
-			Timer.Wait(function() rename_all_labels_in_circuitbox(labels) end, time_delay_for_labels_labeling)
+			Timer.Wait(function() add_wires_to_circuitbox_recursive(wires, 1) end, time_delay_for_components)
+			Timer.Wait(function() rename_all_labels_in_circuitbox(labels) end, time_delay_for_labels)
 			change_input_output_labels(inputs, outputs)
-			Timer.Wait(function() update_values_in_components(components) end, time_delay_for_components_wiring)
+			Timer.Wait(function() update_values_in_components(components) end, time_delay_for_components)
+			Timer.Wait(function() resize_labels(labels) end, time_delay_for_labels)
 			
 		else
 			print("You are missing: ")

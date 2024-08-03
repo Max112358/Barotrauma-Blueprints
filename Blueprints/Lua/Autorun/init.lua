@@ -30,6 +30,5 @@ dofile(blue_prints.path .. "/Lua/commands.lua")
 --TODO list
 --move the input output windows. This is being blocked because I cant figure out how to get a IReadOnlyCollection<CircuitBoxNode> type for the final call
 --get clear_circuitbox working. same problem as above.
---resize labels. This is doable, but low priority in my opinion.
 --add buttons to control the mod instead of the text interface
 
