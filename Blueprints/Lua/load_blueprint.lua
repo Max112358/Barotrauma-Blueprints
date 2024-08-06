@@ -66,17 +66,21 @@ function parseXML(xmlString)
     end
 	
 	-- Parse Wires
-    for wire in xmlString:gmatch("<Wire.-</Wire>") do
-        local wireData = {id = wire:match('id="(%d+)"')}
-        
-        local fromName, fromTarget = wire:match('<From name="([^"]+)" target="([^"]*)"')
-        local toName, toTarget = wire:match('<To name="([^"]+)" target="([^"]*)"')
-        
-        wireData.from = {name = fromName, target = fromTarget ~= "" and fromTarget or nil}
-        wireData.to = {name = toName, target = toTarget ~= "" and toTarget or nil}
-        
-        table.insert(wires, wireData)
-    end
+	wires = {}
+	for wire in xmlString:gmatch("<Wire.-</Wire>") do
+		local wireData = {
+			id = wire:match('id="(%d+)"'),
+			prefab = wire:match('prefab="([^"]+)"')
+		}
+		
+		local fromName, fromTarget = wire:match('<From name="([^"]+)" target="([^"]*)"')
+		local toName, toTarget = wire:match('<To name="([^"]+)" target="([^"]*)"')
+		
+		wireData.from = {name = fromName, target = fromTarget ~= "" and fromTarget or nil}
+		wireData.to = {name = toName, target = toTarget ~= "" and toTarget or nil}
+		
+		table.insert(wires, wireData)
+	end
 	
 	-- Parse Labels
     for label in xmlString:gmatch('<Label[^>]+/>') do
@@ -218,6 +222,11 @@ function add_wires_to_circuitbox_recursive(wires, index)
     end
     
     local wire = wires[index]
+	
+	--select wire color
+	local wire_prefab = ItemPrefab.GetItemPrefab(tostring(wire.prefab))
+	LuaUserData.MakeMethodAccessible(Descriptors["Barotrauma.CircuitBoxUI"], "SelectWire")
+	local circuitbox_ui = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").UI.SelectWire(nil, wire_prefab)
     
     for component_key, component_value in pairs(components) do
         local connectors = component_value.Connectors
