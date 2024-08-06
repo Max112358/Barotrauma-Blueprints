@@ -1,0 +1,134 @@
+<Root>
+  <Item name="" identifier="circuitbox" ID="1024" markedfordeconstruction="false" flippedx="true" rect="-608,-200,32,32" NonInteractable="False" NonPlayerTeamInteractable="False" AllowSwapping="True" Rotation="0" Scale="0.5" SpriteColor="255,255,255,255" InventoryIconColor="255,255,255,255" ContainerColor="255,255,255,255" InvulnerableToDamage="False" Tags="smallitem" DisplaySideBySideWhenLinked="False" DisallowedUpgrades="" SpriteDepth="0.8" HiddenInGame="False" conditionpercentage="100">
+    <Holdable Attached="True" SpriteDepthWhenDropped="0.55" PickingTime="5" CanBePicked="True" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgDetachWrench">
+      <requireditem items="wrench" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
+    </Holdable>
+    <ConnectionPanel Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgRewireScrewdriver">
+      <requireditem items="screwdriver" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
+      <input name="signal_in1">
+        <link w="1080" i="0" />
+      </input>
+      <input name="signal_in2">
+        <link w="1081" i="1" />
+      </input>
+      <input name="signal_in3">
+        <link w="1074" i="1" />
+      </input>
+      <input name="signal_in4">
+        <link w="1073" i="1" />
+      </input>
+      <input name="signal_in5" />
+      <input name="signal_in6" />
+      <input name="signal_in7" />
+      <input name="signal_in8" />
+      <output name="signal_out1">
+        <link w="1063" i="1" />
+      </output>
+      <output name="signal_out2">
+        <link w="1064" i="1" />
+      </output>
+      <output name="signal_out3" />
+      <output name="signal_out4" />
+      <output name="signal_out5" />
+      <output name="signal_out6" />
+      <output name="signal_out7" />
+      <output name="signal_out8" />
+    </ConnectionPanel>
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1052,1053,1054,1055,1056,1057,1058,1059,1060,1061,1062,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1065;1066;1067;1068;1069;1070;1076;1077;1078;1079;1083,,,,,,,,," ExtraStackSize="0" />
+    <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
+      <InputNode pos="-512,0">
+        <ConnectionLabelOverride name="signal_in1" value="FROM LOAD VALUE OUT" />
+        <ConnectionLabelOverride name="signal_in2" value="FROM FUEL OUT" />
+        <ConnectionLabelOverride name="signal_in3" value="FROM POWER VALUE OUT" />
+        <ConnectionLabelOverride name="signal_in4" value="FROM TEMPERATURE OUT" />
+      </InputNode>
+      <OutputNode pos="512,0">
+        <ConnectionLabelOverride name="signal_out1" value="SET FISSION RATE" />
+        <ConnectionLabelOverride name="signal_out2" value="SET TURBINE OUTPUT" />
+      </OutputNode>
+      <Component id="0" position="-411.0852,813.198" backingitemid="0,0" usedresource="dividecomponent"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
+      <Component id="1" position="-415.02368,998.31494" backingitemid="1,0" usedresource="memorycomponent"  Class="MemoryComponent"  Value="3000"  item="memorycomponent" />
+      <Component id="2" position="136.37549,813.20264" backingitemid="2,0" usedresource="memorycomponent"  Class="MemoryComponent"  Value="2500"  item="memorycomponent" />
+      <Component id="3" position="-732.0803,570.98206" backingitemid="3,0" usedresource="dividecomponent"  Class="ArithmeticComponent"  ClampMax="2500"  ClampMin="0"  TimeFrame="0"  item="dividecomponent" />
+      <Component id="4" position="-1179.1125,781.69556" backingitemid="4,0" usedresource="addercomponent"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="addercomponent" />
+      <Component id="5" position="-1167.2981,976.6576" backingitemid="5,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="5000"  item="memorycomponent" />
+      <Component id="6" position="-1960.927,769.88855" backingitemid="6,0" usedresource="dividecomponent"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
+      <Component id="7" position="565.6543,496.15942" backingitemid="7,0" usedresource="fpgacircuit"  Class="EqualsComponent"  Output="15.703125"  FalseOutput="80"  TimeFrame="0"  item="greatercomponent" />
+      <Component id="8" position="-1953.7976,259.578" backingitemid="8,0" usedresource="subtractcomponent"  Class="ArithmeticComponent"  ClampMax="15"  ClampMin="0"  TimeFrame="0"  item="subtractcomponent" />
+      <Component id="9" position="-1953.8009,-0.64868164" backingitemid="9,0" usedresource="fpgacircuit"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="subtractcomponent" />
+      <Component id="10" position="-2581.5125,-0.6488037" backingitemid="10,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="100"  item="memorycomponent" />
+      <Wire id="0" backingitemid="0,0" prefab="redwire">
+        <From name="signal_out" target="1" />
+        <To name="signal_in1" target="0" />
+      </Wire>
+      <Wire id="1" backingitemid="0,1" prefab="redwire">
+        <From name="signal_out" target="2" />
+        <To name="signal_in2" target="0" />
+      </Wire>
+      <Wire id="2" backingitemid="0,2" prefab="redwire">
+        <From name="signal_out" target="0" />
+        <To name="signal_in2" target="3" />
+      </Wire>
+      <Wire id="3" backingitemid="" prefab="redwire">
+        <From name="signal_in1" target="" />
+        <To name="signal_in1" target="3" />
+      </Wire>
+      <Wire id="4" backingitemid="0,3" prefab="redwire">
+        <From name="signal_out" target="3" />
+        <To name="signal_in2" target="4" />
+      </Wire>
+      <Wire id="5" backingitemid="0,4" prefab="redwire">
+        <From name="signal_out" target="5" />
+        <To name="signal_in1" target="4" />
+      </Wire>
+      <Wire id="6" backingitemid="0,5" prefab="redwire">
+        <From name="signal_out" target="4" />
+        <To name="signal_in1" target="6" />
+      </Wire>
+      <Wire id="7" backingitemid="" prefab="redwire">
+        <From name="signal_in2" target="" />
+        <To name="signal_in2" target="6" />
+      </Wire>
+      <Wire id="8" backingitemid="" prefab="redwire">
+        <From name="signal_in2" target="" />
+        <To name="signal_in1" target="7" />
+      </Wire>
+      <Wire id="9" backingitemid="0,6" prefab="redwire">
+        <From name="signal_out" target="6" />
+        <To name="signal_in2" target="7" />
+      </Wire>
+      <Wire id="10" backingitemid="0,7" prefab="redwire">
+        <From name="signal_out" target="6" />
+        <To name="set_output" target="7" />
+      </Wire>
+      <Wire id="11" backingitemid="" prefab="redwire">
+        <From name="signal_out" target="7" />
+        <To name="signal_out1" target="" />
+      </Wire>
+      <Wire id="12" backingitemid="0,8" prefab="redwire">
+        <From name="signal_out" target="6" />
+        <To name="signal_in1" target="8" />
+      </Wire>
+      <Wire id="13" backingitemid="" prefab="redwire">
+        <From name="signal_in2" target="" />
+        <To name="signal_in2" target="8" />
+      </Wire>
+      <Wire id="14" backingitemid="0,9" prefab="redwire">
+        <From name="signal_out" target="8" />
+        <To name="signal_in2" target="9" />
+      </Wire>
+      <Wire id="15" backingitemid="0,10" prefab="redwire">
+        <From name="signal_out" target="10" />
+        <To name="signal_in1" target="9" />
+      </Wire>
+      <Wire id="16" backingitemid="" prefab="redwire">
+        <From name="signal_out" target="9" />
+        <To name="signal_out2" target="" />
+      </Wire>
+      <Label id="0" color="#FF0000" position="-480.01147,1248.4153" size="256,256" header="max power" body="maximum possible power output from the reactor" />
+      <Label id="1" color="#7E00E0" position="1154.0962,1070.459" size="936.5259,323.0216" header="PURPOSE" body="Supposed to be the fastest reactor design currently known. Less fuel efficient than the advanced 11c reactor. Design by Lammert. When you first turn the reactor on, crank the turbine rate up manually. That will prevent any fires." />
+    </CircuitBox>
+    <itemstats />
+  </Item>
+</Root>

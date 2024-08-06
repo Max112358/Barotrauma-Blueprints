@@ -88,29 +88,6 @@ end
 
 
 
-function clear_circuitbox() --this does not work. I cant figure out how to get a IReadOnlyCollection<CircuitBoxNode> type for the final call
-	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
-	local components = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Components
-	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").RemoveComponents(components)
-end
-
-
-
-function move_input_output_nodes() --this does not work. I cant figure out how to get a IReadOnlyCollection<CircuitBoxNode> type for the final call
-	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
-
-	local input_output_nodes = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").InputOutputNodes 
-	local input_connection_node = getNthValue(input_output_nodes, 1)
-	local output_connection_node = getNthValue(input_output_nodes, 2)
-
-	local nodes = {}
-
-	table.insert(nodes, input_connection_node)
-
-    local component_position = Vector2(800, 800)
-		
-	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").MoveComponent(component_position, nodes) 
-end
 
 
 

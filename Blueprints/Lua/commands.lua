@@ -7,7 +7,7 @@ configDescriptions["load"] = "load a blueprint. EX: bp load reactor_controller.t
 configDescriptions["save"] = "save a blueprint. EX: bp save reactor_controller.txt"
 configDescriptions["delete"] = "delete a blueprint. EX: bp delete reactor_controller.txt"
 configDescriptions["list"] = "list all saved files. EX: bp list"
-
+configDescriptions["clear"] = "Remove all components and labels from a circuitbox. EX: bp clear"
 
 
 	
@@ -59,6 +59,9 @@ local function runCommand(command)
 		end
 	end
 	
+	if command[1] == "clear" then
+		clear_circuitbox()
+	end
 	
 	if command[1] == "list" then
 		print_all_saved_files()

@@ -221,26 +221,28 @@ function add_wires_to_circuitbox_recursive(wires, index)
     
     for component_key, component_value in pairs(components) do
         local connectors = component_value.Connectors
-
-        for connector_key, connector_value in pairs(connectors) do
-            if tostring(component_value.ID) == tostring(wire.from.target) and tostring(connector_value.name) == tostring(wire.from.name) then
-                first_connection = connector_value
+		
+		for i = 0, connectors.length-1 do
+			if tostring(component_value.ID) == tostring(wire.from.target) and tostring(connectors[i].name) == tostring(wire.from.name) then
+                first_connection = connectors[i]
             end
             
-            if tostring(component_value.ID) == tostring(wire.to.target) and tostring(connector_value.name) == tostring(wire.to.name) then
-                second_connection = connector_value
+            if tostring(component_value.ID) == tostring(wire.to.target) and tostring(connectors[i].name) == tostring(wire.to.name) then
+                second_connection = connectors[i]
             end
-        end
+		end
+		
     end
-    
-    if wire.from.target == nil then
+	
+	
+	if wire.from.target == nil then
         local input_to_target = string.match(tostring(wire.from.name), "%d+")
-        first_connection = getNthValue(input_connections, tonumber(input_to_target))
+        first_connection = input_connections[tonumber(input_to_target)-1]
     end
     
     if wire.to.target == nil then
         local input_to_target = string.match(tostring(wire.to.name), "%d+")
-        second_connection = getNthValue(output_connections, tonumber(input_to_target))
+        second_connection = output_connections[tonumber(input_to_target)-1]
     end
     
     if first_connection and second_connection then
@@ -341,8 +343,6 @@ function resize_labels(labels_from_blueprint)
 		Timer.Wait(function() resize_label(label_node, 1, resize_amount_y) end, 200) --the commands override each other if sent too fast. 1 is expand down.
 		
     end
-	
-	print("All labels repositioned.")
 end
 
 
@@ -362,11 +362,9 @@ function update_values_in_components(components_from_blueprint)
 			for attr, value in pairs(component_to_copy.class.attributes) do
 				--print("  " .. attr .. ":", value)
 				
-				
-				
 				if component_to_copy.class.name == "MemoryComponent" then
 					if tostring(attr) == "Value" then
-						component_class_to_change.Value = value
+						component_class_to_change[attr] = value --another way to do it
 					end
 				end
 
@@ -518,15 +516,134 @@ function update_values_in_components(components_from_blueprint)
 					end
 				end
 				
+				
+				local property = component_class_to_change.SerializableProperties[Identifier(attr)]
+				Networking.CreateEntityEvent(component_in_box.Item, Item.ChangePropertyEventData(property, component_class_to_change))
+				
 			end
 		end	
 
+
 	end
+	
 	
 	print("All values updated inside components.")
 end
 
+function move_input_output_nodes(inputNodePos, outputNodePos)
+	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
 
+	local input_output_nodes = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").InputOutputNodes 
+	local input_connection_node = getNthValue(input_output_nodes, 1)
+	local output_connection_node = getNthValue(input_output_nodes, 2)
+
+    
+    
+    local sacrificial_immutable_array_input = blue_prints.immutable_array_type.Create(input_connection_node)
+    local input_connection_node_in_immutable_aray = sacrificial_immutable_array_input.Add(input_connection_node)
+    
+	local input_delta_x = inputNodePos.x - input_connection_node.Position.X
+	local input_delta_y = inputNodePos.y - input_connection_node.Position.Y
+	local move_input_vector = Vector2(input_delta_x, input_delta_y)
+	
+	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").MoveComponent(move_input_vector, input_connection_node_in_immutable_aray) 
+	
+	
+	
+	local sacrificial_immutable_array_output = blue_prints.immutable_array_type.Create(output_connection_node)
+    local output_connection_node_in_immutable_aray = sacrificial_immutable_array_output.Add(output_connection_node)
+	
+    local output_delta_x = outputNodePos.x - output_connection_node.Position.X
+	local output_delta_y = outputNodePos.y - output_connection_node.Position.Y
+	local move_output_vector = Vector2(output_delta_x, output_delta_y)
+    
+    blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").MoveComponent(move_output_vector, output_connection_node_in_immutable_aray) 
+end
+
+
+
+
+
+function clear_circuitbox() 
+	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
+	
+	local components = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Components
+	if #components > 0 then
+		local first_component = getNthValue(components, 1)
+		local component_immutable_array = blue_prints.immutable_array_type.Create(first_component)
+		
+		for _, component in ipairs(components) do
+			component_immutable_array = component_immutable_array.Add(component)
+		end
+		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").RemoveComponents(component_immutable_array)
+	end
+	
+	local labels = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Labels
+	if #labels > 0 then
+		local first_label = getNthValue(labels, 1)
+		local label_immutable_array = blue_prints.immutable_array_type.Create(first_label)
+		
+		for _, label in ipairs(labels) do
+			label_immutable_array = label_immutable_array.Add(label)
+		end
+		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").RemoveLabel(label_immutable_array)
+	end
+	
+	--move the input output panels back to their original location
+	local move_input_vector = Vector2(-512, 0)
+	local move_output_vector = Vector2(512, 0)
+	move_input_output_nodes(move_input_vector, move_output_vector)
+	
+	--reset the labels on the input output panels
+	local empty_input = {signal_in1 = "", signal_in2 = "", signal_in3 = "", signal_in4 = "", signal_in5 = "", signal_in6 = "", signal_in7 = "", signal_in8 = ""}
+	local empty_output = {signal_out1 = "", signal_out2 = "", signal_out3 = "", signal_out4 = "", signal_out5 = "", signal_out6 = "", signal_out7 = "", signal_out8 = ""}
+	change_input_output_labels(empty_input, empty_output)
+	
+	
+end
+
+
+
+function wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos) 
+
+
+	local number_of_components = #components
+	local number_of_labels = #labels
+	local time_delay_for_components = (number_of_components + 10) * blue_prints.time_delay_between_loops + 50
+	local time_delay_for_labels = (number_of_labels + 40) * blue_prints.time_delay_between_loops + 50 --labels seem to take a long time in game
+
+
+	-- Check inventory for required components
+	local missing_components = check_inventory_for_requirements(components)
+
+	local all_needed_items_are_present = true
+	for _, count in pairs(missing_components) do
+		if count > 0 then
+			all_needed_items_are_present = false
+			break
+		end
+	end
+
+	if all_needed_items_are_present then
+		print("All required components are present!")
+		add_all_components_to_circuitbox(components)
+		Timer.Wait(function() add_labels_to_circuitbox_recursive(labels, 1) end, 50)
+		Timer.Wait(function() add_wires_to_circuitbox_recursive(wires, 1) end, time_delay_for_components)
+		Timer.Wait(function() rename_all_labels_in_circuitbox(labels) end, time_delay_for_labels)
+		change_input_output_labels(inputs, outputs)
+		Timer.Wait(function() update_values_in_components(components) end, time_delay_for_components)
+		Timer.Wait(function() resize_labels(labels) end, time_delay_for_labels)
+		move_input_output_nodes(inputNodePos, outputNodePos)
+		
+	else
+		print("You are missing: ")
+		for name, count in pairs(missing_components) do
+			if count > 0 then
+				print(name .. ": " .. count)
+			end
+		end
+	end
+end
 
 
 
@@ -579,40 +696,10 @@ function construct_blueprint(provided_path)
 		end
 		--]]
 
-		local number_of_components = #components
-		local number_of_labels = #labels
-		local time_delay_for_components = (number_of_components + 10) * blue_prints.time_delay_between_loops + 50
-		local time_delay_for_labels = (number_of_labels + 40) * blue_prints.time_delay_between_loops + 50 --labels seem to take a long time in game
+		clear_circuitbox()
+		Timer.Wait(function() wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos) end, 500)
 
-		-- Check inventory for required components
-		local missing_components = check_inventory_for_requirements(components)
-
-		local all_needed_items_are_present = true
-		for _, count in pairs(missing_components) do
-			if count > 0 then
-				all_needed_items_are_present = false
-				break
-			end
-		end
-
-		if all_needed_items_are_present then
-			print("All required components are present!")
-			add_all_components_to_circuitbox(components)
-			Timer.Wait(function() add_labels_to_circuitbox_recursive(labels, 1) end, 50)
-			Timer.Wait(function() add_wires_to_circuitbox_recursive(wires, 1) end, time_delay_for_components)
-			Timer.Wait(function() rename_all_labels_in_circuitbox(labels) end, time_delay_for_labels)
-			change_input_output_labels(inputs, outputs)
-			Timer.Wait(function() update_values_in_components(components) end, time_delay_for_components)
-			Timer.Wait(function() resize_labels(labels) end, time_delay_for_labels)
-			
-		else
-			print("You are missing: ")
-			for name, count in pairs(missing_components) do
-				if count > 0 then
-					print(name .. ": " .. count)
-				end
-			end
-		end
+		
 	else
 		print("file not found")
 		print("saved designs:")

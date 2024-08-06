@@ -22,20 +22,20 @@
       <output name="signal_out7" />
       <output name="signal_out8" />
     </ConnectionPanel>
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1048,1035,1036,1037,1046,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1047;1049;1050;1051,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1035,1036,1037,1046,1047,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1048;1049;1050;1051,,,,,,,,," ExtraStackSize="0" />
     <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
       <InputNode pos="-1143.4368,7.9938354">
-        <ConnectionLabelOverride name="signal_in1" value="FROM LOAD VALUE OUT" />
         <ConnectionLabelOverride name="signal_in2" value="FROM FUEL OUT" />
+        <ConnectionLabelOverride name="signal_in1" value="FROM LOAD VALUE OUT" />
       </InputNode>
       <OutputNode pos="1024.689,0.0009765625">
-        <ConnectionLabelOverride name="signal_out2" value="TO SET TURBINE OUTPUT" />
         <ConnectionLabelOverride name="signal_out1" value="TO SET FISSION RATE" />
+        <ConnectionLabelOverride name="signal_out2" value="TO SET TURBINE OUTPUT" />
       </OutputNode>
-      <Component id="0" position="239.59521,460.6076" backingitemid="0,0" usedresource="fpgacircuit"  Class="ArithmeticComponent"  ClampMax="100"  ClampMin="0"  TimeFrame="0"  item="dividecomponent" />
-      <Component id="1" position="236.26465,266.33496" backingitemid="1,0" usedresource="fpgacircuit"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
-      <Component id="2" position="238.4851,63.18152" backingitemid="2,0" usedresource="fpgacircuit"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
+      <Component id="0" position="239.59521,460.6076" backingitemid="0,0" usedresource="dividecomponent"  Class="ArithmeticComponent"  ClampMax="100"  ClampMin="0"  TimeFrame="0"  item="dividecomponent" />
+      <Component id="1" position="236.26465,266.33496" backingitemid="1,0" usedresource="dividecomponent"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
+      <Component id="2" position="238.4851,63.18152" backingitemid="2,0" usedresource="dividecomponent"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
       <Component id="3" position="-485.31665,446.17322" backingitemid="3,0" usedresource="memorycomponent"  Class="MemoryComponent"  Value="30"  item="memorycomponent" />
       <Component id="4" position="-464.22363,70.95068" backingitemid="4,0" usedresource="memorycomponent"  Class="MemoryComponent"  Value="75"  item="memorycomponent" />
       <Wire id="0" backingitemid="0,0" prefab="redwire">
@@ -70,7 +70,7 @@
         <From name="signal_out" target="1" />
         <To name="signal_out1" target="" />
       </Wire>
-      <Label id="0" color="#7ED3E0" position="-1059.5713,515.92584" size="256,256" header="PURPOSE" body="This is an automatic reactor controller. It can handle an unlimited number of rods and run at perfect efficiency." />
+      <Label id="0" color="#7E00E0" position="1079.4918,494.06635" size="676.4121,262.72595" header="PURPOSE" body="This is an automatic reactor controller. It can handle an unlimited number of rods and run at perfect efficiency. Not as fast as other designs, but fewer components." />
       <Label id="1" color="#FF0000" position="-555.19824,746.0366" size="256,256" header="Upper MEM" body="This should hold max reactor output / 100. Lower this value to overclock the reactor." />
       <Label id="2" color="#FF0000" position="-568.5731,-182.43762" size="256,256" header="lower mem" body="This is a constant. Keep it at 75." />
       <Label id="3" color="#7ED3E0" position="202.03345,728.64307" size="256,256" header="Upper Div" body="Clamp max to 100, min to 0" />
