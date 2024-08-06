@@ -1,7 +1,7 @@
 if SERVER then return end --prevents it from running on the server
 
 
-function delete_blueprint(provided_path)
+function blue_prints.delete_blueprint(provided_path)
 
 	local file_path = (blue_prints.save_path .. "/" .. provided_path)
 
@@ -15,7 +15,7 @@ function delete_blueprint(provided_path)
 	else
 		print("file not found")
 		print("saved designs:")
-		print_all_saved_files()
+		blue_prints.print_all_saved_files()
 	end
 
 end

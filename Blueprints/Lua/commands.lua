@@ -34,7 +34,7 @@ local function runCommand(command)
 	if command[1] == "load" then
 		if command[2] ~= nil then
 			print("Attempting to build blueprint")
-			construct_blueprint(command[2])
+			blue_prints.construct_blueprint(command[2])
 		else
 			print("No filename given. EX: bp load file_name.txt")
 		end
@@ -44,7 +44,7 @@ local function runCommand(command)
 	if command[1] == "save" then
 		if command[2] ~= nil then
 			print("Attempting to save blueprint")
-			save_blueprint(command[2])
+			blue_prints.save_blueprint(command[2])
 		else
 			print("No filename given. EX: bp save file_name.txt")
 		end
@@ -53,18 +53,18 @@ local function runCommand(command)
 	if command[1] == "delete" then
 		if command[2] ~= nil then
 			print("Attempting to delete blueprint")
-			delete_blueprint(command[2])
+			blue_prints.delete_blueprint(command[2])
 		else
 			print("No filename given. EX: bp delete file_name.txt")
 		end
 	end
 	
 	if command[1] == "clear" then
-		clear_circuitbox()
+		blue_prints.clear_circuitbox()
 	end
 	
 	if command[1] == "list" then
-		print_all_saved_files()
+		blue_prints.print_all_saved_files()
 	end
 	
 	

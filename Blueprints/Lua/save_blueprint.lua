@@ -6,37 +6,37 @@ if SERVER then return end --prevents it from running on the server
 
 
 
-function add_attribute_to_component_in_xml(xmlContent, targetId, attributeString)
-  -- Function to add the attribute to the specific Component element
-  function modifyComponent(componentString)
-    local id = componentString:match('id="(%d+)"')
-    if id and tonumber(id) == targetId then
-      return componentString:gsub('/>$', string.format(' %s />', attributeString))
-    else
-      return componentString
-    end
-  end
+local function add_attribute_to_component_in_xml(xmlContent, targetId, attributeString)
+	-- Function to add the attribute to the specific Component element
+	local function modifyComponent(componentString)
+		local id = componentString:match('id="(%d+)"')
+		if id and tonumber(id) == targetId then
+			return componentString:gsub('/>$', string.format(' %s />', attributeString))
+		else
+			return componentString
+		end
+	end
 
-  -- Find the CircuitBox element
-  local circuitBoxStart, circuitBoxEnd = xmlContent:find('<CircuitBox.->')
-  local circuitBoxEndTag = xmlContent:find('</CircuitBox>', circuitBoxEnd)
-  if not circuitBoxStart or not circuitBoxEndTag then
-    print("CircuitBox element not found")
-    return xmlContent
-  end
+	-- Find the CircuitBox element
+	local circuitBoxStart, circuitBoxEnd = xmlContent:find('<CircuitBox.->')
+	local circuitBoxEndTag = xmlContent:find('</CircuitBox>', circuitBoxEnd)
+	if not circuitBoxStart or not circuitBoxEndTag then
+		print("CircuitBox element not found")
+		return xmlContent
+	end
 
-  -- Extract the CircuitBox content
-  local circuitBoxContent = xmlContent:sub(circuitBoxEnd + 1, circuitBoxEndTag - 1)
+	-- Extract the CircuitBox content
+	local circuitBoxContent = xmlContent:sub(circuitBoxEnd + 1, circuitBoxEndTag - 1)
 
-  -- Modify the specific Component element
-  local modifiedCircuitBoxContent = circuitBoxContent:gsub('<Component.-/>', modifyComponent)
+	-- Modify the specific Component element
+	local modifiedCircuitBoxContent = circuitBoxContent:gsub('<Component.-/>', modifyComponent)
 
-  -- Replace the original CircuitBox content with the modified content
-  return xmlContent:sub(1, circuitBoxEnd) .. modifiedCircuitBoxContent .. xmlContent:sub(circuitBoxEndTag)
+	-- Replace the original CircuitBox content with the modified content
+	return xmlContent:sub(1, circuitBoxEnd) .. modifiedCircuitBoxContent .. xmlContent:sub(circuitBoxEndTag)
 end
 
 
-function save_blueprint(provided_path)
+function blue_prints.save_blueprint(provided_path)
 	if Character.Controlled == nil then print("you dont have a character") return end
 	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
 

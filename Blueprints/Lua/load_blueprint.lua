@@ -2,7 +2,7 @@ if SERVER then return end --prevents it from running on the server
 
 
 
-function parseXML(xmlString)
+function blue_prints.parseXML(xmlString)
 	local inputs = {}
 	local outputs = {}
 	local components = {}
@@ -108,7 +108,7 @@ end
 
 
 
-function check_inventory_for_requirements(components)
+function blue_prints.check_inventory_for_requirements(components)
     local missing_components = {}
     for _, component in ipairs(components) do
         missing_components[component.item] = (missing_components[component.item] or 0) + 1
@@ -154,11 +154,8 @@ end
 
 
 
-function add_component_to_circuitbox(component, use_fpga)
-    if blue_prints.most_recent_circuitbox == nil then 
-        print("No circuitbox detected")
-        return 
-    end
+function blue_prints.add_component_to_circuitbox(component, use_fpga)
+    if blue_prints.most_recent_circuitbox == nil then print("No circuitbox detected") return end
 	
 	if component.item == "oscillatorcomponent" then component.item = "oscillator" end --these components are named strangely and break convention
 	if component.item == "concatenationcomponent" then component.item = "concatcomponent" end
@@ -173,19 +170,17 @@ function add_component_to_circuitbox(component, use_fpga)
     --print(string.format("Added component %s at position (%.2f, %.2f)", use_fpga and "fpgacircuit" or component.item, component_position.x, component_position.y))
 end
 
-function add_all_components_to_circuitbox(components, index, inventory_status)
-    if blue_prints.most_recent_circuitbox == nil then 
-        print("No circuitbox detected")
-        return 
-    end
+function blue_prints.add_all_components_to_circuitbox(components, index, inventory_status)
+    if blue_prints.most_recent_circuitbox == nil then print("No circuitbox detected") return end
+	
     index = index or 1  -- Start with the first component if no index is provided
-    inventory_status = inventory_status or check_inventory_for_requirements(components)
+    inventory_status = inventory_status or blue_prints.check_inventory_for_requirements(components)
 
     if index <= #components then
         local component = components[index]
         local use_fpga = inventory_status[component.item] and inventory_status[component.item] > 0
 
-        add_component_to_circuitbox(component, use_fpga)
+        blue_prints.add_component_to_circuitbox(component, use_fpga)
 
         if use_fpga then
             inventory_status[component.item] = inventory_status[component.item] - 1
@@ -195,7 +190,7 @@ function add_all_components_to_circuitbox(components, index, inventory_status)
         end
 
         -- Schedule the next addition with a delay
-        Timer.Wait(function() add_all_components_to_circuitbox(components, index + 1, inventory_status) end, blue_prints.time_delay_between_loops)
+        Timer.Wait(function() blue_prints.add_all_components_to_circuitbox(components, index + 1, inventory_status) end, blue_prints.time_delay_between_loops)
     else
         -- If all components are added, print a message
         print("All components added.")
@@ -203,7 +198,7 @@ function add_all_components_to_circuitbox(components, index, inventory_status)
 end
 
 
-function add_wires_to_circuitbox_recursive(wires, index)
+function blue_prints.add_wires_to_circuitbox_recursive(wires, index)
     if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
     
     local first_connection = nil
@@ -211,9 +206,9 @@ function add_wires_to_circuitbox_recursive(wires, index)
     
     local components = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Components
     local input_output_nodes = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").InputOutputNodes
-    local input_connection_node = getNthValue(input_output_nodes, 1)
+    local input_connection_node = blue_prints.getNthValue(input_output_nodes, 1)
     local input_connections = input_connection_node.Connectors
-    local output_connection_node = getNthValue(input_output_nodes, 2)
+    local output_connection_node = blue_prints.getNthValue(input_output_nodes, 2)
     local output_connections = output_connection_node.Connectors
 
     if index > #wires then
@@ -259,23 +254,23 @@ function add_wires_to_circuitbox_recursive(wires, index)
     end
     
     -- Recur to the next wire
-	Timer.Wait(function() add_wires_to_circuitbox_recursive(wires, index + 1) end, blue_prints.time_delay_between_loops)
+	Timer.Wait(function() blue_prints.add_wires_to_circuitbox_recursive(wires, index + 1) end, blue_prints.time_delay_between_loops)
 end
 
 
-function change_input_output_labels(input_dict, output_dict)
+function blue_prints.change_input_output_labels(input_dict, output_dict)
 	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
 
 	local input_output_nodes = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").InputOutputNodes 
-	local input_connection_node = getNthValue(input_output_nodes, 1)
-	local output_connection_node = getNthValue(input_output_nodes, 2)
+	local input_connection_node = blue_prints.getNthValue(input_output_nodes, 1)
+	local output_connection_node = blue_prints.getNthValue(input_output_nodes, 2)
 		
 	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").SetConnectionLabelOverrides(input_connection_node, input_dict) 
 	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").SetConnectionLabelOverrides(output_connection_node, output_dict) 
 end
 
 
-function add_labels_to_circuitbox_recursive(labels, index)
+function blue_prints.add_labels_to_circuitbox_recursive(labels, index)
     if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
     
     -- Base case: if we've processed all labels, return
@@ -292,12 +287,12 @@ function add_labels_to_circuitbox_recursive(labels, index)
     blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").AddLabel(label_position)
     
     -- Recursive call to process the next label
-	Timer.Wait(function() add_labels_to_circuitbox_recursive(labels, index + 1) end, blue_prints.time_delay_between_loops)
+	Timer.Wait(function() blue_prints.add_labels_to_circuitbox_recursive(labels, index + 1) end, blue_prints.time_delay_between_loops)
 end
 
 
 
-function rename_all_labels_in_circuitbox(labels)
+function blue_prints.rename_all_labels_in_circuitbox(labels)
 	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
 
 	local label_nodes = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Labels 
@@ -314,10 +309,10 @@ function rename_all_labels_in_circuitbox(labels)
 		if label.header == nil then label.header = "" end
 		if label.body == nil then label.body = "" end
 		
-		local label_node = getNthValue(label_nodes, i)
+		local label_node = blue_prints.getNthValue(label_nodes, i)
 		local label_header = blue_prints.net_limited_string_type(tostring(label.header))
 		local label_body = blue_prints.net_limited_string_type(tostring(label.body))
-		local label_color = hexToRGBA(label.color)
+		local label_color = blue_prints.hexToRGBA(label.color)
 		
 		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").RenameLabel(label_node, label_color, label_header, label_body)
     end
@@ -332,14 +327,14 @@ local function resize_label(label_node, direction, resize_vector)
 end
 
 
-function resize_labels(labels_from_blueprint)
+function blue_prints.resize_labels(labels_from_blueprint)
 	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
 
 	local label_nodes_in_box = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Labels 
 
 	 for i, label_in_blueprint in ipairs(labels_from_blueprint) do
 		
-		local label_node = getNthValue(label_nodes_in_box, i)
+		local label_node = blue_prints.getNthValue(label_nodes_in_box, i)
 		
 		local amount_to_expand_x = label_in_blueprint.size.width - label_node.size.X
 		amount_to_expand_x = amount_to_expand_x
@@ -357,7 +352,7 @@ end
 
 
 
-function update_values_in_components(components_from_blueprint) 
+function blue_prints.update_values_in_components(components_from_blueprint) 
 	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
 
 	local components_in_box = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Components
@@ -539,12 +534,12 @@ function update_values_in_components(components_from_blueprint)
 	print("All values updated inside components.")
 end
 
-function move_input_output_nodes(inputNodePos, outputNodePos)
+function blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
 	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
 
 	local input_output_nodes = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").InputOutputNodes 
-	local input_connection_node = getNthValue(input_output_nodes, 1)
-	local output_connection_node = getNthValue(input_output_nodes, 2)
+	local input_connection_node = blue_prints.getNthValue(input_output_nodes, 1)
+	local output_connection_node = blue_prints.getNthValue(input_output_nodes, 2)
 
     
     
@@ -573,12 +568,12 @@ end
 
 
 
-function clear_circuitbox() 
+function blue_prints.clear_circuitbox() 
 	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
 	
 	local components = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Components
 	if #components > 0 then
-		local first_component = getNthValue(components, 1)
+		local first_component = blue_prints.getNthValue(components, 1)
 		local component_immutable_array = blue_prints.immutable_array_type.Create(first_component)
 		
 		for _, component in ipairs(components) do
@@ -589,7 +584,7 @@ function clear_circuitbox()
 	
 	local labels = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Labels
 	if #labels > 0 then
-		local first_label = getNthValue(labels, 1)
+		local first_label = blue_prints.getNthValue(labels, 1)
 		local label_immutable_array = blue_prints.immutable_array_type.Create(first_label)
 		
 		for _, label in ipairs(labels) do
@@ -601,19 +596,19 @@ function clear_circuitbox()
 	--move the input output panels back to their original location
 	local move_input_vector = Vector2(-512, 0)
 	local move_output_vector = Vector2(512, 0)
-	move_input_output_nodes(move_input_vector, move_output_vector)
+	blue_prints.move_input_output_nodes(move_input_vector, move_output_vector)
 	
 	--reset the labels on the input output panels
 	local empty_input = {signal_in1 = "", signal_in2 = "", signal_in3 = "", signal_in4 = "", signal_in5 = "", signal_in6 = "", signal_in7 = "", signal_in8 = ""}
 	local empty_output = {signal_out1 = "", signal_out2 = "", signal_out3 = "", signal_out4 = "", signal_out5 = "", signal_out6 = "", signal_out7 = "", signal_out8 = ""}
-	change_input_output_labels(empty_input, empty_output)
+	blue_prints.change_input_output_labels(empty_input, empty_output)
 	
 	
 end
 
 
 
-function wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos) 
+function blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos) 
 
 
 	local number_of_components = #components
@@ -623,7 +618,7 @@ function wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, i
 
 
 	-- Check inventory for required components
-	local missing_components = check_inventory_for_requirements(components)
+	local missing_components = blue_prints.check_inventory_for_requirements(components)
 
 	local all_needed_items_are_present = true
 	for _, count in pairs(missing_components) do
@@ -635,14 +630,14 @@ function wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, i
 
 	if all_needed_items_are_present then
 		print("All required components are present!")
-		add_all_components_to_circuitbox(components)
-		Timer.Wait(function() add_labels_to_circuitbox_recursive(labels, 1) end, 50)
-		Timer.Wait(function() add_wires_to_circuitbox_recursive(wires, 1) end, time_delay_for_components)
-		Timer.Wait(function() rename_all_labels_in_circuitbox(labels) end, time_delay_for_labels)
-		change_input_output_labels(inputs, outputs)
-		Timer.Wait(function() update_values_in_components(components) end, time_delay_for_components)
-		Timer.Wait(function() resize_labels(labels) end, time_delay_for_labels)
-		move_input_output_nodes(inputNodePos, outputNodePos)
+		blue_prints.add_all_components_to_circuitbox(components)
+		Timer.Wait(function() blue_prints.add_labels_to_circuitbox_recursive(labels, 1) end, 50)
+		Timer.Wait(function() blue_prints.add_wires_to_circuitbox_recursive(wires, 1) end, time_delay_for_components)
+		Timer.Wait(function() blue_prints.rename_all_labels_in_circuitbox(labels) end, time_delay_for_labels)
+		blue_prints.change_input_output_labels(inputs, outputs)
+		Timer.Wait(function() blue_prints.update_values_in_components(components) end, time_delay_for_components)
+		Timer.Wait(function() blue_prints.resize_labels(labels) end, time_delay_for_labels)
+		blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
 		
 	else
 		print("You are missing: ")
@@ -657,15 +652,15 @@ end
 
 
 
-function construct_blueprint(provided_path)
+function blue_prints.construct_blueprint(provided_path)
 	if Character.Controlled == nil then print("you dont have a character") return end
 
 	local file_path = (blue_prints.save_path .. "/" .. provided_path)
-	local xmlContent, err = readFile(file_path)
+	local xmlContent, err = blue_prints.readFile(file_path)
 
 	if xmlContent then
 		-- In the usage section:
-		local inputs, outputs, components, wires, labels, inputNodePos, outputNodePos = parseXML(xmlContent)
+		local inputs, outputs, components, wires, labels, inputNodePos, outputNodePos = blue_prints.parseXML(xmlContent)
 
 		--print("Inputs:", inputs)
 		--print("Outputs:", outputs)
@@ -705,14 +700,14 @@ function construct_blueprint(provided_path)
 		end
 		--]]
 
-		clear_circuitbox()
-		Timer.Wait(function() wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos) end, 500)
+		blue_prints.clear_circuitbox()
+		Timer.Wait(function() blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos) end, 500)
 
 		
 	else
 		print("file not found")
 		print("saved designs:")
-		print_all_saved_files()
+		blue_prints.print_all_saved_files()
 	end
 end
 

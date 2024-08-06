@@ -1,7 +1,7 @@
 if SERVER then return end --prevents it from running on the server
 
 
-function print_all_saved_files()
+function blue_prints.print_all_saved_files()
 
     local saved_files = File.GetFiles(blue_prints.save_path)
     
@@ -14,7 +14,7 @@ function print_all_saved_files()
 end
 
 
-function readFile(path)
+function blue_prints.readFile(path)
     local file = io.open(path, "r")
     if not file then
         return nil, "Failed to open file: " .. path
@@ -25,18 +25,18 @@ function readFile(path)
 end
 
 
-function isInteger(str)
+function blue_prints.isInteger(str)
     return str and not (str == "" or str:find("%D"))
 end
 
-function isFloat(str)
+function blue_prints.isFloat(str)
     local n = tonumber(str)
     return n ~= nil and math.floor(n) ~= n
 end
 
 
 
-function removeKeyFromTable(tbl, keyToRemove)
+function blue_prints.removeKeyFromTable(tbl, keyToRemove)
     local newTable = {}
     for k, v in pairs(tbl) do
         if k ~= keyToRemove then
@@ -48,7 +48,7 @@ end
 
 
 
-function hexToRGBA(hex)
+function blue_prints.hexToRGBA(hex)
     -- Remove the '#' if present
     hex = hex:gsub("#", "")
     
@@ -75,7 +75,7 @@ end
 
 
 
-function getNthValue(tbl, n)
+function blue_prints.getNthValue(tbl, n)
     local count = 0
     for key, value in pairs(tbl) do
         count = count + 1
@@ -91,7 +91,7 @@ end
 
 
 
-function string_to_bool(passed_string)
+function blue_prints.string_to_bool(passed_string)
     -- Convert to lower case for case-insensitive comparison
     local lower_string = string.lower(passed_string)
     
