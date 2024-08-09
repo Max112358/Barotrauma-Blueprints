@@ -17,17 +17,18 @@ local function sanity_check_blue_print(inputs, outputs, components, wires, label
         return true
     end
 
+	--[[ --its possible to have no input labels at all
     -- Check inputs and outputs
     local ok, msg = check_table_not_empty(inputs, "Inputs")
     if not ok then return false, msg end
-
     ok, msg = check_table_not_empty(outputs, "Outputs")
     if not ok then return false, msg end
+	--]]
+	
 
     -- Check components
     ok, msg = check_table_not_empty(components, "Components")
     if not ok then return false, msg end
-
     for i, component in ipairs(components) do
         if not component.id or not component.position or not component.usedResource or
            not component.item or not component.class or not component.class.name then
@@ -40,7 +41,6 @@ local function sanity_check_blue_print(inputs, outputs, components, wires, label
     -- Check wires
     ok, msg = check_table_not_empty(wires, "Wires")
     if not ok then return false, msg end
-
     for i, wire in ipairs(wires) do
         if not wire.id or not wire.prefab or not wire.from or not wire.to or
            not wire.from.name or not wire.to.name then
@@ -48,10 +48,10 @@ local function sanity_check_blue_print(inputs, outputs, components, wires, label
         end
     end
 
+	--[[ --its possible to have no labels, and also possible to have blank labels
     -- Check labels
     ok, msg = check_table_not_empty(labels, "Labels")
     if not ok then return false, msg end
-
     for i, label in ipairs(labels) do
         if not label.id or not label.color or not label.position or not label.size or
            not label.header or not label.body then
@@ -63,11 +63,11 @@ local function sanity_check_blue_print(inputs, outputs, components, wires, label
             return false, "Label " .. i .. " size is missing width or height"
         end
     end
+	--]]
 
     -- Check input and output node positions
     ok, msg = check_position(inputNodePos, "Input node position")
     if not ok then return false, msg end
-
     ok, msg = check_position(outputNodePos, "Output node position")
     if not ok then return false, msg end
 
@@ -374,24 +374,16 @@ function blue_prints.save_blueprint(provided_path)
 	
 	
 	
-	
-	
-	
 	local inputs, outputs, components, wires, labels, inputNodePos, outputNodePos = blue_prints.parseXML(circuitbox_xml)
-	local this_file_makes_sense = sanity_check_blue_print(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos)
+	local sanity_check_result, sanity_check_message = sanity_check_blue_print(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos)
 	
 	
-	if this_file_makes_sense == false then
-		print("Something is wrong with this save file! It failed to pass its sanity check! Please link a copy to this save file on the workshop page!")
-		print("The file is in your barotrauma localmods folder. The mod maker needs this file to fix the problem!")
-		print("Something is wrong with this save file! It failed to pass its sanity check! Please link a copy to this save file on the workshop page!")
-		print("The file is in your barotrauma localmods folder. The mod maker needs this file to fix the problem!")
-		print("Something is wrong with this save file! It failed to pass its sanity check! Please link a copy to this save file on the workshop page!")
-		print("The file is in your barotrauma localmods folder. The mod maker needs this file to fix the problem!")
-		print("Something is wrong with this save file! It failed to pass its sanity check! Please link a copy to this save file on the workshop page!")
+	
+	if sanity_check_result == false then
+		print("Sanity check failed: " .. sanity_check_message)
+		print("Something is wrong with this save file! Please link a copy to this save file on the workshop page!")
 		print("The file is in your barotrauma localmods folder. The mod maker needs this file to fix the problem!")
 		print("This mod will only work with vanilla components.")
-		print("Repeated 4 times so you pay attention")
 	end
 	
 	
