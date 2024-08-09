@@ -12,26 +12,25 @@ function blue_prints.parseXML(xmlString)
     local outputNodePos = {}
 
     -- Parse InputNode
-    for inputNode in xmlString:gmatch("<InputNode.-</InputNode>") do
+    local inputNode = xmlString:match("<InputNode[^>]+>")
+    if inputNode then
         local posX, posY = inputNode:match('pos="([%d%.%-]+),([%d%.%-]+)"')
         inputNodePos = {x = tonumber(posX), y = tonumber(posY)}
-        
-        for name, value in inputNode:gmatch('<ConnectionLabelOverride name="([^"]+)" value="([^"]+)"') do
-            if name:match("^signal_in") then
-                inputs[name] = value
-            end
-        end
     end
 
     -- Parse OutputNode
-    for outputNode in xmlString:gmatch("<OutputNode.-</OutputNode>") do
+    local outputNode = xmlString:match("<OutputNode[^>]+>")
+    if outputNode then
         local posX, posY = outputNode:match('pos="([%d%.%-]+),([%d%.%-]+)"')
         outputNodePos = {x = tonumber(posX), y = tonumber(posY)}
-        
-        for name, value in outputNode:gmatch('<ConnectionLabelOverride name="([^"]+)" value="([^"]+)"') do
-            if name:match("^signal_out") then
-                outputs[name] = value
-            end
+    end
+
+    -- Parse input and output labels (if any)
+    for name, value in xmlString:gmatch('<ConnectionLabelOverride name="([^"]+)" value="([^"]+)"') do
+        if name:match("^signal_in") then
+            inputs[name] = value
+        elseif name:match("^signal_out") then
+            outputs[name] = value
         end
     end
 
@@ -546,6 +545,7 @@ function blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
     local sacrificial_immutable_array_input = blue_prints.immutable_array_type.Create(input_connection_node)
     local input_connection_node_in_immutable_aray = sacrificial_immutable_array_input.Add(input_connection_node)
     
+	
 	local input_delta_x = inputNodePos.x - input_connection_node.Position.X
 	local input_delta_y = inputNodePos.y - input_connection_node.Position.Y
 	local move_input_vector = Vector2(input_delta_x, input_delta_y)
@@ -637,7 +637,7 @@ function blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wire
 		blue_prints.change_input_output_labels(inputs, outputs)
 		Timer.Wait(function() blue_prints.update_values_in_components(components) end, time_delay_for_components)
 		Timer.Wait(function() blue_prints.resize_labels(labels) end, time_delay_for_labels)
-		blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
+		Timer.Wait(function() blue_prints.move_input_output_nodes(inputNodePos, outputNodePos) end, time_delay_for_components) --delayed because the change also changes the position
 		
 	else
 		print("You are missing: ")
