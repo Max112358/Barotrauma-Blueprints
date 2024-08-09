@@ -386,13 +386,13 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 
 				if component_to_copy.class.name == "TrigonometricFunctionComponent" then
 					if tostring(attr) == "UseRadians" then
-						component_class_to_change.UseRadians = string_to_bool(value)
+						component_class_to_change.UseRadians = blue_prints.string_to_bool(value)
 					end
 				end
 
 				if component_to_copy.class.name == "ColorComponent" then
 					if tostring(attr) == "UseHSV" then
-						component_class_to_change.UseHSV = string_to_bool(value)
+						component_class_to_change.UseHSV = blue_prints.string_to_bool(value)
 					end
 				end
 
@@ -413,10 +413,10 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 						component_class_to_change.Delay = tonumber(value)
 					end
 					if tostring(attr) == "ResetWhenSignalReceived" then
-						component_class_to_change.ResetWhenSignalReceived = string_to_bool(value)
+						component_class_to_change.ResetWhenSignalReceived = blue_prints.string_to_bool(value)
 					end
 					if tostring(attr) == "ResetWhenDifferentSignalReceived" then
-						component_class_to_change.ResetWhenDifferentSignalReceived = string_to_bool(value)
+						component_class_to_change.ResetWhenDifferentSignalReceived = blue_prints.string_to_bool(value)
 					end
 				end
 
@@ -446,7 +446,7 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 
 				if component_to_copy.class.name == "NotComponent" then
 					if tostring(attr) == "ContinuousOutput" then
-						component_class_to_change.ContinuousOutput = string_to_bool(value)
+						component_class_to_change.ContinuousOutput = blue_prints.string_to_bool(value)
 					end
 				end
 
@@ -480,16 +480,16 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 						component_class_to_change.Output = value
 					end
 					if tostring(attr) == "UseCaptureGroup" then
-						component_class_to_change.UseCaptureGroup = string_to_bool(value)
+						component_class_to_change.UseCaptureGroup = blue_prints.string_to_bool(value)
 					end
 					if tostring(attr) == "OutputEmptyCaptureGroup" then
-						component_class_to_change.OutputEmptyCaptureGroup = string_to_bool(value)
+						component_class_to_change.OutputEmptyCaptureGroup = blue_prints.string_to_bool(value)
 					end
 					if tostring(attr) == "FalseOutput" then
 						component_class_to_change.FalseOutput = value
 					end
 					if tostring(attr) == "ContinuousOutput" then
-						component_class_to_change.ContinuousOutput = string_to_bool(value)
+						component_class_to_change.ContinuousOutput = blue_prints.string_to_bool(value)
 					end
 					if tostring(attr) == "Expression" then
 						component_class_to_change.Expression = value
@@ -498,7 +498,7 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 
 				if component_to_copy.class.name == "RelayComponent" then
 					if tostring(attr) == "IsOn" then
-						component_class_to_change.IsOn = string_to_bool(value)
+						component_class_to_change.IsOn = blue_prints.string_to_bool(value)
 					end
 				end
 

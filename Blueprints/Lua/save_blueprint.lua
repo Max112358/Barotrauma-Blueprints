@@ -2,7 +2,78 @@ if SERVER then return end --prevents it from running on the server
 
 
 
+local function sanity_check_blue_print(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos)
+    local function check_table_not_empty(t, name)
+        if type(t) ~= "table" or next(t) == nil then
+            return false, name .. " is empty or not a table"
+        end
+        return true
+    end
 
+    local function check_position(pos, name)
+        if type(pos) ~= "table" or pos.x == nil or pos.y == nil then
+            return false, name .. " is missing x or y coordinate"
+        end
+        return true
+    end
+
+    -- Check inputs and outputs
+    local ok, msg = check_table_not_empty(inputs, "Inputs")
+    if not ok then return false, msg end
+
+    ok, msg = check_table_not_empty(outputs, "Outputs")
+    if not ok then return false, msg end
+
+    -- Check components
+    ok, msg = check_table_not_empty(components, "Components")
+    if not ok then return false, msg end
+
+    for i, component in ipairs(components) do
+        if not component.id or not component.position or not component.usedResource or
+           not component.item or not component.class or not component.class.name then
+            return false, "Component " .. i .. " is missing required fields"
+        end
+        ok, msg = check_position(component.position, "Component " .. i .. " position")
+        if not ok then return false, msg end
+    end
+
+    -- Check wires
+    ok, msg = check_table_not_empty(wires, "Wires")
+    if not ok then return false, msg end
+
+    for i, wire in ipairs(wires) do
+        if not wire.id or not wire.prefab or not wire.from or not wire.to or
+           not wire.from.name or not wire.to.name then
+            return false, "Wire " .. i .. " is missing required fields"
+        end
+    end
+
+    -- Check labels
+    ok, msg = check_table_not_empty(labels, "Labels")
+    if not ok then return false, msg end
+
+    for i, label in ipairs(labels) do
+        if not label.id or not label.color or not label.position or not label.size or
+           not label.header or not label.body then
+            return false, "Label " .. i .. " is missing required fields"
+        end
+        ok, msg = check_position(label.position, "Label " .. i .. " position")
+        if not ok then return false, msg end
+        if not label.size.width or not label.size.height then
+            return false, "Label " .. i .. " size is missing width or height"
+        end
+    end
+
+    -- Check input and output node positions
+    ok, msg = check_position(inputNodePos, "Input node position")
+    if not ok then return false, msg end
+
+    ok, msg = check_position(outputNodePos, "Output node position")
+    if not ok then return false, msg end
+
+    -- If we've made it this far, all checks have passed
+    return true, "All checks passed"
+end
 
 
 
@@ -53,6 +124,7 @@ function blue_prints.save_blueprint(provided_path)
 	local components = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Components
 	
 	for i, component in ipairs(components) do
+		
 		
 		local memoryComponent = component.Item.GetComponentString("MemoryComponent")
 		if memoryComponent then
@@ -296,10 +368,32 @@ function blue_prints.save_blueprint(provided_path)
 		parsed_item_string = parsed_item_string:lower()
 		parsed_item_string = 'item="' .. parsed_item_string .. '"'
 		
-		--fixme: concatComponent has different name?
 
 		circuitbox_xml = add_attribute_to_component_in_xml(circuitbox_xml, component.ID, parsed_item_string)
     end
+	
+	
+	
+	
+	
+	
+	local inputs, outputs, components, wires, labels, inputNodePos, outputNodePos = blue_prints.parseXML(circuitbox_xml)
+	local this_file_makes_sense = sanity_check_blue_print(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos)
+	
+	
+	if this_file_makes_sense == false then
+		print("Something is wrong with this save file! It failed to pass its sanity check! Please link a copy to this save file on the workshop page!")
+		print("The file is in your barotrauma localmods folder. The mod maker needs this file to fix the problem!")
+		print("Something is wrong with this save file! It failed to pass its sanity check! Please link a copy to this save file on the workshop page!")
+		print("The file is in your barotrauma localmods folder. The mod maker needs this file to fix the problem!")
+		print("Something is wrong with this save file! It failed to pass its sanity check! Please link a copy to this save file on the workshop page!")
+		print("The file is in your barotrauma localmods folder. The mod maker needs this file to fix the problem!")
+		print("Something is wrong with this save file! It failed to pass its sanity check! Please link a copy to this save file on the workshop page!")
+		print("The file is in your barotrauma localmods folder. The mod maker needs this file to fix the problem!")
+		print("This mod will only work with vanilla components.")
+		print("Repeated 4 times so you pay attention")
+	end
+	
 	
 	
 
