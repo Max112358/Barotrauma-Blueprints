@@ -34,35 +34,35 @@ function blue_prints.parseXML(xmlString)
         end
     end
 
-    -- Parse Components
-    for component in xmlString:gmatch('<Component[^>]+/>') do
-        local id = component:match('id="(%d+)"')
-        local positionX, positionY = component:match('position="([%d%.%-]+),([%d%.%-]+)"')
-        local usedResource = component:match('usedresource="([^"]+)"')
-        local item = component:match('item="([^"]+)"')
-        local class = component:match('Class="([^"]+)"')
-        
-        local componentData = {
-            id = id,
-            position = {x = tonumber(positionX), y = tonumber(positionY)},
-            usedResource = usedResource,
-            item = item,
-            class = {
-                name = class,
-                attributes = {}
-            }
-        }
-        
-        -- Parse additional attributes for the class
-        for attr, value in component:gmatch('(%w+)="([^"]*)"') do
-            if attr ~= "id" and attr ~= "position" and attr ~= "backingitemid" and 
-               attr ~= "usedresource" and attr ~= "item" and attr ~= "Class" then
-                componentData.class.attributes[attr] = value
-            end
-        end
-        
-        table.insert(components, componentData)
-    end
+	-- Parse Components
+	for component in xmlString:gmatch('<Component.-/>') do
+		local id = component:match('id="(%d+)"')
+		local positionX, positionY = component:match('position="([%-%d%.]+),([%-%d%.]+)"')
+		local usedResource = component:match('usedresource="([^"]+)"')
+		local item = component:match('item="([^"]+)"')
+		local class = component:match('Class="([^"]+)"')
+		
+		local componentData = {
+			id = id,
+			position = {x = tonumber(positionX), y = tonumber(positionY)},
+			usedResource = usedResource,
+			item = item,
+			class = {
+				name = class,
+				attributes = {}
+			}
+		}
+		
+		-- Parse additional attributes for the class, including Value
+		for attr, value in component:gmatch('(%w+)="(.-)"  ') do
+			if attr ~= "id" and attr ~= "position" and attr ~= "backingitemid" and 
+			   attr ~= "usedresource" and attr ~= "item" and attr ~= "Class" then
+				componentData.class.attributes[attr] = value
+			end
+		end
+		
+		table.insert(components, componentData)
+	end
 	
 	-- Parse Wires
 	wires = {}
@@ -669,6 +669,7 @@ end
 
 function blue_prints.construct_blueprint(provided_path)
 	if Character.Controlled == nil then print("you dont have a character") return end
+	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
 
 	-- Check if the filename already ends with .txt
     if not string.match(provided_path, "%.txt$") then
