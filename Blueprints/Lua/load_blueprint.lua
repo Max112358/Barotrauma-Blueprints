@@ -593,6 +593,21 @@ function blue_prints.clear_circuitbox()
 		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").RemoveLabel(label_immutable_array)
 	end
 	
+	
+	
+	local wires = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Wires
+	if #wires > 0 then
+		local first_wire = blue_prints.getNthValue(wires, 1)
+		local wire_immutable_array = blue_prints.immutable_array_type.Create(first_wire)
+		
+		for _, wire in ipairs(wires) do
+			wire_immutable_array = wire_immutable_array.Add(wire)
+		end
+		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").RemoveWires(wire_immutable_array)
+	end
+	
+	
+	
 	--move the input output panels back to their original location
 	local move_input_vector = Vector2(-512, 0)
 	local move_output_vector = Vector2(512, 0)
@@ -654,6 +669,12 @@ end
 
 function blue_prints.construct_blueprint(provided_path)
 	if Character.Controlled == nil then print("you dont have a character") return end
+
+	-- Check if the filename already ends with .txt
+    if not string.match(provided_path, "%.txt$") then
+        -- Add .txt if it's not already present
+        provided_path = provided_path .. ".txt"
+    end
 
 	local file_path = (blue_prints.save_path .. "/" .. provided_path)
 	local xmlContent, err = blue_prints.readFile(file_path)

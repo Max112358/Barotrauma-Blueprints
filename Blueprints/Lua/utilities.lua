@@ -1,14 +1,56 @@
 if SERVER then return end --prevents it from running on the server
 
 
+
+
+
+
+
+function blue_prints.get_description_from_xml(xmlString)
+    local function trim(s)
+        return s:match("^%s*(.-)%s*$")
+    end
+
+    -- Find the Label tag with header="Description"
+    --local labelTag = xmlString:match('<Label[^>]+header="Description".-/>') --case sensitive
+	local labelTag = xmlString:match('<Label[^>]*header="[%s]*[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN][%s]*".-/>')
+    if not labelTag then
+        return nil
+    end
+
+    -- Extract the body attribute
+    local body = labelTag:match('body="([^"]*)"')
+    if not body then
+        return nil
+    end
+
+    return trim(body)
+end
+
+
+
+
+
+
 function blue_prints.print_all_saved_files()
 
     local saved_files = File.GetFiles(blue_prints.save_path)
     
     for name, value in pairs(saved_files) do
         if string.match(value, "%.txt$") then
-			local filename = value:match("([^\\]+)$")
-            print(filename)
+			local filename = value:match("([^\\]+)$") --capture after last backslash
+			local filename = string.gsub(filename, "%.txt$", "") --cut out the .txt at the end
+			
+			local xml_of_file = blue_prints.readFile(value)
+			local description_of_file = blue_prints.get_description_from_xml(xml_of_file)
+			
+			print("-------------")
+			if description_of_file ~= nil then
+				--print(filename .. " " .. description_of_file)
+				print('‖color:white‖' .. filename .. '‖end‖  -  ‖color:yellow‖' .. description_of_file .. '‖end‖')
+			else
+				print('‖color:white‖' .. filename .. '‖end‖  -  ‖color:yellow‖' .. "No description label." .. '‖end‖')
+			end
         end
     end
 end

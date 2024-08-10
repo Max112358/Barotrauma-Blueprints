@@ -34,18 +34,18 @@
       <output name="signal_out7" />
       <output name="signal_out8" />
     </ConnectionPanel>
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1036,1037,1038,1039,1040,1041,1042,1043,1044,1045,1046,1064,2705,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1049;1050;1051;1052;1053;1054;1057;1058;1059;1060;2706;2707;2708,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1036,1037,1038,1039,1040,1041,1042,1043,1044,1045,1046,1049,1050,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1051;1052;1053;1054;1057;1058;1059;1060;1064;1108;1109;1110;1111,,,,,,,,," ExtraStackSize="0" />
     <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
       <InputNode pos="-512,0">
-        <ConnectionLabelOverride name="signal_in1" value="FROM LOAD VALUE OUT" />
-        <ConnectionLabelOverride name="signal_in2" value="FROM FUEL OUT" />
-        <ConnectionLabelOverride name="signal_in3" value="FROM POWER VALUE OUT" />
         <ConnectionLabelOverride name="signal_in4" value="FROM TEMP OUT" />
+        <ConnectionLabelOverride name="signal_in3" value="FROM POWER VALUE OUT" />
+        <ConnectionLabelOverride name="signal_in2" value="FROM FUEL OUT" />
+        <ConnectionLabelOverride name="signal_in1" value="FROM LOAD VALUE OUT" />
       </InputNode>
       <OutputNode pos="512,0">
-        <ConnectionLabelOverride name="signal_out1" value="TO SET FISSION RATE" />
         <ConnectionLabelOverride name="signal_out2" value="TO SET TURBINE OUTPUT" />
+        <ConnectionLabelOverride name="signal_out1" value="TO SET FISSION RATE" />
       </OutputNode>
       <Component id="0" position="-1541.0767,-84.20166" backingitemid="0,0" usedresource="addercomponent"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="1"  TimeFrame="0"  item="addercomponent" />
       <Component id="1" position="-1931.5281,190.48706" backingitemid="1,0" usedresource="dividecomponent"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="0.10000000149011612"  TimeFrame="0"  item="dividecomponent" />
@@ -76,80 +76,81 @@
         <From name="signal_out" target="0" />
         <To name="signal_in2" target="1" />
       </Wire>
-      <Wire id="5" backingitemid="" prefab="redwire">
+      <Wire id="4" backingitemid="" prefab="redwire">
         <From name="signal_in3" target="" />
         <To name="signal_in2" target="2" />
       </Wire>
-      <Wire id="6" backingitemid="0,1" prefab="redwire">
+      <Wire id="5" backingitemid="0,1" prefab="redwire">
         <From name="signal_out" target="2" />
         <To name="signal_in2" target="3" />
       </Wire>
-      <Wire id="8" backingitemid="0,2" prefab="redwire">
+      <Wire id="6" backingitemid="0,2" prefab="redwire">
         <From name="signal_out" target="3" />
         <To name="signal_in1" target="4" />
       </Wire>
-      <Wire id="9" backingitemid="0,3" prefab="redwire">
+      <Wire id="7" backingitemid="0,3" prefab="redwire">
         <From name="signal_out" target="1" />
         <To name="signal_in2" target="4" />
       </Wire>
-      <Wire id="10" backingitemid="" prefab="redwire">
+      <Wire id="8" backingitemid="" prefab="redwire">
         <From name="signal_in2" target="" />
         <To name="signal_in2" target="5" />
       </Wire>
-      <Wire id="11" backingitemid="0,4" prefab="redwire">
+      <Wire id="9" backingitemid="0,4" prefab="redwire">
         <From name="signal_out" target="6" />
         <To name="signal_in1" target="5" />
       </Wire>
-      <Wire id="12" backingitemid="" prefab="redwire">
+      <Wire id="10" backingitemid="" prefab="redwire">
         <From name="signal_out" target="5" />
         <To name="signal_out2" target="" />
       </Wire>
-      <Wire id="13" backingitemid="0,5" prefab="redwire">
+      <Wire id="11" backingitemid="0,5" prefab="redwire">
         <From name="signal_out" target="5" />
         <To name="signal_in1" target="7" />
       </Wire>
-      <Wire id="14" backingitemid="0,6" prefab="redwire">
+      <Wire id="12" backingitemid="0,6" prefab="redwire">
         <From name="signal_out" target="8" />
         <To name="signal_in2" target="7" />
       </Wire>
-      <Wire id="15" backingitemid="0,7" prefab="redwire">
+      <Wire id="13" backingitemid="0,7" prefab="redwire">
         <From name="signal_out" target="7" />
         <To name="signal_in1" target="9" />
       </Wire>
-      <Wire id="16" backingitemid="0,8" prefab="redwire">
+      <Wire id="14" backingitemid="0,8" prefab="redwire">
         <From name="signal_out" target="4" />
         <To name="signal_in2" target="9" />
       </Wire>
-      <Wire id="17" backingitemid="0,9" prefab="redwire">
+      <Wire id="15" backingitemid="0,9" prefab="redwire">
         <From name="signal_out" target="9" />
         <To name="signal_in1" target="10" />
       </Wire>
-      <Wire id="18" backingitemid="" prefab="redwire">
+      <Wire id="16" backingitemid="" prefab="redwire">
         <From name="signal_in2" target="" />
         <To name="signal_in2" target="10" />
       </Wire>
-      <Wire id="19" backingitemid="" prefab="redwire">
+      <Wire id="17" backingitemid="" prefab="redwire">
         <From name="signal_out" target="10" />
         <To name="signal_out1" target="" />
       </Wire>
-      <Wire id="20" backingitemid="0,10" prefab="redwire">
+      <Wire id="18" backingitemid="0,10" prefab="redwire">
         <From name="signal_out" target="12" />
         <To name="signal_in2" target="11" />
       </Wire>
-      <Wire id="21" backingitemid="" prefab="redwire">
+      <Wire id="19" backingitemid="" prefab="redwire">
         <From name="signal_in1" target="" />
         <To name="signal_in1" target="11" />
       </Wire>
-      <Wire id="4" backingitemid="0,11" prefab="redwire">
+      <Wire id="20" backingitemid="0,11" prefab="redwire">
         <From name="signal_out" target="11" />
         <To name="signal_in1" target="2" />
       </Wire>
-      <Wire id="7" backingitemid="0,12" prefab="redwire">
+      <Wire id="21" backingitemid="0,12" prefab="redwire">
         <From name="signal_out" target="11" />
         <To name="signal_in1" target="3" />
       </Wire>
-      <Label id="0" color="#7E00E0" position="815.8345,1298.8594" size="971.99634,382.92468" header="PURPOSE" body="Supposed to be more efficient than the fast 11c reactor. Design by Lammert. When you first turn the reactor on, crank the turbine rate up manually. That will prevent any fires." />
+      <Label id="0" color="#7E00E0" position="815.8345,1298.8594" size="971.99634,382.92468" header="Description" body="Fast overclockable automatic reactor controller. No need for user inputs." />
       <Label id="1" color="#FF0000" position="-1042.4131,-676.7699" size="891.7202,175.09204" header="Overclock" body="Increase this value to overlock the reactor, or decrease to underclock. The number is the ratio, so 1.15 is 15% more power than normally required." />
+      <Label id="2" color="#7ED3E0" position="801.16724,827.86633" size="951.1011,316.4431" header="notes" body="Supposed to be more efficient than the fast 11c reactor. Design by Lammert. When you first turn the reactor on, crank the turbine rate up manually. That will prevent any fires." />
     </CircuitBox>
     <itemstats />
   </Item>
