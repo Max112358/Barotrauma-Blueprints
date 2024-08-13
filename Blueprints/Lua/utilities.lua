@@ -30,6 +30,110 @@ end
 
 
 
+function blue_prints.get_component_count_from_xml(xmlString)
+	local count = 0
+	for _ in xmlString:gmatch('<Component.-/>') do
+		count = count + 1
+	end
+
+    return count
+end
+
+
+
+
+
+
+function blue_prints.get_xml_content_as_string_from_path(provided_path) 
+	
+	-- Check if the filename already ends with .txt
+    if not string.match(provided_path, "%.txt$") then
+        -- Add .txt if it's not already present
+        provided_path = provided_path .. ".txt"
+    end
+
+	local file_path = (blue_prints.save_path .. "/" .. provided_path)
+	local xmlContent, err = blue_prints.readFile(file_path)
+
+	if xmlContent then
+		return xmlContent
+	else
+		print("file not found")
+		print("saved designs:")
+		blue_prints.print_all_saved_files()
+	end
+end
+
+
+
+
+
+function blue_prints.print_requirements_of_circuit(provided_path) 
+	
+	local xmlContent = blue_prints.get_xml_content_as_string_from_path(provided_path) 
+
+	if xmlContent then
+		-- In the usage section:
+		local inputs, outputs, components, wires, labels, inputNodePos, outputNodePos = blue_prints.parseXML(xmlContent)
+		
+		print("This circuit uses: ")
+		local identifierCounts = {}
+
+		-- Count occurrences
+		for _, component in ipairs(components) do
+			--local prefab = ItemPrefab.GetItemPrefab(component.item)
+			local identifier = component.item
+			identifierCounts[identifier] = (identifierCounts[identifier] or 0) + 1
+		end
+
+		-- Print the counts
+		for identifier, count in pairs(identifierCounts) do
+			print(identifier .. ": " .. count)
+		end
+	end
+end
+
+
+
+function blue_prints.check_what_is_needed_for_blueprint(provided_path) 
+	
+	local xmlContent = blue_prints.get_xml_content_as_string_from_path(provided_path) 
+
+	if xmlContent then
+		-- In the usage section:
+		local inputs, outputs, components, wires, labels, inputNodePos, outputNodePos = blue_prints.parseXML(xmlContent)
+		
+		-- Check inventory for required components
+		local missing_components = blue_prints.check_inventory_for_requirements(components)
+
+		local all_needed_items_are_present = true
+		for _, count in pairs(missing_components) do
+			if count > 0 then
+				all_needed_items_are_present = false
+				break
+			end
+		end
+		
+		if all_needed_items_are_present then
+			print("All required components are present!")
+		else
+			print("You are missing: ")
+			for name, count in pairs(missing_components) do
+				if count > 0 then
+					print(name .. ": " .. count)
+				end
+			end
+			print("You can also use an equivalent amount of FPGAs")
+		end
+	end
+
+	
+end
+
+
+
+
+
 
 
 function blue_prints.print_all_saved_files()
@@ -43,14 +147,16 @@ function blue_prints.print_all_saved_files()
 			
 			local xml_of_file = blue_prints.readFile(value)
 			local description_of_file = blue_prints.get_description_from_xml(xml_of_file)
+			local number_of_components_in_file = blue_prints.get_component_count_from_xml(xml_of_file)
 			
 			print("-------------")
+			
+			local print_string = '‖color:white‖' .. filename ..  '‖end‖' .. "  -  (" .. number_of_components_in_file .. " fpgas) "
+			
 			if description_of_file ~= nil then
-				--print(filename .. " " .. description_of_file)
-				print('‖color:white‖' .. filename .. '‖end‖  -  ‖color:yellow‖' .. description_of_file .. '‖end‖')
-			else
-				print('‖color:white‖' .. filename .. '‖end‖  -  ‖color:yellow‖' .. "No description label." .. '‖end‖')
+				print_string = print_string .. " -  " ..  '‖color:yellow‖' .. description_of_file ..  '‖end‖'
 			end
+			print (print_string)
         end
     end
 end

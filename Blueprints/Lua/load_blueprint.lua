@@ -89,6 +89,12 @@ function blue_prints.parseXML(xmlString)
         local sizeW, sizeH = label:match('size="([%d%.%-]+),([%d%.%-]+)"')
         local header = label:match('header="([^"]+)"')
         local body = label:match('body="([^"]+)"')
+		
+		if body then
+			body = body:gsub("&#xA;", "\n") --turn baros weird formatting back into newlines. This is how it does "enter".
+			body = body:gsub("&#xD;", "\n") --2 versions of "enter" for some reason.
+		end
+		
         table.insert(labels, {
             id = id,
             color = color,
@@ -101,8 +107,6 @@ function blue_prints.parseXML(xmlString)
 
     return inputs, outputs, components, wires, labels, inputNodePos, outputNodePos
 end
-
-
 
 
 
@@ -520,8 +524,11 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 				end
 				
 				
-				local property = component_class_to_change.SerializableProperties[Identifier(attr)]
-				Networking.CreateEntityEvent(component_in_box.Item, Item.ChangePropertyEventData(property, component_class_to_change))
+				--print("Game mode: ", Game.GameSession.GameMode.Name)
+				if tostring(Game.GameSession.GameMode.Name) ~= "Single Player" then --these dont exist in single player so will cause a crash if not avoided.
+					local property = component_class_to_change.SerializableProperties[Identifier(attr)]
+					Networking.CreateEntityEvent(component_in_box.Item, Item.ChangePropertyEventData(property, component_class_to_change))
+				end
 				
 			end
 		end	
@@ -623,6 +630,9 @@ end
 
 
 
+
+
+
 function blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos) 
 
 
@@ -670,6 +680,12 @@ end
 function blue_prints.construct_blueprint(provided_path)
 	if Character.Controlled == nil then print("you dont have a character") return end
 	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
+	
+	if Game.Paused then --the load will fail if you attempt it while paused. This fixes that.
+		print("Unpause the game to complete loading your circuit.")
+		Timer.Wait(function() blue_prints.construct_blueprint(provided_path) end, 1000)
+		return
+	end
 
 	-- Check if the filename already ends with .txt
     if not string.match(provided_path, "%.txt$") then

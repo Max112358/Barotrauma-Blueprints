@@ -1,0 +1,67 @@
+<Root>
+  <Item name="" identifier="circuitbox" ID="1093" markedfordeconstruction="false" flippedx="true" rect="1088,88,32,32" NonInteractable="False" NonPlayerTeamInteractable="False" AllowSwapping="True" Rotation="0" Scale="0.5" SpriteColor="255,255,255,255" InventoryIconColor="255,255,255,255" ContainerColor="255,255,255,255" InvulnerableToDamage="False" Tags="smallitem" DisplaySideBySideWhenLinked="False" DisallowedUpgrades="" SpriteDepth="0.8" HiddenInGame="False" conditionpercentage="100">
+    <Holdable Attached="True" SpriteDepthWhenDropped="0.55" PickingTime="5" CanBePicked="True" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgDetachWrench">
+      <requireditem items="wrench" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
+    </Holdable>
+    <ConnectionPanel Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgRewireScrewdriver">
+      <requireditem items="screwdriver" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
+      <input name="signal_in1" />
+      <input name="signal_in2" />
+      <input name="signal_in3" />
+      <input name="signal_in4" />
+      <input name="signal_in5" />
+      <input name="signal_in6" />
+      <input name="signal_in7" />
+      <input name="signal_in8" />
+      <output name="signal_out1" />
+      <output name="signal_out2" />
+      <output name="signal_out3" />
+      <output name="signal_out4" />
+      <output name="signal_out5" />
+      <output name="signal_out6" />
+      <output name="signal_out7" />
+      <output name="signal_out8" />
+    </ConnectionPanel>
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1094,1096,1097,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1100;1101,,,,,,,,," ExtraStackSize="0" />
+    <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
+      <InputNode pos="-1075.3464,15.8688965">
+        <ConnectionLabelOverride name="signal_in2" value="MOTION DETECTOR FOR HUMANS" />
+        <ConnectionLabelOverride name="signal_in1" value="MOTION DETECTOR FOR MONSTERS" />
+      </InputNode>
+      <OutputNode pos="1245.144,26.977112">
+        <ConnectionLabelOverride name="signal_out1" value="TO DISCHARGE COIL TRIGGER" />
+      </OutputNode>
+      <Component id="0" position="-231.75647,107.18274" backingitemid="0,0" usedresource="fpgacircuit"  Class="OscillatorComponent"  OutputType="Pulse"  Frequency="0.25"  item="oscillatorcomponent" />
+      <Component id="1" position="550.46387,-93.66223" backingitemid="1,0" usedresource="fpgacircuit"  Class="BooleanOperatorComponent"  Output="1"  FalseOutput="0"  TimeFrame="0"  item="andcomponent" />
+      <Component id="2" position="-201.72266,-126.98688" backingitemid="2,0" usedresource="fpgacircuit"  Class="BooleanOperatorComponent"  Output="1"  FalseOutput="0"  TimeFrame="0"  item="andcomponent" />
+      <Wire id="0" backingitemid="" prefab="redwire">
+        <From name="signal_in1" target="" />
+        <To name="signal_in1" target="2" />
+      </Wire>
+      <Wire id="1" backingitemid="" prefab="redwire">
+        <From name="signal_in2" target="" />
+        <To name="signal_in2" target="2" />
+      </Wire>
+      <Wire id="2" backingitemid="0,0" prefab="redwire">
+        <From name="signal_out" target="0" />
+        <To name="signal_in1" target="1" />
+      </Wire>
+      <Wire id="3" backingitemid="0,1" prefab="redwire">
+        <From name="signal_out" target="2" />
+        <To name="signal_in2" target="1" />
+      </Wire>
+      <Wire id="4" backingitemid="" prefab="redwire">
+        <From name="signal_out" target="1" />
+        <To name="signal_out1" target="" />
+      </Wire>
+      <Label id="0" color="#FF0000" position="-1775.1238,-167.45282" size="457.53503,365.49548" header="HUMAN DETECTOR" body="Range X 300&#xA;Range Y 40&#xA;Offset X 0&#xA;Offset Y 0&#xA;Output 0&#xA;False output 1" />
+      <Label id="1" color="#7ED3E0" position="-1779.0916,287.98456" size="452.7744,346.45276" header="Motion Axes" body="For X: right is positive, left is negative.&#xA;&#xA;For Y: up is positive, down is negative." />
+      <Label id="2" color="#FF0000" position="-2278.963,-161.8988" size="478.1648,360.73486" header="Monster detector" body="Range X 300&#xA;Range Y 40&#xA;Offset X 0&#xA;Offset Y 0&#xA;Output 1&#xA;False output 0" />
+      <Label id="3" color="#7ED3E0" position="1865.996,27.734009" size="509.90308,371.84302" header="HOW TO INSTALL WIRE" body="You have to swim outside the hull in order to attach the wire. You can wait till you dock then cut a hole with a plasma cutter. You can check the positioning by looking carefully at the tab map." />
+      <Label id="4" color="#7E00E0" position="1178.0795,-626.85846" size="574.9651,405.16785" header="Description" body="A self disarming discharge coil controller." />
+      <Label id="5" color="#FFFF00" position="-233.45984,427.63086" size="722.54565,330.58386" header="SPEED OF DISCHARGE" body="Set oscillator output higher for faster discharges, lower for slower. Should probably be somewhere between 0.2 and 1.&#xA;&#xA;0.25 is 1 discharge every 4 seconds." />
+    </CircuitBox>
+    <itemstats />
+  </Item>
+</Root>

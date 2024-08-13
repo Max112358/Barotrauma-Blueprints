@@ -3,9 +3,10 @@ if SERVER then return end --prevents it from running on the server
 
 local configDescriptions = {}
 configDescriptions["commands"] = "you can use blueprints or bp"
-configDescriptions["load"] = "load a blueprint. EX: bp load reactor_controller.txt"
-configDescriptions["save"] = "save a blueprint. EX: bp save reactor_controller.txt"
-configDescriptions["delete"] = "delete a blueprint. EX: bp delete reactor_controller.txt"
+configDescriptions["load"] = "load a blueprint. EX: bp load reactor_controller"
+configDescriptions["save"] = "save a blueprint. EX: bp save reactor_controller"
+configDescriptions["need"] = "get requirements for a blueprint. EX: bp need reactor_controller"
+configDescriptions["delete"] = "delete a blueprint. EX: bp delete reactor_controller"
 configDescriptions["list"] = "list all saved files. EX: bp list"
 configDescriptions["clear"] = "Remove all components and labels from a circuitbox. EX: bp clear"
 
@@ -47,6 +48,16 @@ local function runCommand(command)
 			blue_prints.save_blueprint(command[2])
 		else
 			print("No filename given. EX: bp save file_name.txt")
+		end
+	end
+	
+	if command[1] == "need" then
+		if command[2] ~= nil then
+			print("Attempting to get blueprint requirements")
+			blue_prints.print_requirements_of_circuit(command[2]) 
+			blue_prints.check_what_is_needed_for_blueprint(command[2])
+		else
+			print("No filename given. EX: bp need file_name.txt")
 		end
 	end
 	
