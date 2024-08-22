@@ -369,102 +369,38 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 			for attr, value in pairs(component_to_copy.class.attributes) do
 				--print("  " .. attr .. ":", value)
 				
-				if component_to_copy.class.name == "MemoryComponent" then
-					if tostring(attr) == "Value" then
-						component_class_to_change[attr] = value --another way to do it
-					end
+				
+				local success = false
+				local result
+
+				-- First attempt (string version)
+				if not success then
+					success, result = pcall(function()
+						component_class_to_change[attr] = value
+						return "String operation successful"
+					end)
+				end
+				
+				-- Second attempt (number version)
+				if not success then
+					success, result = pcall(function()
+						component_class_to_change[attr] = tonumber(value)
+						return "Number operation successful"
+					end)
 				end
 
-				if component_to_copy.class.name == "ArithmeticComponent" then
-					if tostring(attr) == "ClampMax" then
-						component_class_to_change.ClampMax = tonumber(value)
-					end
-					if tostring(attr) == "ClampMin" then
-						component_class_to_change.ClampMin = tonumber(value)
-					end
-					if tostring(attr) == "TimeFrame" then
-						component_class_to_change.TimeFrame = tonumber(value)
-					end
+				-- Third attempt (bool version)
+				if not success then
+					success, result = pcall(function()
+						component_class_to_change[attr] = blue_prints.string_to_bool(value)
+						return "Boolean operation successful"
+					end)
 				end
 
-				if component_to_copy.class.name == "TrigonometricFunctionComponent" then
-					if tostring(attr) == "UseRadians" then
-						component_class_to_change.UseRadians = blue_prints.string_to_bool(value)
-					end
-				end
-
-				if component_to_copy.class.name == "ColorComponent" then
-					if tostring(attr) == "UseHSV" then
-						component_class_to_change.UseHSV = blue_prints.string_to_bool(value)
-					end
-				end
-
-				if component_to_copy.class.name == "ConcatComponent" then
-					if tostring(attr) == "Separator" then
-						component_class_to_change.Separator = value
-					end
-				end
-
-				if component_to_copy.class.name == "StringComponent" then
-					if tostring(attr) == "TimeFrame" then
-						component_class_to_change.TimeFrame = tonumber(value)
-					end
-				end
-
-				if component_to_copy.class.name == "DelayComponent" then
-					if tostring(attr) == "Delay" then
-						component_class_to_change.Delay = tonumber(value)
-					end
-					if tostring(attr) == "ResetWhenSignalReceived" then
-						component_class_to_change.ResetWhenSignalReceived = blue_prints.string_to_bool(value)
-					end
-					if tostring(attr) == "ResetWhenDifferentSignalReceived" then
-						component_class_to_change.ResetWhenDifferentSignalReceived = blue_prints.string_to_bool(value)
-					end
-				end
-
-				if component_to_copy.class.name == "EqualsComponent" then
-					if tostring(attr) == "Output" then
-						component_class_to_change.Output = value
-					end
-					if tostring(attr) == "FalseOutput" then
-						component_class_to_change.FalseOutput = value
-					end
-					if tostring(attr) == "TimeFrame" then
-						component_class_to_change.TimeFrame = tonumber(value)
-					end
-				end
-
-				if component_to_copy.class.name == "ExponentiationComponent" then
-					if tostring(attr) == "Exponent" then
-						component_class_to_change.Exponent = tonumber(value)
-					end
-				end
-
-				if component_to_copy.class.name == "ModuloComponent" then
-					if tostring(attr) == "Modulus" then
-						component_class_to_change.Modulus = tonumber(value)
-					end
-				end
-
-				if component_to_copy.class.name == "NotComponent" then
-					if tostring(attr) == "ContinuousOutput" then
-						component_class_to_change.ContinuousOutput = blue_prints.string_to_bool(value)
-					end
-				end
-
-				if component_to_copy.class.name == "BooleanOperatorComponent" then
-					if tostring(attr) == "Output" then
-						component_class_to_change.Output = value
-					end
-					if tostring(attr) == "FalseOutput" then
-						component_class_to_change.FalseOutput = value
-					end
-					if tostring(attr) == "TimeFrame" then
-						component_class_to_change.TimeFrame = tonumber(value)
-					end
-				end
-
+				
+				
+				
+				--oscillator is a special case because it uses enums
 				if component_to_copy.class.name == "OscillatorComponent" then
 					if tostring(attr) == "OutputType" then
 						if value == "Pulse" then component_class_to_change.OutputType = component_class_to_change.WaveType.Pulse end
@@ -476,53 +412,17 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 					if tostring(attr) == "Frequency" then
 						component_class_to_change.Frequency = tonumber(value)
 					end
+					success = true
 				end
 
-				if component_to_copy.class.name == "RegExFindComponent" then
-					if tostring(attr) == "Output" then
-						component_class_to_change.Output = value
-					end
-					if tostring(attr) == "UseCaptureGroup" then
-						component_class_to_change.UseCaptureGroup = blue_prints.string_to_bool(value)
-					end
-					if tostring(attr) == "OutputEmptyCaptureGroup" then
-						component_class_to_change.OutputEmptyCaptureGroup = blue_prints.string_to_bool(value)
-					end
-					if tostring(attr) == "FalseOutput" then
-						component_class_to_change.FalseOutput = value
-					end
-					if tostring(attr) == "ContinuousOutput" then
-						component_class_to_change.ContinuousOutput = blue_prints.string_to_bool(value)
-					end
-					if tostring(attr) == "Expression" then
-						component_class_to_change.Expression = value
-					end
+
+				if success then
+					--print("Operation succeeded:", result)
+				else
+					print("All operations failed. Last error: ", result)
+					print("Component type that failed: ", component_class_to_change.name)
 				end
 
-				if component_to_copy.class.name == "RelayComponent" then
-					if tostring(attr) == "IsOn" then
-						component_class_to_change.IsOn = blue_prints.string_to_bool(value)
-					end
-				end
-
-				if component_to_copy.class.name == "SignalCheckComponent" then
-					if tostring(attr) == "Output" then
-						component_class_to_change.Output = value
-					end
-					if tostring(attr) == "FalseOutput" then
-						component_class_to_change.FalseOutput = value
-					end
-					if tostring(attr) == "TargetSignal" then
-						component_class_to_change.TargetSignal = value
-					end
-				end
-
-				if component_to_copy.class.name == "WifiComponent" then
-					if tostring(attr) == "Channel" then
-						component_class_to_change.Channel = tonumber(value)
-					end
-				end
-				
 				
 				--print("Game mode: ", Game.GameSession.GameMode.Name)
 				if tostring(Game.GameSession.GameMode.Name) ~= "Single Player" then --these dont exist in single player so will cause a crash if not avoided.

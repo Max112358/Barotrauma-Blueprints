@@ -279,6 +279,10 @@ function blue_prints.save_blueprint(provided_path)
 	for i, component in ipairs(components) do
 		
 		
+		
+		
+		
+		
 		local memoryComponent = component.Item.GetComponentString("MemoryComponent")
 		if memoryComponent then
 			local element_to_add = 'Class="MemoryComponent"'
