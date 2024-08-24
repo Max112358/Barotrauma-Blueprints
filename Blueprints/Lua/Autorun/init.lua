@@ -18,6 +18,9 @@ blue_prints.time_delay_between_loops = 100
 LuaUserData.RegisterType("Barotrauma.NetLimitedString")
 blue_prints.net_limited_string_type = LuaUserData.CreateStatic("Barotrauma.NetLimitedString", true)
 
+--for accessing component values inside components
+LuaUserData.MakeMethodAccessible(Descriptors["Barotrauma.Item"], "GetInGameEditableProperties")
+LuaUserData.RegisterType("System.ValueTuple`2[System.Object,Barotrauma.SerializableProperty]")
 
 --used to create immutable arrays
 LuaUserData.RegisterType("System.Collections.Immutable.ImmutableArray")

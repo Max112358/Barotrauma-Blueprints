@@ -160,12 +160,14 @@ end
 function blue_prints.add_component_to_circuitbox(component, use_fpga)
     if blue_prints.most_recent_circuitbox == nil then print("No circuitbox detected") return end
 	
+	--[[ --due to refactoring I no longer need this
 	if component.item == "oscillatorcomponent" then component.item = "oscillator" end --these components are named strangely and break convention
 	if component.item == "concatenationcomponent" then component.item = "concatcomponent" end
 	if component.item == "exponentiationcomponent" then component.item = "powcomponent" end
 	if component.item == "regexfind" then component.item = "regexcomponent" end
 	if component.item == "signalcheck" then component.item = "signalcheckcomponent" end
 	if component.item == "squareroot" then component.item = "squarerootcomponent" end
+	--]]
 	
     local item_to_add = use_fpga and ItemPrefab.GetItemPrefab("fpgacircuit") or ItemPrefab.GetItemPrefab(component.item)
     local component_position = Vector2(component.position.x, component.position.y)
