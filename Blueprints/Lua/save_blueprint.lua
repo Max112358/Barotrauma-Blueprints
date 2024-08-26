@@ -2,24 +2,6 @@ if SERVER then return end --prevents it from running on the server
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 -- Function to extract components and their IDs
 local function extractComponents(xmlString)
     local components = {}
@@ -72,28 +54,6 @@ local function renumberComponents(xmlString)
     local idMap = createIdMapping(components)
     return updateXml(xmlString, idMap)
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
