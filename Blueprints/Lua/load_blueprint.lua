@@ -1,6 +1,7 @@
 if SERVER then return end --prevents it from running on the server
 
-
+local wires_added_complete = false
+local labels_changed_complete = false
 
 function blue_prints.parseXML(xmlString)
 	local inputs = {}
@@ -160,8 +161,17 @@ end
 function blue_prints.add_component_to_circuitbox(component, use_fpga)
     if blue_prints.most_recent_circuitbox == nil then print("No circuitbox detected") return end
 	
+	--due to refactoring I no longer need this, but will keep it for historical compatability with older blueprints
+	if component.item == "oscillatorcomponent" then component.item = "oscillator" end --these components are named strangely and break convention
+	if component.item == "concatenationcomponent" then component.item = "concatcomponent" end
+	if component.item == "exponentiationcomponent" then component.item = "powcomponent" end
+	if component.item == "regexfind" then component.item = "regexcomponent" end
+	if component.item == "signalcheck" then component.item = "signalcheckcomponent" end
+	if component.item == "squareroot" then component.item = "squarerootcomponent" end
+
     local item_to_add = use_fpga and ItemPrefab.GetItemPrefab("fpgacircuit") or ItemPrefab.GetItemPrefab(component.item)
     local component_position = Vector2(component.position.x, component.position.y)
+	
     blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").AddComponent(item_to_add, component_position)
     --print(string.format("Added component %s at position (%.2f, %.2f)", use_fpga and "fpgacircuit" or component.item, component_position.x, component_position.y))
 end
@@ -209,6 +219,10 @@ function blue_prints.add_wires_to_circuitbox_recursive(wires, index)
 
     if index > #wires then
 		print("All wires added.")
+		wires_added_complete = true
+		if wires_added_complete and labels_changed_complete then
+			GUI.AddMessage('Load Complete!', Color.White)
+		end
         return
     end
     
@@ -314,6 +328,10 @@ function blue_prints.rename_all_labels_in_circuitbox(labels)
     end
 	
 	print("All labels added.")
+	labels_changed_complete = true
+	if wires_added_complete and labels_changed_complete then
+		GUI.AddMessage('Load Complete!', Color.White)
+	end
 end
 
 local function resize_label(label_node, direction, resize_vector)
@@ -573,6 +591,9 @@ end
 function blue_prints.construct_blueprint(provided_path)
 	if Character.Controlled == nil then print("you dont have a character") return end
 	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
+	
+	wires_added_complete = false
+	labels_changed_complete = false
 	
 	if Game.Paused then --the load will fail if you attempt it while paused. This fixes that.
 		print("Unpause the game to complete loading your circuit.")
