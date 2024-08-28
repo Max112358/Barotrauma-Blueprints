@@ -24,7 +24,7 @@ local function generate_load_gui()
 	title_text.Wrap = false
 
 
-	local instruction_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.2), menuList.Content.RectTransform), "Click on one of the buttons to load that blueprint. The FPGA cost is how many components are required to make it. If the base component is not available, FPGAs will be used instead. These components must be in your main inventory, not a toolbelt/backpack etc. Click anywhere outside this box to cancel.", nil, nil, GUI.Alignment.Center)
+	local instruction_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.2), menuList.Content.RectTransform), 'Click on one of the buttons to load that blueprint. The FPGA cost is how many components are required to make it. If the base component is not available, FPGAs will be used instead. These components must be in your main inventory, not a toolbelt/backpack etc. The descriptions here come from a label in that circuit titled "Description". Click anywhere outside this box to cancel.', nil, nil, GUI.Alignment.Center)
 	instruction_text.Wrap = true
 	instruction_text.Padding = Vector4(0, 0, 0, 0) --no idea why this is needed, but it wont wrap correctly without this.
 
@@ -37,10 +37,18 @@ local function generate_load_gui()
 			
 			local xml_of_file = blue_prints.readFile(value)
 			local description_of_file = blue_prints.get_description_from_xml(xml_of_file)
+			
+			if description_of_file then
+				description_of_file = description_of_file:gsub("&#xA;", "\n") --turn baros weird formatting back into newlines. This is how it does "enter".
+				description_of_file = description_of_file:gsub("&#xD;", "\n") --2 versions of "enter" for some reason.
+			end
+			
+			
 			local number_of_components_in_file = blue_prints.get_component_count_from_xml(xml_of_file)
 			
 			local blueprint_button = GUI.Button(GUI.RectTransform(Vector2(1, 0.1), menuList.Content.RectTransform), tostring(filename), GUI.Alignment.Center, "GUIButtonSmall")
 			blueprint_button.OnClicked = function ()
+				blue_prints.most_recently_loaded_blueprint_name = filename
 				blue_prints.construct_blueprint(filename)
 				blue_prints.current_gui_page.Visible = not blue_prints.current_gui_page.Visible
 				GUI.AddMessage('File Loading...', Color.White)

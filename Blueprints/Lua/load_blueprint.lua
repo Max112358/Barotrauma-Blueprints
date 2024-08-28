@@ -113,7 +113,13 @@ end
 
 
 function blue_prints.check_inventory_for_requirements(components)
+
+	--print("Game mode: ", Game.IsSubEditor)
+
     local missing_components = {}
+	
+	if Game.IsSubEditor then return missing_components end --if in sub editor, you dont have to worry about inventory
+	
     for _, component in ipairs(components) do
         missing_components[component.item] = (missing_components[component.item] or 0) + 1
     end
@@ -280,6 +286,19 @@ function blue_prints.change_input_output_labels(input_dict, output_dict)
 end
 
 
+
+function blue_prints.add_advertisement_label()
+    if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
+    
+    --just add an extra label to labels table thats to the right of the rightmost component or label
+	
+	--dont do this if there is already an advertisement label
+end
+
+
+
+
+
 function blue_prints.add_labels_to_circuitbox_recursive(labels, index)
     if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
     
@@ -436,9 +455,11 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 
 				
 				--print("Game mode: ", Game.GameSession.GameMode.Name)
-				if tostring(Game.GameSession.GameMode.Name) ~= "Single Player" then --these dont exist in single player so will cause a crash if not avoided.
-					local property = component_class_to_change.SerializableProperties[Identifier(attr)]
-					Networking.CreateEntityEvent(component_in_box.Item, Item.ChangePropertyEventData(property, component_class_to_change))
+				if Game.GameSession ~= nil then --a nil check for the sub editor
+					if tostring(Game.GameSession.GameMode.Name) ~= "Single Player" then --these dont exist in single player so will cause a crash if not avoided.
+						local property = component_class_to_change.SerializableProperties[Identifier(attr)]
+						Networking.CreateEntityEvent(component_in_box.Item, Item.ChangePropertyEventData(property, component_class_to_change))
+					end
 				end
 				
 			end

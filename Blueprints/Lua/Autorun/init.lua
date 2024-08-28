@@ -9,6 +9,7 @@ blue_prints.save_path = "LocalMods/Blueprints_saved_blueprints"
 blue_prints.most_recent_circuitbox = nil 
 blue_prints.time_delay_between_loops = 100
 blue_prints.current_gui_page = nil
+blue_prints.most_recently_loaded_blueprint_name = nil
 
 dofile(blue_prints.path .. "/Lua/cs_required_warning.lua")
 
@@ -27,5 +28,7 @@ if CSActive then --CSActive is if csharp scripts are enabled. This mod requires 
 end 
 
 --TODO list
---add buttons to control the mod instead of the text interface
+--advertisement label
+--better way to find the circuitbox using the gui?
+--count components in box and add them to total before clearing (right now it always clears which is dumb)
 

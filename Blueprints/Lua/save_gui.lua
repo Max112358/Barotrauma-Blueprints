@@ -24,7 +24,7 @@ local function generate_save_gui()
 	title_text.Wrap = false
 
 
-	local instruction_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.2), menuList.Content.RectTransform), "Enter a filename and hit save. If using an existing filename, the old file will be overwritten. Click anywhere outside this box to cancel.", nil, nil, GUI.Alignment.Center)
+	local instruction_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.2), menuList.Content.RectTransform), 'Enter a filename and hit save. If using an existing filename, the old file will be overwritten. A label with the name "Description" will be used as the reminder text when loading. Click anywhere outside this box to cancel.', nil, nil, GUI.Alignment.Center)
 	instruction_text.Wrap = true
 	instruction_text.Padding = Vector4(0, 0, 0, 0) --no idea why this is needed, but it wont wrap correctly without this.
 
@@ -32,6 +32,9 @@ local function generate_save_gui()
 	local textBox = GUI.TextBox(GUI.RectTransform(Vector2(1, 0.2), menuList.Content.RectTransform), "Your filename here")
 	textBox.OnTextChangedDelegate = function (textBox)
 		--print(textBox.Text)
+	end
+	if blue_prints.most_recently_loaded_blueprint_name ~= nil then
+		textBox.Text = blue_prints.most_recently_loaded_blueprint_name
 	end
 	
 	local spacer_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.1), menuList.Content.RectTransform), "", nil, nil, GUI.Alignment.Center)

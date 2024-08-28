@@ -254,28 +254,10 @@ function blue_prints.string_to_bool(passed_string)
 end
 
 
+
+
 --save a reference to the most recently interacted circuit box
-Hook.Add("item.interact", "get_blue_prints.most_recent_circuitbox", function(potential_circuit_box, characterPicker, ignoreRequiredItemsBool, forceSelectKeyBool, forceActionKeyBool)
-	if Character.Controlled == nil then return end
-	if potential_circuit_box.Prefab.Identifier == "circuitbox" then
-		blue_prints.most_recent_circuitbox = potential_circuit_box
-	end
-end)
+Hook.Patch("Barotrauma.Items.Components.CircuitBox", "AddToGUIUpdateList", function(instance, ptable)
+	blue_prints.most_recent_circuitbox = instance.Item
+end, Hook.HookMethodType.After)
 
---[[
-Hook.Add("item.interact", "tagPrinter", function(item, characterPicker, ignoreRequiredItemsBool, forceSelectKeyBool, forceActionKeyBool)
-   
-	local myTags = item.GetTags()
-
-	print("-------------")
-	print("Item:----------")
-	print(item.Prefab.Identifier)
-
-
-	print("Tags:---------")
-	for tag in myTags do
-		print(tag)
-	end
-	print("-------------")
-end)
---]]

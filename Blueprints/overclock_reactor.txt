@@ -1,32 +1,20 @@
 <Root>
-  <Item name="" identifier="circuitbox" ID="1008" markedfordeconstruction="false" flippedx="true" rect="-608,-200,32,32" NonInteractable="False" NonPlayerTeamInteractable="False" AllowSwapping="True" Rotation="0" Scale="0.5" SpriteColor="255,255,255,255" InventoryIconColor="255,255,255,255" ContainerColor="255,255,255,255" InvulnerableToDamage="False" Tags="smallitem" DisplaySideBySideWhenLinked="False" DisallowedUpgrades="" SpriteDepth="0.8" HiddenInGame="False" conditionpercentage="100">
+  <Item name="" identifier="circuitbox" ID="1" markedfordeconstruction="false" rect="-320,152,32,32" NonInteractable="False" NonPlayerTeamInteractable="False" AllowSwapping="True" Rotation="0" Scale="0.5" SpriteColor="255,255,255,255" InventoryIconColor="255,255,255,255" ContainerColor="255,255,255,255" InvulnerableToDamage="False" Tags="smallitem" DisplaySideBySideWhenLinked="False" DisallowedUpgrades="" SpriteDepth="0.8" HiddenInGame="False" conditionpercentage="100">
     <Holdable Attached="True" SpriteDepthWhenDropped="0.55" PickingTime="5" CanBePicked="True" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgDetachWrench">
       <requireditem items="wrench" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
     </Holdable>
     <ConnectionPanel Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgRewireScrewdriver">
       <requireditem items="screwdriver" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
-      <input name="signal_in1">
-        <link w="1061" i="0" />
-      </input>
-      <input name="signal_in2">
-        <link w="1062" i="1" />
-      </input>
-      <input name="signal_in3">
-        <link w="1056" i="1" />
-      </input>
-      <input name="signal_in4">
-        <link w="1055" i="1" />
-      </input>
+      <input name="signal_in1" />
+      <input name="signal_in2" />
+      <input name="signal_in3" />
+      <input name="signal_in4" />
       <input name="signal_in5" />
       <input name="signal_in6" />
       <input name="signal_in7" />
       <input name="signal_in8" />
-      <output name="signal_out1">
-        <link w="1047" i="1" />
-      </output>
-      <output name="signal_out2">
-        <link w="1048" i="1" />
-      </output>
+      <output name="signal_out1" />
+      <output name="signal_out2" />
       <output name="signal_out3" />
       <output name="signal_out4" />
       <output name="signal_out5" />
@@ -34,8 +22,8 @@
       <output name="signal_out7" />
       <output name="signal_out8" />
     </ConnectionPanel>
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1036,1037,1038,1039,1040,1041,1042,1043,1044,1045,1046,1049,1050,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1051;1052;1053;1054;1057;1058;1059;1060;1064;1108;1109;1110;1111,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="2,3,4,5,6,7,8,9,10,11,12,13,14,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="15;16;17;18;19;20;21;22;23;24;25;26;27,,,,,,,,," ExtraStackSize="0" />
     <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
       <InputNode pos="-512,0">
         <ConnectionLabelOverride name="signal_in4" value="FROM TEMP OUT" />
@@ -47,19 +35,19 @@
         <ConnectionLabelOverride name="signal_out2" value="TO SET TURBINE OUTPUT" />
         <ConnectionLabelOverride name="signal_out1" value="TO SET FISSION RATE" />
       </OutputNode>
-      <Component id="0" position="-1541.0767,-84.20166" backingitemid="0,0" usedresource="addercomponent"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="1"  TimeFrame="0"  item="addercomponent" />
-      <Component id="1" position="-1931.5281,190.48706" backingitemid="1,0" usedresource="dividecomponent"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="0.10000000149011612"  TimeFrame="0"  item="dividecomponent" />
-      <Component id="2" position="-746.44556,455.36597" backingitemid="2,0" usedresource="subtractcomponent"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="subtractcomponent" />
-      <Component id="3" position="-1340.9497,451.44287" backingitemid="3,0" usedresource="fpgacircuit"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="addercomponent" />
-      <Component id="4" position="-2149.3196,696.70264" backingitemid="4,0" usedresource="fpgacircuit"  Class="ArithmeticComponent"  ClampMax="2500"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
-      <Component id="5" position="-1076.0747,1257.853" backingitemid="5,0" usedresource="fpgacircuit"  Class="ArithmeticComponent"  ClampMax="100"  ClampMin="15"  TimeFrame="0"  item="multiplycomponent" />
-      <Component id="6" position="-1680.3901,1257.8547" backingitemid="6,0" usedresource="memorycomponent"  Class="MemoryComponent"  Value="1.0625"  item="memorycomponent" />
-      <Component id="7" position="-1205.572,1034.1844" backingitemid="7,0" usedresource="fpgacircuit"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
-      <Component id="8" position="-1849.1287,1034.1857" backingitemid="8,0" usedresource="memorycomponent"  Class="MemoryComponent"  Value="50"  item="memorycomponent" />
-      <Component id="9" position="-1403.7432,751.6498" backingitemid="9,0" usedresource="fpgacircuit"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="addercomponent" />
-      <Component id="10" position="-220.6211,767.34814" backingitemid="10,0" usedresource="dividecomponent"  Class="ArithmeticComponent"  ClampMax="80"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
-      <Component id="11" position="-188.25317,-429.46387" backingitemid="11,0" usedresource="fpgacircuit"  Class="ArithmeticComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
-      <Component id="12" position="-871.21716,-445.49158" backingitemid="12,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="1.15"  item="memorycomponent" />
+      <Component id="0" position="-1541.0767,-84.20166" backingitemid="0,0" usedresource="fpgacircuit"  Class="AdderComponent"  InventoryIconColor="{R:255 G:255 B:255 A:255}"  ContainerColor="{R:255 G:255 B:255 A:255}"  SpriteDepthWhenDropped="0.550000011920929"  ClampMax="999999"  ClampMin="1"  TimeFrame="0"  item="addercomponent" />
+      <Component id="1" position="-1931.5281,190.48706" backingitemid="1,0" usedresource="fpgacircuit"  Class="DivideComponent"  InventoryIconColor="{R:255 G:255 B:255 A:255}"  ContainerColor="{R:255 G:255 B:255 A:255}"  SpriteDepthWhenDropped="0.550000011920929"  ClampMax="999999"  ClampMin="0.10000000149011612"  TimeFrame="0"  item="dividecomponent" />
+      <Component id="2" position="-746.44556,455.36597" backingitemid="2,0" usedresource="fpgacircuit"  Class="SubtractComponent"  InventoryIconColor="{R:255 G:255 B:255 A:255}"  ContainerColor="{R:255 G:255 B:255 A:255}"  SpriteDepthWhenDropped="0.550000011920929"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="subtractcomponent" />
+      <Component id="3" position="-1340.9497,451.44287" backingitemid="3,0" usedresource="fpgacircuit"  Class="AdderComponent"  InventoryIconColor="{R:255 G:255 B:255 A:255}"  ContainerColor="{R:255 G:255 B:255 A:255}"  SpriteDepthWhenDropped="0.550000011920929"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="addercomponent" />
+      <Component id="4" position="-2149.3196,696.70264" backingitemid="4,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  InventoryIconColor="{R:255 G:255 B:255 A:255}"  ContainerColor="{R:255 G:255 B:255 A:255}"  SpriteDepthWhenDropped="0.550000011920929"  ClampMax="2500"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
+      <Component id="5" position="-1076.0747,1257.853" backingitemid="5,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  InventoryIconColor="{R:255 G:255 B:255 A:255}"  ContainerColor="{R:255 G:255 B:255 A:255}"  SpriteDepthWhenDropped="0.550000011920929"  ClampMax="100"  ClampMin="15"  TimeFrame="0"  item="multiplycomponent" />
+      <Component id="6" position="-1680.3901,1257.8547" backingitemid="6,0" usedresource="fpgacircuit"  Class="MemoryComponent"  InventoryIconColor="{R:255 G:255 B:255 A:255}"  ContainerColor="{R:255 G:255 B:255 A:255}"  SpriteDepthWhenDropped="0.550000011920929"  Value="1.0625"  item="memorycomponent" />
+      <Component id="7" position="-1205.572,1034.1844" backingitemid="7,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  InventoryIconColor="{R:255 G:255 B:255 A:255}"  ContainerColor="{R:255 G:255 B:255 A:255}"  SpriteDepthWhenDropped="0.550000011920929"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
+      <Component id="8" position="-1849.1287,1034.1857" backingitemid="8,0" usedresource="fpgacircuit"  Class="MemoryComponent"  InventoryIconColor="{R:255 G:255 B:255 A:255}"  ContainerColor="{R:255 G:255 B:255 A:255}"  SpriteDepthWhenDropped="0.550000011920929"  Value="50"  item="memorycomponent" />
+      <Component id="9" position="-1403.7432,751.6498" backingitemid="9,0" usedresource="fpgacircuit"  Class="AdderComponent"  InventoryIconColor="{R:255 G:255 B:255 A:255}"  ContainerColor="{R:255 G:255 B:255 A:255}"  SpriteDepthWhenDropped="0.550000011920929"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="addercomponent" />
+      <Component id="10" position="-220.6211,767.34814" backingitemid="10,0" usedresource="fpgacircuit"  Class="DivideComponent"  InventoryIconColor="{R:255 G:255 B:255 A:255}"  ContainerColor="{R:255 G:255 B:255 A:255}"  SpriteDepthWhenDropped="0.550000011920929"  ClampMax="80"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
+      <Component id="11" position="-188.25317,-429.46387" backingitemid="11,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  InventoryIconColor="{R:255 G:255 B:255 A:255}"  ContainerColor="{R:255 G:255 B:255 A:255}"  SpriteDepthWhenDropped="0.550000011920929"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
+      <Component id="12" position="-871.21716,-445.49158" backingitemid="12,0" usedresource="fpgacircuit"  Class="MemoryComponent"  InventoryIconColor="{R:255 G:255 B:255 A:255}"  ContainerColor="{R:255 G:255 B:255 A:255}"  SpriteDepthWhenDropped="0.550000011920929"  Value="1.15"  item="memorycomponent" />
       <Wire id="0" backingitemid="" prefab="redwire">
         <From name="signal_in3" target="" />
         <To name="signal_in1" target="0" />

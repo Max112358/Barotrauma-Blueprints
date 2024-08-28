@@ -35,6 +35,9 @@ local function generate_delete_gui()
 	textBox.OnTextChangedDelegate = function (textBox)
 		--print(textBox.Text)
 	end
+	if blue_prints.most_recently_loaded_blueprint_name ~= nil then
+		textBox.Text = blue_prints.most_recently_loaded_blueprint_name
+	end
 	
 	local spacer_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.1), menuList.Content.RectTransform), "", nil, nil, GUI.Alignment.Center)
 
