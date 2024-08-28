@@ -8,6 +8,7 @@ blue_prints.save_path = "LocalMods/Blueprints_saved_blueprints"
 
 blue_prints.most_recent_circuitbox = nil 
 blue_prints.time_delay_between_loops = 100
+blue_prints.current_gui_page = nil
 
 dofile(blue_prints.path .. "/Lua/cs_required_warning.lua")
 

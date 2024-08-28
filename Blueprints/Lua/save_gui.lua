@@ -3,21 +3,20 @@ if SERVER then return end -- we don't want server to run GUI code.
 -- our main frame where we will put our custom GUI
 local frame = GUI.Frame(GUI.RectTransform(Vector2(1, 1)), nil)
 frame.CanBeFocused = false
-local save_gui = nil
 
 local function generate_save_gui()
 	-- menu frame
-	save_gui = GUI.Frame(GUI.RectTransform(Vector2(1, 1), frame.RectTransform, GUI.Anchor.Center), nil)
-	save_gui.CanBeFocused = false
-	save_gui.Visible = false
+	blue_prints.current_gui_page = GUI.Frame(GUI.RectTransform(Vector2(1, 1), frame.RectTransform, GUI.Anchor.Center), nil)
+	blue_prints.current_gui_page.CanBeFocused = false
+	blue_prints.current_gui_page.Visible = false
 
 	-- put a button that goes behind the menu content, so we can close it when we click outside
-	local closeButton = GUI.Button(GUI.RectTransform(Vector2(1, 1), save_gui.RectTransform, GUI.Anchor.Center), "", GUI.Alignment.Center, nil)
+	local closeButton = GUI.Button(GUI.RectTransform(Vector2(1, 1), blue_prints.current_gui_page.RectTransform, GUI.Anchor.Center), "", GUI.Alignment.Center, nil)
 	closeButton.OnClicked = function ()
-		save_gui.Visible = not save_gui.Visible
+		blue_prints.current_gui_page.Visible = not blue_prints.current_gui_page.Visible
 	end
 
-	local menuContent = GUI.Frame(GUI.RectTransform(Vector2(0.4, 0.6), save_gui.RectTransform, GUI.Anchor.Center))
+	local menuContent = GUI.Frame(GUI.RectTransform(Vector2(0.4, 0.6), blue_prints.current_gui_page.RectTransform, GUI.Anchor.Center))
 	local menuList = GUI.ListBox(GUI.RectTransform(Vector2(1, 1), menuContent.RectTransform, GUI.Anchor.BottomCenter))
 
 	local title_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.1), menuList.Content.RectTransform), "SAVE", nil, nil, GUI.Alignment.Center)
@@ -30,7 +29,7 @@ local function generate_save_gui()
 	instruction_text.Padding = Vector4(0, 0, 0, 0) --no idea why this is needed, but it wont wrap correctly without this.
 
 
-	local textBox = GUI.TextBox(GUI.RectTransform(Vector2(1, 0.2), menuList.Content.RectTransform), "Your filename here.")
+	local textBox = GUI.TextBox(GUI.RectTransform(Vector2(1, 0.2), menuList.Content.RectTransform), "Your filename here")
 	textBox.OnTextChangedDelegate = function (textBox)
 		--print(textBox.Text)
 	end
@@ -42,12 +41,12 @@ local function generate_save_gui()
 	local save_button = GUI.Button(GUI.RectTransform(Vector2(1, 0.1), menuList.Content.RectTransform), "Save", GUI.Alignment.Center, "GUIButtonSmall")
 	save_button.OnClicked = function ()
 		blue_prints.save_blueprint(textBox.Text)
-		save_gui.Visible = not save_gui.Visible
+		blue_prints.current_gui_page.Visible = not blue_prints.current_gui_page.Visible
 		GUI.AddMessage('File Saved', Color.White)
 	end
 	
 	
-	return save_gui
+	return blue_prints.current_gui_page
 end
 
 
@@ -55,8 +54,10 @@ end
 local button = GUI.Button(GUI.RectTransform(Vector2(0.1, 0.2), frame.RectTransform, GUI.Anchor.CenterRight), "Save Blueprint", GUI.Alignment.Center, "GUIButtonSmall")
 button.RectTransform.AbsoluteOffset = Point(25, 70)
 button.OnClicked = function ()
-	save_gui = generate_save_gui()
-	save_gui.Visible = not save_gui.Visible
+	if blue_prints.current_gui_page ~= nil then blue_prints.current_gui_page.Visible = false end
+	blue_prints.current_gui_page = nil
+	blue_prints.current_gui_page = generate_save_gui()
+	blue_prints.current_gui_page.Visible = not blue_prints.current_gui_page.Visible
 end
 
 

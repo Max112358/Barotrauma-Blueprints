@@ -3,21 +3,20 @@ if SERVER then return end -- we don't want server to run GUI code.
 -- our main frame where we will put our custom GUI
 local frame = GUI.Frame(GUI.RectTransform(Vector2(1, 1)), nil)
 frame.CanBeFocused = false
-local load_gui = nil
 
 local function generate_load_gui()
 	-- menu frame
-	load_gui = GUI.Frame(GUI.RectTransform(Vector2(1, 1), frame.RectTransform, GUI.Anchor.Center), nil)
-	load_gui.CanBeFocused = false
-	load_gui.Visible = false
+	blue_prints.current_gui_page = GUI.Frame(GUI.RectTransform(Vector2(1, 1), frame.RectTransform, GUI.Anchor.Center), nil)
+	blue_prints.current_gui_page.CanBeFocused = false
+	blue_prints.current_gui_page.Visible = false
 
 	-- put a button that goes behind the menu content, so we can close it when we click outside
-	local closeButton = GUI.Button(GUI.RectTransform(Vector2(1, 1), load_gui.RectTransform, GUI.Anchor.Center), "", GUI.Alignment.Center, nil)
+	local closeButton = GUI.Button(GUI.RectTransform(Vector2(1, 1), blue_prints.current_gui_page.RectTransform, GUI.Anchor.Center), "", GUI.Alignment.Center, nil)
 	closeButton.OnClicked = function ()
-		load_gui.Visible = not load_gui.Visible
+		blue_prints.current_gui_page.Visible = not blue_prints.current_gui_page.Visible
 	end
 
-	local menuContent = GUI.Frame(GUI.RectTransform(Vector2(0.4, 0.6), load_gui.RectTransform, GUI.Anchor.Center))
+	local menuContent = GUI.Frame(GUI.RectTransform(Vector2(0.4, 0.6), blue_prints.current_gui_page.RectTransform, GUI.Anchor.Center))
 	local menuList = GUI.ListBox(GUI.RectTransform(Vector2(1, 1), menuContent.RectTransform, GUI.Anchor.BottomCenter))
 
 	local title_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.1), menuList.Content.RectTransform), "LOAD", nil, nil, GUI.Alignment.Center)
@@ -43,7 +42,7 @@ local function generate_load_gui()
 			local blueprint_button = GUI.Button(GUI.RectTransform(Vector2(1, 0.1), menuList.Content.RectTransform), tostring(filename), GUI.Alignment.Center, "GUIButtonSmall")
 			blueprint_button.OnClicked = function ()
 				blue_prints.construct_blueprint(filename)
-				load_gui.Visible = not load_gui.Visible
+				blue_prints.current_gui_page.Visible = not blue_prints.current_gui_page.Visible
 				GUI.AddMessage('File Loading...', Color.White)
 			end
 			
@@ -61,7 +60,7 @@ local function generate_load_gui()
 		end
 	end
 	
-	return load_gui
+	return blue_prints.current_gui_page
 end
 
 
@@ -69,8 +68,10 @@ end
 local button = GUI.Button(GUI.RectTransform(Vector2(0.1, 0.2), frame.RectTransform, GUI.Anchor.CenterRight), "Load Blueprint", GUI.Alignment.Center, "GUIButtonSmall")
 button.RectTransform.AbsoluteOffset = Point(25, 0)
 button.OnClicked = function ()
-	load_gui = generate_load_gui()
-	load_gui.Visible = not load_gui.Visible
+	if blue_prints.current_gui_page ~= nil then blue_prints.current_gui_page.Visible = false end
+	blue_prints.current_gui_page = nil
+	blue_prints.current_gui_page = generate_load_gui()
+	blue_prints.current_gui_page.Visible = not blue_prints.current_gui_page.Visible
 end
 
 
