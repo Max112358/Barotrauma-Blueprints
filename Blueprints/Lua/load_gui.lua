@@ -51,7 +51,6 @@ local function generate_load_gui()
 				blue_prints.most_recently_loaded_blueprint_name = filename
 				blue_prints.construct_blueprint(filename)
 				blue_prints.current_gui_page.Visible = not blue_prints.current_gui_page.Visible
-				GUI.AddMessage('File Loading...', Color.White)
 			end
 			
 			local component_count_string = filename .. " - " .. tostring(number_of_components_in_file) .. " FPGAs"

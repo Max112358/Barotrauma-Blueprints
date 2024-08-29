@@ -29,6 +29,4 @@ end
 
 --TODO list
 --advertisement label
---better way to find the circuitbox using the gui?
---count components in box and add them to total before clearing (right now it always clears which is dumb)
 

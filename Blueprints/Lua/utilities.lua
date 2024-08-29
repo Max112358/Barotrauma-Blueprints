@@ -131,7 +131,18 @@ function blue_prints.check_what_is_needed_for_blueprint(provided_path)
 end
 
 
-
+function blue_prints.get_components_currently_in_circuitbox(passed_circuitbox) 
+	
+	local components = passed_circuitbox.GetComponentString("CircuitBox").Components
+	
+	local resourceCounts = {}
+	for i, component in pairs(components) do
+		--print(tostring(component.UsedResource.Identifier))
+		resourceCounts[tostring(component.UsedResource.Identifier)] = (resourceCounts[tostring(component.UsedResource.Identifier)] or 0) + 1
+    end
+	
+	return resourceCounts
+end
 
 
 

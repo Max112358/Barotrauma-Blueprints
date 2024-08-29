@@ -114,6 +114,8 @@ end
 
 function blue_prints.check_inventory_for_requirements(components)
 
+
+
 	--print("Game mode: ", Game.IsSubEditor)
 
     local missing_components = {}
@@ -127,6 +129,22 @@ function blue_prints.check_inventory_for_requirements(components)
     
     local fpgacircuit_count = 0
     
+	--count inventory items already stored inside the box
+	if blue_prints.most_recent_circuitbox ~= nil then 
+		local items_already_in_box = blue_prints.get_components_currently_in_circuitbox(blue_prints.most_recent_circuitbox)
+		
+		for resource, count in pairs(items_already_in_box) do
+			local identifier = resource
+			if identifier == "fpgacircuit" then
+				fpgacircuit_count = fpgacircuit_count + count
+			elseif missing_components[identifier] and missing_components[identifier] > 0 then
+				missing_components[identifier] = missing_components[identifier] - count
+			end
+		end
+	end
+	
+	
+	
     -- First pass: count regular items and fpgacircuits
     for inventory_item in character.Inventory.AllItems do
         local identifier = tostring(inventory_item.Prefab.Identifier)
@@ -573,37 +591,15 @@ function blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wire
 	local time_delay_for_components = (number_of_components + 10) * blue_prints.time_delay_between_loops + 50
 	local time_delay_for_labels = (number_of_labels + 40) * blue_prints.time_delay_between_loops + 50 --labels seem to take a long time in game
 
+	blue_prints.add_all_components_to_circuitbox(components)
+	Timer.Wait(function() blue_prints.add_labels_to_circuitbox_recursive(labels, 1) end, 50)
+	Timer.Wait(function() blue_prints.add_wires_to_circuitbox_recursive(wires, 1) end, time_delay_for_components)
+	Timer.Wait(function() blue_prints.rename_all_labels_in_circuitbox(labels) end, time_delay_for_labels)
+	blue_prints.change_input_output_labels(inputs, outputs)
+	Timer.Wait(function() blue_prints.update_values_in_components(components) end, time_delay_for_components)
+	Timer.Wait(function() blue_prints.resize_labels(labels) end, time_delay_for_labels)
+	Timer.Wait(function() blue_prints.move_input_output_nodes(inputNodePos, outputNodePos) end, time_delay_for_components) --delayed because the change also changes the position
 
-	-- Check inventory for required components
-	local missing_components = blue_prints.check_inventory_for_requirements(components)
-
-	local all_needed_items_are_present = true
-	for _, count in pairs(missing_components) do
-		if count > 0 then
-			all_needed_items_are_present = false
-			break
-		end
-	end
-
-	if all_needed_items_are_present then
-		print("All required components are present!")
-		blue_prints.add_all_components_to_circuitbox(components)
-		Timer.Wait(function() blue_prints.add_labels_to_circuitbox_recursive(labels, 1) end, 50)
-		Timer.Wait(function() blue_prints.add_wires_to_circuitbox_recursive(wires, 1) end, time_delay_for_components)
-		Timer.Wait(function() blue_prints.rename_all_labels_in_circuitbox(labels) end, time_delay_for_labels)
-		blue_prints.change_input_output_labels(inputs, outputs)
-		Timer.Wait(function() blue_prints.update_values_in_components(components) end, time_delay_for_components)
-		Timer.Wait(function() blue_prints.resize_labels(labels) end, time_delay_for_labels)
-		Timer.Wait(function() blue_prints.move_input_output_nodes(inputNodePos, outputNodePos) end, time_delay_for_components) --delayed because the change also changes the position
-		
-	else
-		print("You are missing: ")
-		for name, count in pairs(missing_components) do
-			if count > 0 then
-				print(name .. ": " .. count)
-			end
-		end
-	end
 end
 
 
@@ -672,9 +668,34 @@ function blue_prints.construct_blueprint(provided_path)
 			print("Wires is nil")
 		end
 		--]]
+		
+		--Check inventory for required components
+		local missing_components = blue_prints.check_inventory_for_requirements(components)
 
-		blue_prints.clear_circuitbox()
-		Timer.Wait(function() blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos) end, 500)
+		local all_needed_items_are_present = true
+		for _, count in pairs(missing_components) do
+			if count > 0 then
+				all_needed_items_are_present = false
+				break
+			end
+		end
+
+		if all_needed_items_are_present then
+			print("All required components are present!")
+			GUI.AddMessage('File Loading...', Color.White)
+			blue_prints.clear_circuitbox()
+			Timer.Wait(function() blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos) end, 500)
+		else
+			print("You are missing: ")
+			GUI.AddMessage('Not Enough Components', Color.Red)
+			for name, count in pairs(missing_components) do
+				if count > 0 then
+					print(name .. ": " .. count)
+				end
+			end
+		end
+
+		
 
 		
 	else
