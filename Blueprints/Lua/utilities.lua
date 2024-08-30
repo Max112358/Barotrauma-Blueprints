@@ -145,6 +145,53 @@ function blue_prints.get_components_currently_in_circuitbox(passed_circuitbox)
 end
 
 
+function blue_prints.getFurthestRightElement(components, labels, inputNodePos, outputNodePos)
+    local furthestRight = {x = -math.huge, y = 0, element = nil, type = nil}
+
+	local offset_adjustment = 256
+
+    -- Check components
+    for _, component in ipairs(components) do
+        if component.position.x + offset_adjustment > furthestRight.x then
+            furthestRight.x = component.position.x + offset_adjustment
+            furthestRight.y = component.position.y
+            furthestRight.element = component
+            furthestRight.type = "component"
+        end
+    end
+
+    -- Check labels
+    for _, label in ipairs(labels) do
+		print(label.header, label.size.width)
+        local rightEdge = label.position.x + (label.size.width / 2)
+        if rightEdge > furthestRight.x then
+            furthestRight.x = rightEdge
+            furthestRight.y = label.position.y
+            furthestRight.element = label
+            furthestRight.type = "label"
+        end
+    end
+
+    -- Check input node
+    if inputNodePos and inputNodePos.x + offset_adjustment > furthestRight.x then --input and output nodes dont check width
+        furthestRight.x = inputNodePos.x + offset_adjustment
+        furthestRight.y = inputNodePos.y
+        furthestRight.element = inputNodePos
+        furthestRight.type = "inputNode"
+    end
+
+    -- Check output node
+    if outputNodePos and outputNodePos.x + offset_adjustment > furthestRight.x then
+        furthestRight.x = outputNodePos.x + offset_adjustment
+        furthestRight.y = outputNodePos.y
+        furthestRight.element = outputNodePos
+        furthestRight.type = "outputNode"
+    end
+
+    return furthestRight
+end
+
+
 
 function blue_prints.print_all_saved_files()
 

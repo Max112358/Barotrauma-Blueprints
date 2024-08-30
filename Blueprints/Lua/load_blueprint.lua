@@ -105,6 +105,8 @@ function blue_prints.parseXML(xmlString)
             body = body
         })
     end
+	
+	blue_prints.add_advertisement_label(components, labels, inputNodePos, outputNodePos)--if there is no ad, add one
 
     return inputs, outputs, components, wires, labels, inputNodePos, outputNodePos
 end
@@ -305,12 +307,43 @@ end
 
 
 
-function blue_prints.add_advertisement_label()
+function blue_prints.add_advertisement_label(components, labels, inputNodePos, outputNodePos)
     if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
     
     --just add an extra label to labels table thats to the right of the rightmost component or label
-	
 	--dont do this if there is already an advertisement label
+	advertisement_header = "Blueprints"
+	
+	for _, label in ipairs(labels) do --if there is already an advertisement, dont add another
+		if label.header and label.header == advertisement_header then
+			return 
+		end
+	end
+	
+	
+	local furthestRight = blue_prints.getFurthestRightElement(components, labels, inputNodePos, outputNodePos)
+
+	--print("Furthest right element type:", furthestRight.type)
+	--print("Furthest right x-coordinate:", furthestRight.x)
+	--print("Furthest right y-coordinate:", furthestRight.y)
+	
+	
+	local function addManualLabel(id, color, posX, posY, sizeW, sizeH, header, body)
+        table.insert(labels, {
+            id = id,
+            color = color,
+            position = {x = tonumber(posX), y = tonumber(posY)},
+            size = {width = tonumber(sizeW), height = tonumber(sizeH)},
+            header = header,
+            body = body
+        })
+    end
+
+	addManualLabel(#labels, "#0082FF", furthestRight.x + 384, furthestRight.y, 512, 256, advertisement_header, 'Circuit made with Blueprints. \n \n Get it now on the steam workshop!')
+
+
+	
+	
 end
 
 

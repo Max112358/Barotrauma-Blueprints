@@ -10,7 +10,7 @@ local button = GUI.Button(GUI.RectTransform(Vector2(0.1, 0.2), frame.RectTransfo
 button.RectTransform.AbsoluteOffset = Point(25, 140)
 button.OnClicked = function ()
 	
-	message_box = GUI.MessageBox('Are you sure you want to clear the box?', 'This will remove all components, labels and wires.', {'Cancel', 'Clear'}) 
+	message_box = GUI.MessageBox('Are you sure you want to clear the box?', 'This will remove all components, labels and wires.', {'Cancel', 'Clear Box'}) 
 	
 	cancel_button = nil
 	clear_button = nil
