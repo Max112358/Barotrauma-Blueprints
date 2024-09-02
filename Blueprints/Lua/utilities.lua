@@ -162,7 +162,7 @@ function blue_prints.getFurthestRightElement(components, labels, inputNodePos, o
 
     -- Check labels
     for _, label in ipairs(labels) do
-		print(label.header, label.size.width)
+		--print(label.header, label.size.width)
         local rightEdge = label.position.x + (label.size.width / 2)
         if rightEdge > furthestRight.x then
             furthestRight.x = rightEdge

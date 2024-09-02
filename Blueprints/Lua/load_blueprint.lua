@@ -340,9 +340,6 @@ function blue_prints.add_advertisement_label(components, labels, inputNodePos, o
     end
 
 	addManualLabel(#labels, "#0082FF", furthestRight.x + 384, furthestRight.y, 512, 256, advertisement_header, 'Circuit made with Blueprints. \n \n Get it now on the steam workshop!')
-
-
-	
 	
 end
 

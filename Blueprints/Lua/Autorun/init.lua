@@ -24,7 +24,6 @@ if CSActive then --CSActive is if csharp scripts are enabled. This mod requires 
 	dofile(blue_prints.path .. "/Lua/load_gui.lua")
 	dofile(blue_prints.path .. "/Lua/save_gui.lua")
 	dofile(blue_prints.path .. "/Lua/clear_gui.lua")
-	dofile(blue_prints.path .. "/Lua/delete_gui.lua")
 end 
 
 --TODO list

@@ -43,27 +43,62 @@ local function generate_load_gui()
 				description_of_file = description_of_file:gsub("&#xD;", "\n") --2 versions of "enter" for some reason.
 			end
 			
-			
 			local number_of_components_in_file = blue_prints.get_component_count_from_xml(xml_of_file)
 			
-			local blueprint_button = GUI.Button(GUI.RectTransform(Vector2(1, 0.1), menuList.Content.RectTransform), tostring(filename), GUI.Alignment.Center, "GUIButtonSmall")
-			blueprint_button.OnClicked = function ()
+			
+			-- Add this new code for side-by-side buttons
+			local buttonContainer = GUI.Frame(GUI.RectTransform(Vector2(1, 0.025), menuList.Content.RectTransform))
+
+
+			local button_label = filename .. " - " .. tostring(number_of_components_in_file) .. " FPGAs"
+			local leftButton = GUI.Button(GUI.RectTransform(Vector2(0.90, 1), buttonContainer.RectTransform, GUI.Anchor.CenterLeft), tostring(button_label), GUI.Alignment.CenterLeft, "GUIButtonSmall")
+			leftButton.OnClicked = function ()
 				blue_prints.most_recently_loaded_blueprint_name = filename
 				blue_prints.construct_blueprint(filename)
 				blue_prints.current_gui_page.Visible = not blue_prints.current_gui_page.Visible
 			end
+
+			local rightButton = GUI.Button(GUI.RectTransform(Vector2(0.10, 1), buttonContainer.RectTransform, GUI.Anchor.CenterRight), "Delete", GUI.Alignment.Center, "GUIButtonSmall")
+			rightButton.OnClicked = function ()
 			
-			local component_count_string = filename .. " - " .. tostring(number_of_components_in_file) .. " FPGAs"
-			local component_count_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.025), menuList.Content.RectTransform), component_count_string, nil, nil, GUI.Alignment.Center)
-			--component_count_text.TextColor = Color(math.random(0, 255), math.random(0, 255), math.random(0, 255))
-			component_count_text.Wrap = false
+				message_box = GUI.MessageBox('Are you sure you want to delete this blueprint?', '', {'Cancel', 'Delete Blueprint'}) 
+	
+				cancel_button = nil
+				delete_button = nil
+				
+				if message_box.Buttons[0] == nil then --this is if no one has registered it. If some other mod registers it I dont want it to break.
+					cancel_button = message_box.Buttons[1]
+					delete_button = message_box.Buttons[2]
+				else --if its been registered, it will behave as a csharp table
+					cancel_button = message_box.Buttons[0]
+					delete_button = message_box.Buttons[1]
+				end
+				
+				delete_button.Color = Color(255, 80, 80) -- Sets the button color to red
+				delete_button.HoverColor = Color(255, 120, 120) -- light red hover color
+				
+				cancel_button.OnClicked = function ()
+					message_box.Close()
+				end
+				
+				delete_button.OnClicked = function ()
+					blue_prints.delete_blueprint(filename)
+					blue_prints.current_gui_page.Visible = not blue_prints.current_gui_page.Visible
+					GUI.AddMessage('File Deleted', Color.White)
+					message_box.Close()
+				end
 			
-			
+				
+			end
+			rightButton.Color = Color(255, 80, 80) -- Sets the button color to red
+						
 			if description_of_file ~= nil then
-				local description_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.15), menuList.Content.RectTransform), description_of_file, nil, nil, GUI.Alignment.CenterLeft)
+				local description_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.15), menuList.Content.RectTransform), description_of_file, nil, nil, GUI.Alignment.TopLeft)
 				description_text.Wrap = true
 				description_text.Padding = Vector4(0, 0, 0, 0) --no idea why this is needed, but it wont wrap correctly without this.
 			end
+			
+			local spacer_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.025), menuList.Content.RectTransform), "", nil, nil, GUI.Alignment.TopLeft)
 		end
 	end
 	
