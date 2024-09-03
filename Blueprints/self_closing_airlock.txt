@@ -48,17 +48,12 @@
     <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1083;1084;1098,,,,,,,,," ExtraStackSize="0" />
     <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
       <InputNode pos="-835.7718,23.269592">
-        <ConnectionLabelOverride name="signal_in5" value="docking hatch on_undock" />
-        <ConnectionLabelOverride name="signal_in4" value="docking hatch on_dock" />
         <ConnectionLabelOverride name="signal_in3" value="docking hatch state_out" />
         <ConnectionLabelOverride name="signal_in2" value="door state out" />
+        <ConnectionLabelOverride name="signal_in5" value="docking hatch on_undock" />
         <ConnectionLabelOverride name="signal_in1" value="toggle docking from nav terminal" />
-        <ConnectionLabelOverride name="signal_in7" value="door to ocean state out" />
-        <ConnectionLabelOverride name="signal_in6" value="guard drowner switch" />
       </InputNode>
       <OutputNode pos="2342.3813,26.177307">
-        <ConnectionLabelOverride name="signal_out4" value="set state on door to ocean" />
-        <ConnectionLabelOverride name="signal_out3" value="set state on door to sub" />
         <ConnectionLabelOverride name="signal_out2" value="toggle door" />
         <ConnectionLabelOverride name="signal_out1" value="toggle docking hatch" />
       </OutputNode>
@@ -120,12 +115,12 @@
         <From name="signal_out" target="0" />
         <To name="signal_out2" target="" />
       </Wire>
-      <Label id="7" color="#7ED3E0" position="364.7052,149.81427" size="1462.7697,692.4911" header="open on dock" body="if docked, and door is not open, open the door." />
-      <Label id="8" color="#7ED3E0" position="206.97406,-676.83813" size="1521.3209,618.8059" header="close door at sea" body="If at sea and the door is open, close it after a delay." />
-      <Label id="9" color="#7ED3E0" position="75.154816,969.8597" size="667.0513,360.19006" header="close door on undock" body="If you just undocked and the door is open, immediately close the door." />
-      <Label id="10" color="#FF00FF" position="2244.7256,-564.48303" size="981.7676,216.5232" header="Purpose" body="This circuit is ment to replace the default docking hatch. It will close the doors automatically after a while undocked. This can be useful on some subs like the R-29 Big Rig." />
-      <Label id="11" color="#7E00E0" position="2308.8633,683.50287" size="870.48096,240.2406" header="Description" body="An airlock replacement that can close itself after a delay." />
-      <Label id="12" color="#0082FF" position="2951.5066,53.51999" size="512,256" header="Blueprints" body="Circuit made with Blueprints. &#xA; &#xA; Get it now on the steam workshop!" />
+      <Label id="0" color="#7ED3E0" position="364.70514,149.81427" size="1462.7697,692.4911" header="open on dock" body="if docked, and door is not open, open the door." />
+      <Label id="1" color="#7ED3E0" position="206.97406,-676.83813" size="1521.3209,618.8059" header="close door at sea" body="If at sea and the door is open, close it after a delay." />
+      <Label id="2" color="#7ED3E0" position="75.15477,969.8597" size="667.0513,360.19006" header="close door on undock" body="If you just undocked and the door is open, immediately close the door." />
+      <Label id="3" color="#FF00FF" position="2244.7256,-564.48303" size="981.7676,216.5232" header="Purpose" body="This circuit is ment to replace the default docking hatch. It will close the doors automatically after a while undocked. This can be useful on some subs like the R-29 Big Rig." />
+      <Label id="4" color="#7E00E0" position="2308.8633,683.50287" size="870.48096,240.2406" header="Description" body="An airlock replacement that can close itself after a delay. Useful for docking ports that are also airlocks, like on the R-29 Big Rig." />
+      <Label id="5" color="#0082FF" position="2951.5066,53.51999" size="512,256" header="Blueprints" body="Circuit made with Blueprints. &#xA; &#xA; Get it now on the steam workshop!" />
     </CircuitBox>
     <itemstats />
   </Item>
