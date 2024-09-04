@@ -1,7 +1,6 @@
 if SERVER then return end --prevents it from running on the server
 
-local wires_added_complete = false
-local labels_changed_complete = false
+local path_to_loaded_file = nil
 
 function blue_prints.parseXML(xmlString)
 	local inputs = {}
@@ -91,10 +90,64 @@ function blue_prints.parseXML(xmlString)
         local header = label:match('header="([^"]+)"')
         local body = label:match('body="([^"]+)"')
 		
-		if body then
-			body = body:gsub("&#xA;", "\n") --turn baros weird formatting back into newlines. This is how it does "enter".
-			body = body:gsub("&#xD;", "\n") --2 versions of "enter" for some reason.
+		
+		local html_entities = {
+			['&quot;'] = '"',
+			['&amp;'] = '&',
+			['&lt;'] = '<',
+			['&gt;'] = '>',
+			['&nbsp;'] = ' ',
+			['&iexcl;'] = '¡',
+			['&cent;'] = '¢',
+			['&pound;'] = '£',
+			['&curren;'] = '¤',
+			['&yen;'] = '¥',
+			['&brvbar;'] = '¦',
+			['&sect;'] = '§',
+			['&uml;'] = '¨',
+			['&copy;'] = '©',
+			['&ordf;'] = 'ª',
+			['&laquo;'] = '«',
+			['&not;'] = '¬',
+			['&shy;'] = '­',
+			['&reg;'] = '®',
+			['&macr;'] = '¯',
+			['&deg;'] = '°',
+			['&plusmn;'] = '±',
+			['&sup2;'] = '²',
+			['&sup3;'] = '³',
+			['&acute;'] = '´',
+			['&micro;'] = 'µ',
+			['&para;'] = '¶',
+			['&middot;'] = '·',
+			['&cedil;'] = '¸',
+			['&sup1;'] = '¹',
+			['&ordm;'] = 'º',
+			['&raquo;'] = '»',
+			['&frac14;'] = '¼',
+			['&frac12;'] = '½',
+			['&frac34;'] = '¾',
+			['&iquest;'] = '¿',
+			['&#xA;'] = '\n',
+			['&#xD;'] = '\n'
+		}
+
+		local function contains_html_entities(str)
+			return str:find('&[^;]+;')
 		end
+
+		local function decode_html_entities(str)
+			if not contains_html_entities(str) then
+				return str
+			end
+			return (str:gsub('(&[^;]+;)', function(entity)
+				return html_entities[entity] or entity
+			end))
+		end
+		
+		header = decode_html_entities(header)
+		body = decode_html_entities(body)
+
 		
         table.insert(labels, {
             id = id,
@@ -245,10 +298,6 @@ function blue_prints.add_wires_to_circuitbox_recursive(wires, index)
 
     if index > #wires then
 		print("All wires added.")
-		wires_added_complete = true
-		if wires_added_complete and labels_changed_complete then
-			GUI.AddMessage('Load Complete!', Color.White)
-		end
         return
     end
     
@@ -304,6 +353,8 @@ function blue_prints.change_input_output_labels(input_dict, output_dict)
 	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").SetConnectionLabelOverrides(input_connection_node, input_dict) 
 	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").SetConnectionLabelOverrides(output_connection_node, output_dict) 
 end
+
+
 
 
 
@@ -395,10 +446,6 @@ function blue_prints.rename_all_labels_in_circuitbox(labels)
     end
 	
 	print("All labels added.")
-	labels_changed_complete = true
-	if wires_added_complete and labels_changed_complete then
-		GUI.AddMessage('Load Complete!', Color.White)
-	end
 end
 
 local function resize_label(label_node, direction, resize_vector)
@@ -618,8 +665,12 @@ function blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wire
 
 	local number_of_components = #components
 	local number_of_labels = #labels
+	local number_of_wires = #wires
 	local time_delay_for_components = (number_of_components + 10) * blue_prints.time_delay_between_loops + 50
 	local time_delay_for_labels = (number_of_labels + 40) * blue_prints.time_delay_between_loops + 50 --labels seem to take a long time in game
+	local time_delay_for_wire_completion = (number_of_wires + 10) * blue_prints.time_delay_between_loops + 50
+	
+	local longer_delay = math.max(time_delay_for_components + time_delay_for_wire_completion, time_delay_for_labels + 1000) + 1000
 
 	blue_prints.add_all_components_to_circuitbox(components)
 	Timer.Wait(function() blue_prints.add_labels_to_circuitbox_recursive(labels, 1) end, 50)
@@ -629,6 +680,8 @@ function blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wire
 	Timer.Wait(function() blue_prints.update_values_in_components(components) end, time_delay_for_components)
 	Timer.Wait(function() blue_prints.resize_labels(labels) end, time_delay_for_labels)
 	Timer.Wait(function() blue_prints.move_input_output_nodes(inputNodePos, outputNodePos) end, time_delay_for_components) --delayed because the change also changes the position
+	
+	Timer.Wait(function() blue_prints.delayed_loading_complete_unit_test() end, longer_delay)
 
 end
 
@@ -641,6 +694,7 @@ function blue_prints.construct_blueprint(provided_path)
 	
 	wires_added_complete = false
 	labels_changed_complete = false
+	
 	
 	if Game.Paused then --the load will fail if you attempt it while paused. This fixes that.
 		print("Unpause the game to complete loading your circuit.")
@@ -655,6 +709,7 @@ function blue_prints.construct_blueprint(provided_path)
     end
 
 	local file_path = (blue_prints.save_path .. "/" .. provided_path)
+	path_to_loaded_file = file_path
 	local xmlContent, err = blue_prints.readFile(file_path)
 
 	if xmlContent then
@@ -745,5 +800,31 @@ end
 
 
 
+function blue_prints.delayed_loading_complete_unit_test()
 
+	xml_of_loaded_circuit = blue_prints.prepare_circuitbox_xml_for_saving()
+	
+	--run a unit test here to make sure it works
+	local load_test_results = blue_prints.loading_complete_unit_test(path_to_loaded_file, xml_of_loaded_circuit)
+	print("Passed loading unit test: " .. tostring(load_test_results))
+	
+	if load_test_results then
+		GUI.AddMessage('Load Complete!', Color.White)
+	else
+		GUI.AddMessage('Load Failed!', Color.Red)
+		message_box = GUI.MessageBox('Load Failed', 'Your circuit has failed to load. Your blueprint file might be from an earlier version of Blueprints and nothing is actually wrong. Try saving it again (overwriting the original) to update your blueprint file to the latest version. \n \nIf you are certain your file is up to date try loading it again. Do not move or change anything during loading: the loaded circuit must match the blueprint file EXACTLY in order for you not to see this message. \n \nIf the problem persists please report this bug on the steam workshop page. Include a download link to your saved blueprint file and a screenshot of your console text (you can see that by hitting F3)', {'OK'}) 
+	
+		ok_button = nil
+		
+		if message_box.Buttons[0] == nil then --this is if no one has registered it. If some other mod registers it I dont want it to break.
+			ok_button = message_box.Buttons[1]
+		else --if its been registered, it will behave as a csharp table
+			ok_button = message_box.Buttons[0]
+		end
+		
+		ok_button.OnClicked = function ()
+			message_box.Close()
+		end
+	end
 
+end

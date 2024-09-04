@@ -49,7 +49,7 @@ local function updateXml(xmlString, idMap)
 end
 
 -- Main function to renumber components and update wire targets
-local function renumberComponents(xmlString)
+local function renumber_components(xmlString)
     local components = extractComponents(xmlString)
     local idMap = createIdMapping(components)
     return updateXml(xmlString, idMap)
@@ -214,21 +214,71 @@ local function add_attribute_to_component_in_xml(xmlContent, targetId, attribute
 end
 
 
-function blue_prints.save_blueprint(provided_path)
-	if Character.Controlled == nil then print("you dont have a character") return end
-	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
-	
-    -- Check if the filename already ends with .txt
-    if not string.match(provided_path, "%.txt$") then
-        -- Add .txt if it's not already present
-        provided_path = provided_path .. ".txt"
+
+
+
+
+
+
+-- Function to round a number to the nearest integer
+local function round(num)
+    return math.floor(num + 0.5)
+end
+
+-- Function to round the position and size attributes in a Label element
+local function round_attributes(label)
+    -- Round the position attribute
+    if label:find('position="') then
+        local pos_x, pos_y = label:match('position="([^,]+),([^"]+)"')
+        local rounded_position = string.format('position="%d,%d"', round(tonumber(pos_x)), round(tonumber(pos_y)))
+        label = label:gsub('position="[^"]+"', rounded_position)
     end
 
-	local file_path = (blue_prints.save_path .. "/" .. provided_path)
+    -- Round the size attribute
+    if label:find('size="') then
+        local size_x, size_y = label:match('size="([^,]+),([^"]+)"')
+        local rounded_size = string.format('size="%d,%d"', round(tonumber(size_x)), round(tonumber(size_y)))
+        label = label:gsub('size="[^"]+"', rounded_size)
+    end
 	
-	local character = Character.Controlled
+	if label:find('pos="') then
+        local pos_x, pos_y = label:match('pos="([^,]+),([^"]+)"')
+        local rounded_position = string.format('pos="%d,%d"', round(tonumber(pos_x)), round(tonumber(pos_y)))
+        label = label:gsub('pos="[^"]+"', rounded_position)
+    end
 
-    
+    return label
+end
+
+-- Function to process the entire XML string
+local function round_label_values(xml_string)
+    local processed_string = ""
+
+    -- Process each line of the XML string
+    for line in xml_string:gmatch("[^\r\n]+") do
+        -- Find and process Label elements
+        if line:find("<Label") or line:find("<Component") or line:find("<InputNode") or line:find("<OutputNode") then
+            line = round_attributes(line)
+        end
+        processed_string = processed_string .. line .. "\n"
+    end
+
+    return processed_string
+end
+
+
+
+
+
+
+
+
+
+
+
+function blue_prints.prepare_circuitbox_xml_for_saving()
+	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
+
 	local sacrificial_xml = XElement("Root")
 	blue_prints.most_recent_circuitbox.Save(sacrificial_xml)
 	local circuitbox_xml = tostring(sacrificial_xml)
@@ -270,7 +320,32 @@ function blue_prints.save_blueprint(provided_path)
 	
 	--now some cleanup to deal with deleted components
 	circuitbox_xml = put_components_in_order(circuitbox_xml)
-	circuitbox_xml = renumberComponents(circuitbox_xml)
+	circuitbox_xml = renumber_components(circuitbox_xml)
+	circuitbox_xml = round_label_values(circuitbox_xml)
+	
+	return circuitbox_xml
+
+end
+
+
+
+
+
+
+
+function blue_prints.save_blueprint(provided_path)
+	if Character.Controlled == nil then print("you dont have a character") return end
+	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
+	
+    -- Check if the filename already ends with .txt
+    if not string.match(provided_path, "%.txt$") then
+        -- Add .txt if it's not already present
+        provided_path = provided_path .. ".txt"
+    end
+
+	local file_path = (blue_prints.save_path .. "/" .. provided_path)
+	
+    local circuitbox_xml = blue_prints.prepare_circuitbox_xml_for_saving()
 	
 
 	-- Open the file for writing

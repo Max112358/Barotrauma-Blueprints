@@ -1,32 +1,20 @@
 <Root>
-  <Item name="" identifier="circuitbox" ID="1008" markedfordeconstruction="false" flippedx="true" rect="-608,-200,32,32" NonInteractable="False" NonPlayerTeamInteractable="False" AllowSwapping="True" Rotation="0" Scale="0.5" SpriteColor="255,255,255,255" InventoryIconColor="255,255,255,255" ContainerColor="255,255,255,255" InvulnerableToDamage="False" Tags="smallitem" DisplaySideBySideWhenLinked="False" DisallowedUpgrades="" SpriteDepth="0.8" HiddenInGame="False" conditionpercentage="100">
+  <Item name="" identifier="circuitbox" ID="1013" markedfordeconstruction="false" flippedx="true" rect="208,-8,32,32" NonInteractable="False" NonPlayerTeamInteractable="False" AllowSwapping="True" Rotation="0" Scale="0.5" SpriteColor="255,255,255,255" InventoryIconColor="255,255,255,255" ContainerColor="255,255,255,255" InvulnerableToDamage="False" Tags="smallitem" DisplaySideBySideWhenLinked="False" DisallowedUpgrades="" SpriteDepth="0.8" HiddenInGame="False" conditionpercentage="100">
     <Holdable Attached="True" SpriteDepthWhenDropped="0.55" PickingTime="5" CanBePicked="True" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgDetachWrench">
       <requireditem items="wrench" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
     </Holdable>
     <ConnectionPanel Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgRewireScrewdriver">
       <requireditem items="screwdriver" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
-      <input name="signal_in1">
-        <link w="1053" i="0" />
-      </input>
-      <input name="signal_in2">
-        <link w="1054" i="1" />
-      </input>
-      <input name="signal_in3">
-        <link w="1048" i="1" />
-      </input>
-      <input name="signal_in4">
-        <link w="1047" i="1" />
-      </input>
+      <input name="signal_in1" />
+      <input name="signal_in2" />
+      <input name="signal_in3" />
+      <input name="signal_in4" />
       <input name="signal_in5" />
       <input name="signal_in6" />
       <input name="signal_in7" />
       <input name="signal_in8" />
-      <output name="signal_out1">
-        <link w="1039" i="1" />
-      </output>
-      <output name="signal_out2">
-        <link w="1040" i="1" />
-      </output>
+      <output name="signal_out1" />
+      <output name="signal_out2" />
       <output name="signal_out3" />
       <output name="signal_out4" />
       <output name="signal_out5" />
@@ -34,35 +22,35 @@
       <output name="signal_out7" />
       <output name="signal_out8" />
     </ConnectionPanel>
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1028,1029,1030,1031,1032,1033,1034,1035,1036,1037,1038,1041,1042,1043,1044,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1045;1046;1049;1050;1051;1052;1056;1094;1095;1096;1097;2786,2787;2788;2789,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1138,1139,1140,1141,1142,1143,1144,1145,1146,2787,2788,2789,2790,2791,2792,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="2793;2794;2795;2796;2797;2798;2799;2800;2801;2802;2803;2804,2805;2813;2872,,,,,,,," ExtraStackSize="0" />
     <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
       <InputNode pos="-512,0">
-        <ConnectionLabelOverride name="signal_in5" value="FROM NAV TERMINAL VELOCITY X OUT" />
         <ConnectionLabelOverride name="signal_in4" value="FROM TEMP OUT" />
-        <ConnectionLabelOverride name="signal_in3" value="FROM POWER VALUE OUT" />
         <ConnectionLabelOverride name="signal_in2" value="FROM FUEL OUT" />
+        <ConnectionLabelOverride name="signal_in5" value="FROM NAV TERMINAL VELOCITY X OUT" />
         <ConnectionLabelOverride name="signal_in1" value="FROM LOAD VALUE OUT" />
+        <ConnectionLabelOverride name="signal_in3" value="FROM POWER VALUE OUT" />
       </InputNode>
       <OutputNode pos="512,0">
         <ConnectionLabelOverride name="signal_out2" value="TO SET TURBINE OUTPUT" />
         <ConnectionLabelOverride name="signal_out1" value="TO SET FISSION RATE" />
       </OutputNode>
-      <Component id="0" position="-1541.0767,-84.20166" backingitemid="0,0" usedresource="addercomponent"  Class="AdderComponent"  ClampMax="999999"  ClampMin="1"  TimeFrame="0"  item="addercomponent" />
-      <Component id="1" position="-1931.5281,190.48706" backingitemid="1,0" usedresource="dividecomponent"  Class="DivideComponent"  ClampMax="999999"  ClampMin="0.10000000149011612"  TimeFrame="0"  item="dividecomponent" />
-      <Component id="2" position="-746.44556,455.36597" backingitemid="2,0" usedresource="subtractcomponent"  Class="SubtractComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="subtractcomponent" />
-      <Component id="3" position="-1340.9497,451.44287" backingitemid="3,0" usedresource="fpgacircuit"  Class="AdderComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="addercomponent" />
-      <Component id="4" position="-2149.3196,696.70264" backingitemid="4,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  ClampMax="2500"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
-      <Component id="5" position="-1076.0747,1257.853" backingitemid="5,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  ClampMax="100"  ClampMin="15"  TimeFrame="0"  item="multiplycomponent" />
-      <Component id="6" position="-1680.3901,1257.8547" backingitemid="6,0" usedresource="memorycomponent"  Class="MemoryComponent"  Value="1.0625"  item="memorycomponent" />
-      <Component id="7" position="-1205.572,1034.1844" backingitemid="7,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
-      <Component id="8" position="-1849.1287,1034.1857" backingitemid="8,0" usedresource="memorycomponent"  Class="MemoryComponent"  Value="50"  item="memorycomponent" />
-      <Component id="9" position="-1403.7432,751.6498" backingitemid="9,0" usedresource="fpgacircuit"  Class="AdderComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="addercomponent" />
-      <Component id="10" position="-220.6211,767.34814" backingitemid="10,0" usedresource="dividecomponent"  Class="DivideComponent"  ClampMax="80"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
-      <Component id="11" position="-147.30591,-383.3982" backingitemid="11,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
-      <Component id="12" position="-923.4158,-418.37048" backingitemid="12,0" usedresource="fpgacircuit"  Class="GreaterComponent"  Output="1.15"  FalseOutput="0.85"  TimeFrame="0"  item="greatercomponent" />
-      <Component id="13" position="-1983.6312,-557.34186" backingitemid="13,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="10"  item="memorycomponent" />
-      <Component id="14" position="-1734.065,-350.86072" backingitemid="14,0" usedresource="fpgacircuit"  Class="FunctionComponent"  item="abscomponent" />
+      <Component id="0" position="-1541,-84" backingitemid="0,0" usedresource="fpgacircuit"  Class="AdderComponent"  ClampMax="999999"  ClampMin="1"  TimeFrame="0"  item="addercomponent" />
+      <Component id="1" position="-1932,190" backingitemid="1,0" usedresource="fpgacircuit"  Class="DivideComponent"  ClampMax="999999"  ClampMin="0.10000000149011612"  TimeFrame="0"  item="dividecomponent" />
+      <Component id="2" position="-746,455" backingitemid="2,0" usedresource="fpgacircuit"  Class="SubtractComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="subtractcomponent" />
+      <Component id="3" position="-1341,451" backingitemid="3,0" usedresource="fpgacircuit"  Class="AdderComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="addercomponent" />
+      <Component id="4" position="-2149,697" backingitemid="4,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  ClampMax="2500"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
+      <Component id="5" position="-1076,1258" backingitemid="5,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  ClampMax="100"  ClampMin="15"  TimeFrame="0"  item="multiplycomponent" />
+      <Component id="6" position="-1680,1258" backingitemid="6,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="1.0625"  item="memorycomponent" />
+      <Component id="7" position="-1206,1034" backingitemid="7,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
+      <Component id="8" position="-1849,1034" backingitemid="8,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="50"  item="memorycomponent" />
+      <Component id="9" position="-1404,752" backingitemid="9,0" usedresource="fpgacircuit"  Class="AdderComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="addercomponent" />
+      <Component id="10" position="-221,767" backingitemid="10,0" usedresource="fpgacircuit"  Class="DivideComponent"  ClampMax="80"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
+      <Component id="11" position="-147,-383" backingitemid="11,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
+      <Component id="12" position="-923,-418" backingitemid="12,0" usedresource="fpgacircuit"  Class="GreaterComponent"  Output="1.15"  FalseOutput="0.85"  TimeFrame="0"  item="greatercomponent" />
+      <Component id="13" position="-1984,-557" backingitemid="13,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="10"  item="memorycomponent" />
+      <Component id="14" position="-1734,-351" backingitemid="14,0" usedresource="fpgacircuit"  Class="FunctionComponent"  item="abscomponent" />
       <Wire id="0" backingitemid="" prefab="redwire">
         <From name="signal_in3" target="" />
         <To name="signal_in1" target="0" />
@@ -139,35 +127,36 @@
         <From name="signal_in1" target="" />
         <To name="signal_in1" target="11" />
       </Wire>
+      <Wire id="19" backingitemid="" prefab="bluewire">
+        <From name="signal_in5" target="" />
+        <To name="signal_in" target="14" />
+      </Wire>
       <Wire id="19" backingitemid="0,10" prefab="redwire">
         <From name="signal_out" target="11" />
         <To name="signal_in1" target="2" />
       </Wire>
-      <Wire id="20" backingitemid="0,11" prefab="redwire">
+      <Wire id="19" backingitemid="0,11" prefab="redwire">
         <From name="signal_out" target="11" />
         <To name="signal_in1" target="3" />
       </Wire>
-      <Wire id="21" backingitemid="1,0" prefab="bluewire">
+      <Wire id="19" backingitemid="1,0" prefab="bluewire">
         <From name="signal_out" target="12" />
         <To name="signal_in2" target="11" />
       </Wire>
-      <Wire id="22" backingitemid="" prefab="bluewire">
-        <From name="signal_in5" target="" />
-        <To name="signal_in" target="14" />
-      </Wire>
-      <Wire id="23" backingitemid="1,1" prefab="bluewire">
+      <Wire id="20" backingitemid="1,1" prefab="bluewire">
         <From name="signal_out" target="14" />
         <To name="signal_in1" target="12" />
       </Wire>
-      <Wire id="24" backingitemid="1,2" prefab="bluewire">
+      <Wire id="21" backingitemid="1,2" prefab="bluewire">
         <From name="signal_out" target="13" />
         <To name="signal_in2" target="12" />
       </Wire>
-      <Label id="0" color="#7E00E0" position="815.8345,1298.8594" size="971.99634,382.92468" header="Description" body="Fast overclockable automatic reactor controller. No need for user inputs. This one is tied into the engine output so as to increase the power output when the ship is moving, but underclock when it is stopped." />
-      <Label id="1" color="#FF0000" position="-1042.4131,-676.7699" size="891.7202,175.09204" header="Overclock" body="Increase this value to overlock the reactor, or decrease to underclock. The number is the ratio, so 1.15 is 15% more power than normally required." />
-      <Label id="2" color="#7ED3E0" position="801.16724,879.45197" size="951.1011,213.27185" header="notes" body="Supposed to be more efficient than the fast 11c reactor. Design by Lammert. When you first turn the reactor on, crank the turbine rate up manually. That will prevent any fires." />
-      <Label id="4" color="#7ED3E0" position="799.20166,586.2182" size="947.24756,219.1532" header="Notes 2" body="This keeps the turbine output at near maximum constantly, then adjusts the heat so as to throttle the output voltage. Because the acceptable fission rate has a much narrower range, it ends up being a very fast controller." />
-      <Label id="5" color="#FF0000" position="-1037.9879,-966.5089" size="886.8186,256" header="Overclock 2" body="The output of the greater than is the output rate when the ship is moving, the false output is what happens when the ship is stopped. You dont really need to overvolt if you aren't moving so this saves fuel." />
+      <Label id="0" color="#7E00E0" position="816,1299" size="972,383" header="Description" body="Fast overclockable automatic reactor controller. No need for user inputs. This one is tied into the engine output so as to increase the power output when the ship is moving, but underclock when it is stopped." />
+      <Label id="1" color="#FF0000" position="-1042,-677" size="892,175" header="Overclock" body="Increase this value to overlock the reactor, or decrease to underclock. The number is the ratio, so 1.15 is 15% more power than normally required." />
+      <Label id="2" color="#7ED3E0" position="801,879" size="951,213" header="notes" body="Supposed to be more efficient than the fast 11c reactor. Design by Lammert. When you first turn the reactor on, crank the turbine rate up manually. That will prevent any fires." />
+      <Label id="3" color="#7ED3E0" position="799,586" size="947,219" header="Notes 2" body="This keeps the turbine output at near maximum constantly, then adjusts the heat so as to throttle the output voltage. Because the acceptable fission rate has a much narrower range, it ends up being a very fast controller." />
+      <Label id="4" color="#FF0000" position="-1038,-967" size="887,256" header="Overclock 2" body="The output of the greater than is the output rate when the ship is moving, the false output is what happens when the ship is stopped. You dont really need to overvolt if you aren't moving so this saves fuel." />
+      <Label id="5" color="#0082FF" position="1686,1299" size="512,256" header="Blueprints" body="Circuit made with Blueprints. &#xA; &#xA; Get it now on the steam workshop!" />
     </CircuitBox>
     <itemstats />
   </Item>

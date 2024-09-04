@@ -1,58 +1,45 @@
 <Root>
-  <Item name="" identifier="circuitbox" ID="2858" markedfordeconstruction="false" rect="1120,-216,32,32" NonInteractable="False" NonPlayerTeamInteractable="False" AllowSwapping="True" Rotation="0" Scale="0.5" SpriteColor="255,255,255,255" InventoryIconColor="255,255,255,255" ContainerColor="255,255,255,255" InvulnerableToDamage="False" Tags="smallitem" DisplaySideBySideWhenLinked="False" DisallowedUpgrades="" SpriteDepth="0.8" HiddenInGame="False" conditionpercentage="100">
+  <Item name="" identifier="circuitbox" ID="1013" markedfordeconstruction="false" flippedx="true" rect="208,-8,32,32" NonInteractable="False" NonPlayerTeamInteractable="False" AllowSwapping="True" Rotation="0" Scale="0.5" SpriteColor="255,255,255,255" InventoryIconColor="255,255,255,255" ContainerColor="255,255,255,255" InvulnerableToDamage="False" Tags="smallitem" DisplaySideBySideWhenLinked="False" DisallowedUpgrades="" SpriteDepth="0.8" HiddenInGame="False" conditionpercentage="100">
     <Holdable Attached="True" SpriteDepthWhenDropped="0.55" PickingTime="5" CanBePicked="True" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgDetachWrench">
       <requireditem items="wrench" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
     </Holdable>
     <ConnectionPanel Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgRewireScrewdriver">
       <requireditem items="screwdriver" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
-      <input name="signal_in1">
-        <link w="2783" i="1" />
-      </input>
-      <input name="signal_in2">
-        <link w="2782" i="1" />
-      </input>
-      <input name="signal_in3">
-        <link w="2781" i="1" />
-      </input>
+      <input name="signal_in1" />
+      <input name="signal_in2" />
+      <input name="signal_in3" />
       <input name="signal_in4" />
       <input name="signal_in5" />
       <input name="signal_in6" />
       <input name="signal_in7" />
       <input name="signal_in8" />
-      <output name="signal_out1">
-        <link w="2784" i="0" />
-        <link w="2787" i="0" />
-      </output>
-      <output name="signal_out2">
-        <link w="2785" i="0" />
-      </output>
-      <output name="signal_out3">
-        <link w="2786" i="0" />
-      </output>
+      <output name="signal_out1" />
+      <output name="signal_out2" />
+      <output name="signal_out3" />
       <output name="signal_out4" />
       <output name="signal_out5" />
       <output name="signal_out6" />
       <output name="signal_out7" />
       <output name="signal_out8" />
     </ConnectionPanel>
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="2859,2788,2789,2790,2791,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="2792;2860;2861,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1138,1139,1140,1141,1142,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1143;1144;1145,,,,,,,,," ExtraStackSize="0" />
     <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
-      <InputNode pos="-756.47644,51.81836">
-        <ConnectionLabelOverride name="signal_in1" value="Lever Signal" />
+      <InputNode pos="-756,52">
         <ConnectionLabelOverride name="signal_in2" value="Nav Velocity Y Out" />
+        <ConnectionLabelOverride name="signal_in1" value="Lever Signal" />
         <ConnectionLabelOverride name="signal_in3" value="Water Detector Signal" />
       </InputNode>
-      <OutputNode pos="837.302,-112.83447">
-        <ConnectionLabelOverride name="signal_out1" value="Lamp Set State and Set Color" />
-        <ConnectionLabelOverride name="signal_out2" value="Pump Set Target Level" />
+      <OutputNode pos="837,-113">
         <ConnectionLabelOverride name="signal_out3" value="Pump Set State" />
+        <ConnectionLabelOverride name="signal_out2" value="Pump Set Target Level" />
+        <ConnectionLabelOverride name="signal_out1" value="Lamp Set State and Set Color" />
       </OutputNode>
-      <Component id="0" position="-191.25684,-90.54559" backingitemid="0,0" usedresource="fpgacircuit"  Class="OrComponent"  TimeFrame="0"  Output="1"  FalseOutput="0"  item="orcomponent" />
-      <Component id="1" position="-68.65161,152.3021" backingitemid="1,0" usedresource="fpgacircuit"  Class="SignalCheckComponent"  Output="4.5999985"  FalseOutput="-100"  TargetSignal="1"  item="signalcheckcomponent" />
-      <Component id="2" position="386.2478,-239.46814" backingitemid="2,0" usedresource="fpgacircuit"  Class="ColorComponent"  UseHSV="false"  item="colorcomponent" />
-      <Component id="3" position="-202.9353,-254.9126" backingitemid="3,0" usedresource="fpgacircuit"  Class="NotComponent"  ContinuousOutput="false"  item="notcomponent" />
-      <Component id="4" position="-667.13135,-326.71027" backingitemid="4,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="0.3"  item="memorycomponent" />
+      <Component id="0" position="-191,-91" backingitemid="0,0" usedresource="fpgacircuit"  Class="OrComponent"  TimeFrame="0"  Output="1"  FalseOutput="0"  item="orcomponent" />
+      <Component id="1" position="-69,152" backingitemid="1,0" usedresource="fpgacircuit"  Class="SignalCheckComponent"  Output="4.5999985"  FalseOutput="-100"  TargetSignal="1"  item="signalcheckcomponent" />
+      <Component id="2" position="386,-239" backingitemid="2,0" usedresource="fpgacircuit"  Class="ColorComponent"  UseHSV="false"  item="colorcomponent" />
+      <Component id="3" position="-203,-255" backingitemid="3,0" usedresource="fpgacircuit"  Class="NotComponent"  ContinuousOutput="false"  item="notcomponent" />
+      <Component id="4" position="-667,-327" backingitemid="4,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="0.3"  item="memorycomponent" />
       <Wire id="0" backingitemid="" prefab="orangewire">
         <From name="signal_in1" target="" />
         <To name="signal_in1" target="0" />
@@ -97,13 +84,14 @@
         <From name="signal_out" target="2" />
         <To name="signal_out1" target="" />
       </Wire>
-      <Label id="0" color="#7ED3E0" position="-100.90558,398.04214" size="596.1271,192.49048" header="Signal Check" body="output = empty&#xA;false output = -100&#xA;target signal = 1" />
-      <Label id="1" color="#7ED3E0" position="-124.18335,-516.4026" size="472.55835,207.39233" header="Colour Logic" body="Lever: 1 - Red&#xA;Lever: 0, Pump:1 - Yellow&#xA;Lever: 0, Pump 0 - Green" />
-      <Label id="2" color="#7ED3E0" position="-680.20325,-533.00464" size="369.3806,161.83704" header="Memory" body="Lamp Brightness 0.0-1.0" />
-      <Label id="3" color="#7ED3E0" position="-744.8027,413.93362" size="534.5228,141.80237" header="Lever" body="Off = Drain&#xA;On = Normal Operation" />
-      <Label id="4" color="#7ED3E0" position="776.51575,350.78827" size="710.27124,320.44666" header="Description" body="Lets you easily drain water from a balast tank so you can cut out ballast flora easier. Ballast flora in a dry environment takes double damage. &#xA;&#xA;Start cutting when the light turns green." />
-      <Label id="5" color="#7ED3E0" position="795.55676,-549.486" size="526.5818,246.01538" header="Purpose" body="Extension of Max's Ballast Flora circuit adding a colour output for the ballast lamp to indicate the state of the circuit." />
-      <Label id="6" color="#FFFFFF" position="-1417.0221,41.100708" size="532.5725,245.01709" header="Water Detector" body="Position the water detector one square away from the floor. So one square higher than the lowest possible placement." />
+      <Label id="0" color="#7ED3E0" position="-101,398" size="596,192" header="Signal Check" body="output = empty&#xA;false output = -100&#xA;target signal = 1" />
+      <Label id="1" color="#7ED3E0" position="-124,-516" size="473,207" header="Colour Logic" body="Lever: 1 - Red&#xA;Lever: 0, Pump:1 - Yellow&#xA;Lever: 0, Pump 0 - Green" />
+      <Label id="2" color="#7ED3E0" position="-680,-533" size="369,162" header="Memory" body="Lamp Brightness 0.0-1.0" />
+      <Label id="3" color="#7ED3E0" position="-745,414" size="535,142" header="Lever" body="Off = Drain&#xA;On = Normal Operation" />
+      <Label id="4" color="#7ED3E0" position="777,351" size="710,320" header="Description" body="Lets you easily drain water from a balast tank so you can cut out ballast flora easier. Ballast flora in a dry environment takes double damage. &#xA;&#xA;Start cutting when the light turns green." />
+      <Label id="5" color="#7ED3E0" position="796,-549" size="527,246" header="Purpose" body="Extension of Max's Ballast Flora circuit adding a colour output for the ballast lamp to indicate the state of the circuit." />
+      <Label id="6" color="#FFFFFF" position="-1417,41" size="533,245" header="Water Detector" body="Position the water detector one square away from the floor. So one square higher than the lowest possible placement." />
+      <Label id="7" color="#0082FF" position="1516,351" size="512,256" header="Blueprints" body="Circuit made with Blueprints. &#xA; &#xA; Get it now on the steam workshop!" />
     </CircuitBox>
     <itemstats />
   </Item>

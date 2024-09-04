@@ -78,9 +78,8 @@ local function runCommand(command)
 		blue_prints.print_all_saved_files()
 	end
 	
-	if command[1] == "test" then
-		local temp = blue_prints.get_components_currently_in_circuitbox(blue_prints.most_recent_circuitbox)
-		print(temp)
+	if command[1] == "unit_tests" then
+		blue_prints.unit_test_all_blueprint_files()
 	end
 	
 	
