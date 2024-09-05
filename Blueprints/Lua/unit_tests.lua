@@ -93,6 +93,19 @@ end
 --]]
 
 
+local function clean_string_for_comparison(string_to_clean)
+
+	string_to_clean = string_to_clean:gsub(' ', '') --remove all whitespace
+	string_to_clean = string_to_clean:gsub('LinkToChat="false"', '') 
+	string_to_clean = string_to_clean:gsub('LinkToChat="true"', '')
+	
+	return string_to_clean
+end
+
+
+
+
+
 local function check_file_against_string(file_path, comparison_string)
   local include_prefixes = {'<InputNode' , '<OutputNode' , '<ConnectionLabelOverride', '<Component', '<From name=' , '<To name=', '<Label id='}
   local ignore_anywhere = {'header="Blueprints" body="Circuit made with Blueprints. &#xA; &#xA; Get it now on the steam workshop!"'}
@@ -145,10 +158,10 @@ local function check_file_against_string(file_path, comparison_string)
   end
 
   for _, comparison_line in ipairs(comparison_lines) do
-  comparison_line = comparison_line:gsub(' ', '') --remove all whitespace
+	comparison_line = clean_string_for_comparison(comparison_line) --remove anything that should be ignored
     local found = false
     for _, file_line in ipairs(file_lines) do
-		file_line = file_line:gsub(' ', '') --remove all whitespace
+		file_line = clean_string_for_comparison(file_line) --remove anything that should be ignored
 		if file_line == comparison_line then
 			found = true
 			break
@@ -161,10 +174,10 @@ local function check_file_against_string(file_path, comparison_string)
   end
   
   for _, file_line in ipairs(file_lines) do
-	file_line = file_line:gsub(' ', '') --remove all whitespace
+	file_line = clean_string_for_comparison(file_line) --remove anything that should be ignored
     local found = false
     for _, comparison_line in ipairs(comparison_lines) do
-		comparison_line = comparison_line:gsub(' ', '') --remove all whitespace
+		comparison_line = clean_string_for_comparison(comparison_line) --remove anything that should be ignored
 		if file_line == comparison_line then
 			found = true
 			break

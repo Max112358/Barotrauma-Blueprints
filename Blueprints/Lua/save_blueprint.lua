@@ -219,7 +219,7 @@ local function remove_attribute_from_components(xmlContent, attributeName)
     -- Function to remove the specified attribute from a component
     local function removeAttribute(componentString)
         -- Pattern to match the attribute and its value
-        local pattern = '%s*' .. attributeName .. '="[^"]+"%s?%s?'
+        local pattern = '%s*' .. attributeName .. '="[^"]+"'
         return componentString:gsub(pattern, '')
     end
 
@@ -392,7 +392,7 @@ function blue_prints.prepare_circuitbox_xml_for_saving()
 	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "InventoryIconColor")
 	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "ContainerColor")
 	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "SpriteDepthWhenDropped")
-	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "LinkToChat")
+	--circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "LinkToChat")
 	circuitbox_xml = clean_component_whitespace(circuitbox_xml)
 	
 	return circuitbox_xml
