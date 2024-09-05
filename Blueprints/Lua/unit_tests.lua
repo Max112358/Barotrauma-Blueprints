@@ -96,7 +96,7 @@ end
 local function clean_string_for_comparison(string_to_clean)
 
 	string_to_clean = string_to_clean:gsub(' ', '') --remove all whitespace
-	string_to_clean = string_to_clean:gsub('LinkToChat="false"', '') 
+	string_to_clean = string_to_clean:gsub('LinkToChat="false"', '') --link to chat is a special case because some servers do not allow it. 
 	string_to_clean = string_to_clean:gsub('LinkToChat="true"', '')
 	
 	return string_to_clean

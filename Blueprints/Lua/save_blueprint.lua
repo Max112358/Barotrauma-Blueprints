@@ -392,7 +392,6 @@ function blue_prints.prepare_circuitbox_xml_for_saving()
 	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "InventoryIconColor")
 	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "ContainerColor")
 	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "SpriteDepthWhenDropped")
-	--circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "LinkToChat")
 	circuitbox_xml = clean_component_whitespace(circuitbox_xml)
 	
 	return circuitbox_xml
