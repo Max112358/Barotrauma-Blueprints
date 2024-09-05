@@ -145,8 +145,12 @@ function blue_prints.parseXML(xmlString)
 			end))
 		end
 		
-		header = decode_html_entities(header)
-		body = decode_html_entities(body)
+		if header then
+			header = decode_html_entities(header)
+		end
+		if body then
+			body = decode_html_entities(body)
+		end
 
 		
         table.insert(labels, {
@@ -240,6 +244,7 @@ end
 function blue_prints.add_component_to_circuitbox(component, use_fpga)
     if blue_prints.most_recent_circuitbox == nil then print("No circuitbox detected") return end
 	
+	--[[
 	--due to refactoring I no longer need this, but will keep it for historical compatability with older blueprints
 	if component.item == "oscillatorcomponent" then component.item = "oscillator" end --these components are named strangely and break convention
 	if component.item == "concatenationcomponent" then component.item = "concatcomponent" end
@@ -247,10 +252,12 @@ function blue_prints.add_component_to_circuitbox(component, use_fpga)
 	if component.item == "regexfind" then component.item = "regexcomponent" end
 	if component.item == "signalcheck" then component.item = "signalcheckcomponent" end
 	if component.item == "squareroot" then component.item = "squarerootcomponent" end
+	--]]
 
     local item_to_add = use_fpga and ItemPrefab.GetItemPrefab("fpgacircuit") or ItemPrefab.GetItemPrefab(component.item)
     local component_position = Vector2(component.position.x, component.position.y)
-	
+	--print(tostring(component))
+	--print(item_to_add)
     blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").AddComponent(item_to_add, component_position)
     --print(string.format("Added component %s at position (%.2f, %.2f)", use_fpga and "fpgacircuit" or component.item, component_position.x, component_position.y))
 end
@@ -495,67 +502,88 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 				--print("  " .. attr .. ":", value)
 				
 				
+				
+				
 				local success = false
 				local result
-
-				-- First attempt (string version)
-				if not success then
-					success, result = pcall(function()
-						component_class_to_change[attr] = value
-						return "String operation successful"
-					end)
-				end
 				
-				-- Second attempt (number version)
-				if not success then
-					success, result = pcall(function()
-						component_class_to_change[attr] = tonumber(value)
-						return "Number operation successful"
-					end)
-				end
-
-				-- Third attempt (bool version)
-				if not success then
-					success, result = pcall(function()
-						component_class_to_change[attr] = blue_prints.string_to_bool(value)
-						return "Boolean operation successful"
-					end)
-				end
-
-				
-				
-				
-				--oscillator is a special case because it uses enums
-				if component_to_copy.class.name == "OscillatorComponent" then
-					if tostring(attr) == "OutputType" then
-						if value == "Pulse" then component_class_to_change.OutputType = component_class_to_change.WaveType.Pulse end
-						if value == "Sawtooth" then component_class_to_change.OutputType = component_class_to_change.WaveType.Sawtooth end
-						if value == "Sine" then component_class_to_change.OutputType = component_class_to_change.WaveType.Sine end
-						if value == "Square" then component_class_to_change.OutputType = component_class_to_change.WaveType.Square end
-						if value == "Triangle" then component_class_to_change.OutputType = component_class_to_change.WaveType.Triangle end
-					end
-					if tostring(attr) == "Frequency" then
-						component_class_to_change.Frequency = tonumber(value)
-					end
-					success = true
-				end
-
-
-				if success then
-					--print("Operation succeeded:", result)
-				else
-					print("All operations failed. Last error: ", result)
-					print("Component type that failed: ", component_class_to_change.name)
-				end
-
-				
-				--print("Game mode: ", Game.GameSession.GameMode.Name)
-				if Game.GameSession ~= nil then --a nil check for the sub editor
-					if tostring(Game.GameSession.GameMode.Name) ~= "Single Player" then --these dont exist in single player so will cause a crash if not avoided.
-						local property = component_class_to_change.SerializableProperties[Identifier(attr)]
-						Networking.CreateEntityEvent(component_in_box.Item, Item.ChangePropertyEventData(property, component_class_to_change))
+				--print(attr)
+				local is_actually_editable = false
+				local my_editables =  component_in_box.Item.GetInGameEditableProperties(false)
+				for tuple in my_editables do 
+					--print(tuple.Item2.name, ' = ', tuple.Item2.GetValue(tuple.Item1)) 
+					if tostring(tuple.Item2.name) == tostring(attr) then
+						is_actually_editable = true
+						break
 					end
 				end
+				
+				
+				if is_actually_editable then --only attempt load if its actually editable
+				
+					-- First attempt (string version)
+					if not success then
+						success, result = pcall(function()
+							component_class_to_change[attr] = value
+							return "String operation successful"
+						end)
+					end
+					
+					-- Second attempt (number version)
+					if not success then
+						success, result = pcall(function()
+							component_class_to_change[attr] = tonumber(value)
+							return "Number operation successful"
+						end)
+					end
+
+					-- Third attempt (bool version)
+					if not success then
+						success, result = pcall(function()
+							component_class_to_change[attr] = blue_prints.string_to_bool(value)
+							return "Boolean operation successful"
+						end)
+					end
+
+					
+					
+					
+					--oscillator is a special case because it uses enums
+					if component_to_copy.class.name == "OscillatorComponent" then
+						if tostring(attr) == "OutputType" then
+							if value == "Pulse" then component_class_to_change.OutputType = component_class_to_change.WaveType.Pulse end
+							if value == "Sawtooth" then component_class_to_change.OutputType = component_class_to_change.WaveType.Sawtooth end
+							if value == "Sine" then component_class_to_change.OutputType = component_class_to_change.WaveType.Sine end
+							if value == "Square" then component_class_to_change.OutputType = component_class_to_change.WaveType.Square end
+							if value == "Triangle" then component_class_to_change.OutputType = component_class_to_change.WaveType.Triangle end
+						end
+						if tostring(attr) == "Frequency" then
+							component_class_to_change.Frequency = tonumber(value)
+						end
+						success = true
+					end
+
+
+					if success then
+						--print("Operation succeeded:", result)
+					else
+						print("All operations failed. Last error: ", result)
+						print("Component type that failed: ", component_class_to_change.name)
+					end
+
+					
+					--print("Game mode: ", Game.GameSession.GameMode.Name)
+					if Game.GameSession ~= nil then --a nil check for the sub editor
+						if tostring(Game.GameSession.GameMode.Name) ~= "Single Player" then --these dont exist in single player so will cause a crash if not avoided.
+							local property = component_class_to_change.SerializableProperties[Identifier(attr)]
+							Networking.CreateEntityEvent(component_in_box.Item, Item.ChangePropertyEventData(property, component_class_to_change))
+						end
+					end
+				
+				
+				end
+
+				
 				
 			end
 		end	

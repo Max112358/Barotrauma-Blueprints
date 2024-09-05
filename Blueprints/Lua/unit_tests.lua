@@ -145,12 +145,14 @@ local function check_file_against_string(file_path, comparison_string)
   end
 
   for _, comparison_line in ipairs(comparison_lines) do
+  comparison_line = comparison_line:gsub(' ', '') --remove all whitespace
     local found = false
     for _, file_line in ipairs(file_lines) do
-      if file_line == comparison_line then
-        found = true
-        break
-      end
+		file_line = file_line:gsub(' ', '') --remove all whitespace
+		if file_line == comparison_line then
+			found = true
+			break
+		end
     end
     if not found then
       print("Line not found in file: " .. comparison_line)
@@ -159,12 +161,14 @@ local function check_file_against_string(file_path, comparison_string)
   end
   
   for _, file_line in ipairs(file_lines) do
+	file_line = file_line:gsub(' ', '') --remove all whitespace
     local found = false
     for _, comparison_line in ipairs(comparison_lines) do
-      if file_line == comparison_line then
-        found = true
-        break
-      end
+		comparison_line = comparison_line:gsub(' ', '') --remove all whitespace
+		if file_line == comparison_line then
+			found = true
+			break
+		end
     end
     if not found then
       print("Line not found in string: " .. file_line)

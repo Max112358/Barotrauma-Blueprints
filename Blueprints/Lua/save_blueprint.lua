@@ -215,8 +215,75 @@ end
 
 
 
+local function remove_attribute_from_components(xmlContent, attributeName)
+    -- Function to remove the specified attribute from a component
+    local function removeAttribute(componentString)
+        -- Pattern to match the attribute and its value
+        local pattern = '%s*' .. attributeName .. '="[^"]+"%s?%s?'
+        return componentString:gsub(pattern, '')
+    end
+
+    -- Find all Component elements and process them
+    local function processComponents(content)
+        return content:gsub('<Component.-/>', removeAttribute)
+    end
+
+    -- Find the CircuitBox element
+    local circuitBoxStart, circuitBoxEnd = xmlContent:find('<CircuitBox.->')
+    local circuitBoxEndTag = xmlContent:find('</CircuitBox>', circuitBoxEnd)
+    if not circuitBoxStart or not circuitBoxEndTag then
+        print("CircuitBox element not found")
+        return xmlContent
+    end
+
+    -- Extract and process the CircuitBox content
+    local circuitBoxContent = xmlContent:sub(circuitBoxEnd + 1, circuitBoxEndTag - 1)
+    local modifiedCircuitBoxContent = processComponents(circuitBoxContent)
+
+    -- Replace the original CircuitBox content with the modified content
+    return xmlContent:sub(1, circuitBoxEnd) .. modifiedCircuitBoxContent .. xmlContent:sub(circuitBoxEndTag)
+end
 
 
+
+
+local function clean_component_whitespace(xmlContent)
+    local function cleanComponent(componentString)
+        -- First, ensure there's a space between all attributes
+        local cleanedString = componentString:gsub('(%S+="[^"]*")(%S)', '%1 %2')
+        
+        -- Then, replace multiple spaces with 2 spaces
+        cleanedString = cleanedString:gsub('%s+', '  ')
+        
+        -- Ensure there's exactly one space after the opening '<Component'
+        cleanedString = cleanedString:gsub('<Component%s*', '<Component  ')
+        
+        -- Remove any space just before the closing '/>'
+        cleanedString = cleanedString:gsub('%s+/>', '  />')
+        
+        return cleanedString
+    end
+
+    -- Find all Component elements and process them
+    local function processComponents(content)
+        return content:gsub('<Component.-/>', cleanComponent)
+    end
+
+    -- Find the CircuitBox element
+    local circuitBoxStart, circuitBoxEnd = xmlContent:find('<CircuitBox.->')
+    local circuitBoxEndTag = xmlContent:find('</CircuitBox>', circuitBoxEnd)
+    if not circuitBoxStart or not circuitBoxEndTag then
+        print("CircuitBox element not found")
+        return xmlContent
+    end
+
+    -- Extract and process the CircuitBox content
+    local circuitBoxContent = xmlContent:sub(circuitBoxEnd + 1, circuitBoxEndTag - 1)
+    local modifiedCircuitBoxContent = processComponents(circuitBoxContent)
+
+    -- Replace the original CircuitBox content with the modified content
+    return xmlContent:sub(1, circuitBoxEnd) .. modifiedCircuitBoxContent .. xmlContent:sub(circuitBoxEndTag)
+end
 
 
 
@@ -251,7 +318,7 @@ local function round_attributes(label)
 end
 
 -- Function to process the entire XML string
-local function round_label_values(xml_string)
+local function round_position_values(xml_string)
     local processed_string = ""
 
     -- Process each line of the XML string
@@ -321,7 +388,12 @@ function blue_prints.prepare_circuitbox_xml_for_saving()
 	--now some cleanup to deal with deleted components
 	circuitbox_xml = put_components_in_order(circuitbox_xml)
 	circuitbox_xml = renumber_components(circuitbox_xml)
-	circuitbox_xml = round_label_values(circuitbox_xml)
+	circuitbox_xml = round_position_values(circuitbox_xml)
+	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "InventoryIconColor")
+	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "ContainerColor")
+	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "SpriteDepthWhenDropped")
+	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "LinkToChat")
+	circuitbox_xml = clean_component_whitespace(circuitbox_xml)
 	
 	return circuitbox_xml
 
