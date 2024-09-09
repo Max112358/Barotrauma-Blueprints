@@ -870,8 +870,21 @@ function blue_prints.delayed_loading_complete_array_check()
 		GUI.AddMessage('Load Complete', Color.White)
 		print("Blueprint loading complete")
 	else
-		GUI.AddMessage('Blueprint loading Failed', Color.Red)
-		-- Print the array to confirm changes
+		GUI.AddMessage('Loading Failed', Color.Red)
+		
+		message_box = GUI.MessageBox('Load Failed', 'Your circuit has failed to load. One of the load functions has failed to complete. Hit F3 for more details. \n \nTry loading it again. \n \nIf the problem persists please report this bug on the steam workshop page. Include a download link to your saved blueprint file and a screenshot of your console text (you can see that by hitting F3)', {'OK'}) 
+		ok_button = nil
+		
+		if message_box.Buttons[0] == nil then --this is if no one has registered it. If some other mod registers it I dont want it to break.
+			ok_button = message_box.Buttons[1]
+		else --if its been registered, it will behave as a csharp table
+			ok_button = message_box.Buttons[0]
+		end
+		
+		ok_button.OnClicked = function ()
+			message_box.Close()
+		end
+		
 		for key, value in pairs(has_load_completed_array) do
 			print(tostring(key) .. ": " .. tostring(value))
 		end
