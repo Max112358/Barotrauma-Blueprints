@@ -10,6 +10,7 @@ blue_prints.most_recent_circuitbox = nil
 blue_prints.time_delay_between_loops = 100
 blue_prints.current_gui_page = nil
 blue_prints.most_recently_loaded_blueprint_name = nil
+blue_prints.unit_tests_enabled = false
 
 dofile(blue_prints.path .. "/Lua/cs_required_warning.lua")
 

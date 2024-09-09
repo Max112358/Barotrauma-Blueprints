@@ -8,6 +8,7 @@ configDescriptions["save"] = "save a blueprint. EX: bp save reactor_controller"
 configDescriptions["need"] = "get requirements for a blueprint. EX: bp need reactor_controller"
 configDescriptions["delete"] = "delete a blueprint. EX: bp delete reactor_controller"
 configDescriptions["list"] = "list all saved files. EX: bp list"
+configDescriptions["toggle"] = "toggle things on and off. EX: bp toggle tests"
 configDescriptions["clear"] = "Remove all components and labels from a circuitbox. EX: bp clear"
 
 
@@ -79,7 +80,15 @@ local function runCommand(command)
 	end
 	
 	if command[1] == "unit_tests" then
+		blue_prints.unit_tests_enabled = true
 		blue_prints.unit_test_all_blueprint_files()
+	end
+	
+	if command[1] == "toggle" then
+		if command[2] == "tests" then
+			blue_prints.unit_tests_enabled =  not blue_prints.unit_tests_enabled
+			print("tests enabled: " .. tostring(blue_prints.unit_tests_enabled))
+		end
 	end
 	
 	
