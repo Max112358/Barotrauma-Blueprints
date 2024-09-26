@@ -597,7 +597,8 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 					
 					--print("Game mode: ", Game.GameSession.GameMode.Name)
 					if Game.GameSession ~= nil then --a nil check for the sub editor
-						if tostring(Game.GameSession.GameMode.Name) ~= "Single Player" then --these dont exist in single player so will cause a crash if not avoided.
+						local gameModeName = tostring(Game.GameSession.GameMode.Name)
+						if gameModeName ~= "Single Player" and gameModeName ~= "Testing Mode" then --these dont exist in single player so will cause a crash if not avoided.
 							local property = component_class_to_change.SerializableProperties[Identifier(attr)]
 							Networking.CreateEntityEvent(component_in_box.Item, Item.ChangePropertyEventData(property, component_class_to_change))
 						end
