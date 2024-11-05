@@ -54,8 +54,11 @@ function blue_prints.parseXML(xmlString)
 		local id = component:match('id="(%d+)"')
 		local positionX, positionY = component:match('position="([%-%d%.]+),([%-%d%.]+)"')
 		local usedResource = component:match('usedresource="([^"]+)"')
-		local item = component:match('item="([^"]+)"')
-		local class = component:match('Class="([^"]+)"')
+		
+		-- Try new format first, then fall back to old format
+		local item = component:match('item=<<<STRINGSTART>>>([^<]+)<<<STRINGEND>>>') or component:match('item="([^"]+)"')
+        local class = component:match('Class=<<<STRINGSTART>>>([^<]+)<<<STRINGEND>>>') or component:match('Class="([^"]+)"')
+		
 		
 		local componentData = {
 			id = id,
@@ -68,13 +71,26 @@ function blue_prints.parseXML(xmlString)
 			}
 		}
 		
+		
 		-- Parse additional attributes for the class, including Value
-		for attr, value in component:gmatch('(%w+)="(.-)"  ') do
-			if attr ~= "id" and attr ~= "position" and attr ~= "backingitemid" and 
-			   attr ~= "usedresource" and attr ~= "item" and attr ~= "Class" then
-				componentData.class.attributes[attr] = value
-			end
-		end
+        -- First try new format with STRINGSTART/STRINGEND
+        for attr, value in component:gmatch('(%w+)=<<<STRINGSTART>>>(.-)<<<STRINGEND>>>') do
+            if attr ~= "id" and attr ~= "position" and attr ~= "backingitemid" and 
+               attr ~= "usedresource" and attr ~= "item" and attr ~= "Class" then
+                componentData.class.attributes[attr] = value
+            end
+        end
+        
+        -- If no attributes found, try old format
+        if next(componentData.class.attributes) == nil then
+            for attr, value in component:gmatch('(%w+)="(.-)"  ') do
+                if attr ~= "id" and attr ~= "position" and attr ~= "backingitemid" and 
+                   attr ~= "usedresource" and attr ~= "item" and attr ~= "Class" then
+                    componentData.class.attributes[attr] = value
+                end
+            end
+        end
+		
 		
 		table.insert(components, componentData)
 	end
@@ -525,10 +541,12 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 				--print("  " .. attr .. ":", value)
 				
 				
-				
+				--print(component_class_to_change)
+				--print(tostring(component_class_to_change[attr]))
 				
 				local success = false
 				local result
+				
 				
 				--print(attr)
 				local is_actually_editable = false
@@ -567,7 +585,6 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 							return "Boolean operation successful"
 						end)
 					end
-
 					
 					
 					
@@ -585,7 +602,7 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 						end
 						success = true
 					end
-
+					
 
 					if success then
 						--print("Operation succeeded:", result)
@@ -598,7 +615,7 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 					--print("Game mode: ", Game.GameSession.GameMode.Name)
 					if Game.GameSession ~= nil then --a nil check for the sub editor
 						local gameModeName = tostring(Game.GameSession.GameMode.Name)
-						if gameModeName ~= "Single Player" and gameModeName ~= "Testing Mode" then --these dont exist in single player so will cause a crash if not avoided.
+						if not Game.GameSession.GameMode.IsSinglePlayer then --these dont exist in single player so will cause a crash if not avoided.
 							local property = component_class_to_change.SerializableProperties[Identifier(attr)]
 							Networking.CreateEntityEvent(component_in_box.Item, Item.ChangePropertyEventData(property, component_class_to_change))
 						end
@@ -910,7 +927,7 @@ function blue_prints.delayed_loading_complete_unit_test()
 			--GUI.AddMessage('Load Complete!', Color.White)
 		else
 			GUI.AddMessage('Load Failed!', Color.Red)
-			message_box = GUI.MessageBox('Load Failed', 'Your circuit has failed to load. Your blueprint file might be from an earlier version of Blueprints and nothing is actually wrong. Try saving it again (overwriting the original) to update your blueprint file to the latest version. \n \nIf you are certain your file is up to date try loading it again. Do not move or change anything during loading: the loaded circuit must match the blueprint file EXACTLY in order for you not to see this message. \n \nIf the problem persists please report this bug on the steam workshop page. Include a download link to your saved blueprint file and a screenshot of your console text (you can see that by hitting F3)', {'OK'}) 
+			message_box = GUI.MessageBox('Load Failed', 'Your circuit has failed to load. Your blueprint file might be from an earlier version of Blueprints and nothing is actually wrong. Try saving it again (overwriting the original) to update your blueprint file to the latest version. \n \nIf you are certain your file is up to date try loading it again. Do not move or change anything during loading: the loaded circuit must match the blueprint file EXACTLY in order for you not to see this message. \n \nThis also means if the inputs change any values in any component the unit test will also fail. Same thing if you have some value that changes over time, like RGB or timing values from an oscillator. So the circuit might still be ok, it just does not match your save exactly. \n \nIf none of these exceptions apply and the problem persists please report this bug on the steam workshop page or the discord. Include a download link to your saved blueprint file and a screenshot of your console text (you can see that by hitting F3)', {'OK'}) 
 		
 			ok_button = nil
 			

@@ -12,3 +12,8 @@ LuaUserData.RegisterType("System.ValueTuple`2[System.Object,Barotrauma.Serializa
 LuaUserData.RegisterType("System.Collections.Immutable.ImmutableArray")
 LuaUserData.RegisterType("System.Collections.Immutable.ImmutableArray`1")
 blue_prints.immutable_array_type = LuaUserData.CreateStatic("System.Collections.Immutable.ImmutableArray", false)
+
+--register types for components not in lua yet
+LuaUserData.RegisterType('Barotrauma.Items.Components.ConnectionSelectorComponent')
+LuaUserData.RegisterType('Barotrauma.Items.Components.DemultiplexerComponent')
+LuaUserData.RegisterType('Barotrauma.Items.Components.MultiplexerComponent')

@@ -1,6 +1,90 @@
 if SERVER then return end --prevents it from running on the server
 
 
+-- Delimiter constants
+local STRING_START = "<<<STRINGSTART>>>"
+local STRING_END = "<<<STRINGEND>>>"
+
+-- Encodes a string to be safely stored in XML attributes
+local function encodeAttributeString(str)
+    if str == nil then return "" end
+    
+    -- First, escape any existing delimiters in the content
+    local escaped = str:gsub(STRING_START, "\\<<<STRINGSTART>>>")
+                      :gsub(STRING_END, "\\<<<STRINGEND>>>")
+    
+    -- Wrap the escaped content with delimiters
+    return STRING_START .. escaped .. STRING_END
+end
+
+
+-- Decodes a string that was stored in XML attributes
+local function decodeAttributeString(str)
+    if str == nil then return "" end
+    
+    -- Check if the string has our delimiters
+    local content = str:match(STRING_START .. "(.-)" .. STRING_END)
+    if not content then
+        -- If no delimiters found, return original string (for backward compatibility)
+        return str
+    end
+    
+    -- Unescape any escaped delimiters
+    return content:gsub("\\<<<STRINGSTART>>>", STRING_START)
+                 :gsub("\\<<<STRINGEND>>>", STRING_END)
+end
+
+
+
+-- Modified function to add encoded attributes to components
+local function add_encoded_attribute_to_component(xmlContent, targetId, attributeName, attributeValue)
+    -- First encode the attribute value
+    local encodedValue = encodeAttributeString(attributeValue)
+    
+    -- Function to add the attribute to the specific Component element
+    local function modifyComponent(componentString)
+        local id = componentString:match('id="(%d+)"')
+        if id and tonumber(id) == targetId then
+            -- Create the full attribute string with the encoded value
+            local attributeStr = string.format('%s=%s', attributeName, encodedValue)
+            return componentString:gsub('/>$', ' ' .. attributeStr .. ' />')
+        else
+            return componentString
+        end
+    end
+
+    -- Find the CircuitBox element
+    local circuitBoxStart, circuitBoxEnd = xmlContent:find('<CircuitBox.->')
+    local circuitBoxEndTag = xmlContent:find('</CircuitBox>', circuitBoxEnd)
+    if not circuitBoxStart or not circuitBoxEndTag then
+        print("CircuitBox element not found")
+        return xmlContent
+    end
+
+    -- Extract the CircuitBox content
+    local circuitBoxContent = xmlContent:sub(circuitBoxEnd + 1, circuitBoxEndTag - 1)
+
+    -- Modify the specific Component element
+    local modifiedCircuitBoxContent = circuitBoxContent:gsub('<Component.-/>', modifyComponent)
+
+    -- Replace the original CircuitBox content with the modified content
+    return xmlContent:sub(1, circuitBoxEnd) .. modifiedCircuitBoxContent .. xmlContent:sub(circuitBoxEndTag)
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- Function to extract components and their IDs
 local function extractComponents(xmlString)
@@ -343,59 +427,63 @@ end
 
 
 
+-- Modified prepare_circuitbox_xml_for_saving function
 function blue_prints.prepare_circuitbox_xml_for_saving()
-	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
+    if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
 
-	local sacrificial_xml = XElement("Root")
-	blue_prints.most_recent_circuitbox.Save(sacrificial_xml)
-	local circuitbox_xml = tostring(sacrificial_xml)
+    local sacrificial_xml = XElement("Root")
+    blue_prints.most_recent_circuitbox.Save(sacrificial_xml)
+    local circuitbox_xml = tostring(sacrificial_xml)
 
-	--the xml does not contain all the component info, so we have to add it
-	local components = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Components
-	
-	for i, component in ipairs(components) do
-		
-		--add the class name to component
-		local class_name = nil
-		for value in component.Item.Components do
-			local target_string = tostring(value)
-			local target_string = target_string:match("([^%.]+)$") --cut off anything before the last period
-			if string.find(target_string, "Component") then
-				--print("The string contains 'Component'")
-				class_name = target_string
-				break
-			end
+    local components = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Components
+    
+    for i, component in ipairs(components) do
+        -- Add the class name to component
+        local class_name = nil
+        for value in component.Item.Components do
+            local target_string = tostring(value)
+            local target_string = target_string:match("([^%.]+)$")
+            if string.find(target_string, "Component") then
+                class_name = target_string
+                break
+            end
         end
-		if class_name ~= nil then 
-			circuitbox_xml = add_attribute_to_component_in_xml(circuitbox_xml, component.ID, 'Class="' .. class_name .. '"')
-		else
-			print("Error: couldnt find class name! Report this bug on the workshop page please! Component causing the problem: " .. tostring(component.Item.Prefab.Identifier))
-		end
-		
-		--add any values stored inside the component
-		local my_editables =  component.Item.GetInGameEditableProperties(false)
-		for tuple in my_editables do 
-			--print(tuple.Item2.name, ' = ', tuple.Item2.GetValue(tuple.Item1)) 
-			circuitbox_xml = add_attribute_to_component_in_xml(circuitbox_xml, component.ID, tostring(tuple.Item2.name) .. '="' .. tostring(tuple.Item2.GetValue(tuple.Item1)) .. '"')
-		end
-		
-		--add the item prefab itself
-		local parsed_item_string = 'item="' .. tostring(component.Item.Prefab.Identifier) .. '"'
-		circuitbox_xml = add_attribute_to_component_in_xml(circuitbox_xml, component.ID, parsed_item_string)
-		
+        if class_name ~= nil then 
+            circuitbox_xml = add_encoded_attribute_to_component(circuitbox_xml, component.ID, 'Class', class_name)
+        else
+            print("Error: couldn't find class name! Report this bug on the workshop page please! Component causing the problem: " .. tostring(component.Item.Prefab.Identifier))
+        end
+        
+        -- Add any values stored inside the component
+        local my_editables = component.Item.GetInGameEditableProperties(false)
+        for tuple in my_editables do 
+            circuitbox_xml = add_encoded_attribute_to_component(
+                circuitbox_xml, 
+                component.ID, 
+                tostring(tuple.Item2.name),
+                tostring(tuple.Item2.GetValue(tuple.Item1))
+            )
+        end
+        
+        -- Add the item prefab itself
+        circuitbox_xml = add_encoded_attribute_to_component(
+            circuitbox_xml, 
+            component.ID, 
+            'item',
+            tostring(component.Item.Prefab.Identifier)
+        )
     end
-	
-	--now some cleanup to deal with deleted components
-	circuitbox_xml = put_components_in_order(circuitbox_xml)
-	circuitbox_xml = renumber_components(circuitbox_xml)
-	circuitbox_xml = round_position_values(circuitbox_xml)
-	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "InventoryIconColor")
-	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "ContainerColor")
-	circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "SpriteDepthWhenDropped")
-	circuitbox_xml = clean_component_whitespace(circuitbox_xml)
-	
-	return circuitbox_xml
-
+    
+    -- Cleanup to deal with deleted components
+    circuitbox_xml = put_components_in_order(circuitbox_xml)
+    circuitbox_xml = renumber_components(circuitbox_xml)
+    circuitbox_xml = round_position_values(circuitbox_xml)
+    circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "InventoryIconColor")
+    circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "ContainerColor")
+    circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "SpriteDepthWhenDropped")
+    circuitbox_xml = clean_component_whitespace(circuitbox_xml)
+    
+    return circuitbox_xml
 end
 
 
