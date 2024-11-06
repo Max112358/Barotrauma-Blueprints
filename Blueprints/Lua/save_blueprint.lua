@@ -457,11 +457,21 @@ function blue_prints.prepare_circuitbox_xml_for_saving()
         -- Add any values stored inside the component
         local my_editables = component.Item.GetInGameEditableProperties(false)
         for tuple in my_editables do 
+		
+			local field_name = tostring(tuple.Item2.name)
+			local field_value = tostring(tuple.Item2.GetValue(tuple.Item1))
+			
+			field_name = blue_prints.clean_string(field_name)
+			field_value = blue_prints.clean_string(field_value)
+			
+			--print(field_name)
+			--print(field_value)
+		
             circuitbox_xml = add_encoded_attribute_to_component(
                 circuitbox_xml, 
                 component.ID, 
-                tostring(tuple.Item2.name),
-                tostring(tuple.Item2.GetValue(tuple.Item1))
+                field_name,
+                field_value
             )
         end
         

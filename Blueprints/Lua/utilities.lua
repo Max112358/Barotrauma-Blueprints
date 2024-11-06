@@ -2,7 +2,30 @@ if SERVER then return end --prevents it from running on the server
 
 
 
-
+function blue_prints.clean_string(str)
+    local cleaned = str
+    -- Common control characters
+    cleaned = cleaned:gsub("\r", "")      -- Carriage Return
+    cleaned = cleaned:gsub("\n", "")      -- Line Feed
+    cleaned = cleaned:gsub("\t", "")      -- Tab
+    cleaned = cleaned:gsub("\f", "")      -- Form Feed
+    cleaned = cleaned:gsub("\b", "")      -- Backspace
+    cleaned = cleaned:gsub("\v", "")      -- Vertical Tab
+    cleaned = cleaned:gsub("\a", "")      -- Bell (Alert)
+    cleaned = cleaned:gsub("\027", "")    -- Escape
+    cleaned = cleaned:gsub("\000", "")    -- Null byte
+    cleaned = cleaned:gsub("\x1A", "")    -- EOF (Control-Z)
+    cleaned = cleaned:gsub("%z", "")      -- Additional null bytes
+    cleaned = cleaned:gsub("%c", "")      -- Any remaining control characters
+    
+    -- Remove Unicode zero-width characters
+    cleaned = cleaned:gsub("\u{200B}", "") -- Zero-width space
+    cleaned = cleaned:gsub("\u{200C}", "") -- Zero-width non-joiner
+    cleaned = cleaned:gsub("\u{200D}", "") -- Zero-width joiner
+    cleaned = cleaned:gsub("\u{FEFF}", "") -- Zero-width no-break space (BOM)
+    
+    return cleaned
+end
 
 
 
