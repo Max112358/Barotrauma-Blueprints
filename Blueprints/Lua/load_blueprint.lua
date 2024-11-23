@@ -510,13 +510,16 @@ function blue_prints.resize_labels(labels_from_blueprint)
 		
 		local amount_to_expand_x = label_in_blueprint.size.width - label_node.size.X
 		amount_to_expand_x = amount_to_expand_x
-		local resize_amount_right = Vector2(amount_to_expand_x, 256) --the 256 doesnt do anything, but if you send a 0 it doesnt work
+		local amount_to_expand_y = label_in_blueprint.size.height - label_node.size.Y
+		--local resize_amount_y = Vector2(256, -amount_to_expand_y) --the 256 doesnt do anything, but if you send a 0 it doesnt work
+
+		local expansion_vector = Vector2(amount_to_expand_x, -amount_to_expand_y)
+
+		local resize_amount_right = expansion_vector 
 		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").ResizeNode(label_node, 2, resize_amount_right) --2 is expand right
 		
-		local amount_to_expand_y = label_in_blueprint.size.height - label_node.size.Y
-		local resize_amount_y = Vector2(256, -amount_to_expand_y)
-		
-		Timer.Wait(function() resize_label(label_node, 1, resize_amount_y) end, 200) --the commands override each other if sent too fast. 1 is expand down.
+
+		Timer.Wait(function() resize_label(label_node, 1, expansion_vector) end, 200) --the commands override each other if sent too fast. 1 is expand down.
 		
     end
 	

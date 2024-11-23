@@ -31,6 +31,13 @@ function blue_prints.escapePercent(str)
     return str:gsub("%%", "%%%%")
 end
 
+function blue_prints.getScreenResolution()
+    if Screen and Screen.Selected and Screen.Selected.Cam then
+        return Screen.Selected.Cam.Resolution
+    end
+    return nil
+end
+
 function blue_prints.get_description_from_xml(xmlString)
     local function trim(s)
         return s:match("^%s*(.-)%s*$")

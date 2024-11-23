@@ -1,8 +1,11 @@
 if SERVER then return end -- we don't want server to run GUI code.
 
+
+
+
 -- our main frame where we will put our custom GUI
 local frame = GUI.Frame(GUI.RectTransform(Vector2(1, 1)), nil)
-local resolution = Screen.Selected.Cam.Resolution
+local resolution = blue_prints.getScreenResolution()
 local run_once_at_start = false
 
 local function generate_load_gui()
@@ -100,7 +103,7 @@ local function generate_load_gui()
 end
 
 local function check_and_rebuild_frame()
-    local new_resolution = Screen.Selected.Cam.Resolution
+    local new_resolution = blue_prints.getScreenResolution()
     if new_resolution ~= resolution or run_once_at_start == false then
         -- our main frame where we will put our custom GUI
         frame = GUI.Frame(GUI.RectTransform(Vector2(1, 1)), nil)
