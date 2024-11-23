@@ -47,7 +47,7 @@ local function add_encoded_attribute_to_component(xmlContent, targetId, attribut
         if id and tonumber(id) == targetId then
             -- Create the full attribute string with the encoded value
             local attributeStr = string.format('%s=%s', attributeName, encodedValue)
-            return componentString:gsub('/>$', ' ' .. attributeStr .. ' />')
+            return componentString:gsub('/>$', ' ' .. blue_prints.escapePercent(attributeStr) .. ' />')
         else
             return componentString
         end
@@ -333,40 +333,49 @@ end
 
 local function clean_component_whitespace(xmlContent)
     local function cleanComponent(componentString)
-        -- First, ensure there's a space between all attributes
-        local cleanedString = componentString:gsub('(%S+="[^"]*")(%S)', '%1 %2')
+        -- Don't touch anything between STRINGSTART and STRINGEND
+        local parts = {}
+        local lastPos = 1
         
-        -- Then, replace multiple spaces with 2 spaces
-        cleanedString = cleanedString:gsub('%s+', '  ')
+        -- Find start and end positions of all encoded strings
+        local startPos = componentString:find('<<<STRINGSTART>>>', lastPos, true)
+        while startPos do
+            local endPos = componentString:find('<<<STRINGEND>>>', startPos, true)
+            if not endPos then break end
+            
+            -- Add the part before the encoded string
+            local beforePart = componentString:sub(lastPos, startPos - 1)
+            beforePart = beforePart:gsub('%s+', ' ') -- collapse multiple spaces to single space
+            table.insert(parts, beforePart)
+            
+            -- Add the encoded string unchanged
+            table.insert(parts, componentString:sub(startPos, endPos + 13))
+            
+            lastPos = endPos + 14
+            startPos = componentString:find('<<<STRINGSTART>>>', lastPos, true)
+        end
         
-        -- Ensure there's exactly one space after the opening '<Component'
-        cleanedString = cleanedString:gsub('<Component%s*', '<Component  ')
+        -- Add any remaining part after the last encoded string
+        if lastPos <= #componentString then
+            local remaining = componentString:sub(lastPos)
+            remaining = remaining:gsub('%s+', ' ')
+            table.insert(parts, remaining)
+        end
         
-        -- Remove any space just before the closing '/>'
-        cleanedString = cleanedString:gsub('%s+/>', '  />')
-        
-        return cleanedString
+        return table.concat(parts)
     end
 
-    -- Find all Component elements and process them
-    local function processComponents(content)
-        return content:gsub('<Component.-/>', cleanComponent)
-    end
-
-    -- Find the CircuitBox element
+    -- Find all Component tags and process them
     local circuitBoxStart, circuitBoxEnd = xmlContent:find('<CircuitBox.->')
     local circuitBoxEndTag = xmlContent:find('</CircuitBox>', circuitBoxEnd)
     if not circuitBoxStart or not circuitBoxEndTag then
-        print("CircuitBox element not found")
         return xmlContent
     end
 
-    -- Extract and process the CircuitBox content
     local circuitBoxContent = xmlContent:sub(circuitBoxEnd + 1, circuitBoxEndTag - 1)
-    local modifiedCircuitBoxContent = processComponents(circuitBoxContent)
+    local modifiedContent = circuitBoxContent:gsub('<Component.-/>', cleanComponent)
 
-    -- Replace the original CircuitBox content with the modified content
-    return xmlContent:sub(1, circuitBoxEnd) .. modifiedCircuitBoxContent .. xmlContent:sub(circuitBoxEndTag)
+    return xmlContent:sub(1, circuitBoxEnd) .. modifiedContent .. xmlContent:sub(circuitBoxEndTag)
 end
 
 

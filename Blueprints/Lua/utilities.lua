@@ -27,7 +27,9 @@ function blue_prints.clean_string(str)
     return cleaned
 end
 
-
+function blue_prints.escapePercent(str)
+    return str:gsub("%%", "%%%%")
+end
 
 function blue_prints.get_description_from_xml(xmlString)
     local function trim(s)
