@@ -512,35 +512,23 @@ end
 
 
 function blue_prints.save_blueprint(provided_path)
-	if Character.Controlled == nil then print("you dont have a character") return end
-	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
-	
+    if Character.Controlled == nil then print("you dont have a character") return end
+    if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
+    
     -- Check if the filename already ends with .txt
     if not string.match(provided_path, "%.txt$") then
         -- Add .txt if it's not already present
         provided_path = provided_path .. ".txt"
     end
 
-	local file_path = (blue_prints.save_path .. "/" .. provided_path)
-	
+    local file_path = blue_prints.normalizePath(blue_prints.save_path .. "/" .. provided_path)
     local circuitbox_xml = blue_prints.prepare_circuitbox_xml_for_saving()
-	
 
-	-- Open the file for writing
-	local file = io.open(file_path, "w")
-
-	-- Check if the file was successfully opened
-	if file then
-		-- Write the XML string to the file
-		file:write(circuitbox_xml)
-		
-		-- Close the file
-		file:close()
-		
-		print("blueprint saved to " .. file_path)
-		return
-	else
-		print("Error: Could not open file for writing")
-	end
+    -- Write the XML string to the file using our new write function
+    if blue_prints.writeFile(file_path, circuitbox_xml) then
+        print("blueprint saved to " .. file_path)
+    else
+        print("Error: Could not save blueprint")
+    end
 end
 

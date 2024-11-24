@@ -515,9 +515,7 @@ function blue_prints.resize_labels(labels_from_blueprint)
 
 		local expansion_vector = Vector2(amount_to_expand_x, -amount_to_expand_y)
 
-		local resize_amount_right = expansion_vector 
-		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").ResizeNode(label_node, 2, resize_amount_right) --2 is expand right
-		
+		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").ResizeNode(label_node, 2, expansion_vector) --2 is expand right
 
 		Timer.Wait(function() resize_label(label_node, 1, expansion_vector) end, 200) --the commands override each other if sent too fast. 1 is expand down.
 		
@@ -764,111 +762,69 @@ end
 
 
 function blue_prints.construct_blueprint(provided_path)
-	if Character.Controlled == nil then print("you dont have a character") return end
-	if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
-	
-	wires_added_complete = false
-	labels_changed_complete = false
-	
-	
-	if Game.Paused then --the load will fail if you attempt it while paused. This fixes that.
-		print("Unpause the game to complete loading your circuit.")
-		Timer.Wait(function() blue_prints.construct_blueprint(provided_path) end, 1000)
-		return
-	end
+    if Character.Controlled == nil then print("you dont have a character") return end
+    if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
+    
+    wires_added_complete = false
+    labels_changed_complete = false
+    
+    if Game.Paused then --the load will fail if you attempt it while paused. This fixes that.
+        print("Unpause the game to complete loading your circuit.")
+        Timer.Wait(function() blue_prints.construct_blueprint(provided_path) end, 1000)
+        return
+    end
 
-	-- Check if the filename already ends with .txt
+    -- Check if the filename already ends with .txt
     if not string.match(provided_path, "%.txt$") then
         -- Add .txt if it's not already present
         provided_path = provided_path .. ".txt"
     end
 
-	local file_path = (blue_prints.save_path .. "/" .. provided_path)
-	path_to_loaded_file = file_path
-	local xmlContent, err = blue_prints.readFile(file_path)
+    local file_path = blue_prints.normalizePath(blue_prints.save_path .. "/" .. provided_path)
+    path_to_loaded_file = file_path  -- Keep track for unit testing
+    
+    -- Use our new read function
+    local xmlContent = blue_prints.readFileContents(file_path)
 
-	if xmlContent then
-		-- In the usage section:
-		local inputs, outputs, components, wires, labels, inputNodePos, outputNodePos = blue_prints.parseXML(xmlContent)
-		
-		-- Set the entire array to false
-		for key, _ in pairs(has_load_completed_array) do
-			has_load_completed_array[key] = false
-		end
-		
-		
-		--print("Inputs:", inputs)
-		--print("Outputs:", outputs)
-		--print("Components:", components)
-		--print("Wires:", wires)
+    if xmlContent then
+        -- Parse the XML content
+        local inputs, outputs, components, wires, labels, inputNodePos, outputNodePos = blue_prints.parseXML(xmlContent)
+        
+        -- Set the entire array to false
+        for key, _ in pairs(has_load_completed_array) do
+            has_load_completed_array[key] = false
+        end
 
-		--[[
-		for name, value in pairs(inputs) do
-			print(string.format("  %s: %s", name, value))
-		end
-	
+        -- Check inventory for required components
+        local missing_components = blue_prints.check_inventory_for_requirements(components)
 
-		for name, value in pairs(outputs) do
-			print(string.format("  %s: %s", name, value))
-		end
+        local all_needed_items_are_present = true
+        for _, count in pairs(missing_components) do
+            if count > 0 then
+                all_needed_items_are_present = false
+                break
+            end
+        end
 
-		if components then
-			print("\nComponents:")
-			for _, component in ipairs(components) do
-				print(string.format("Component ID: %s", component.id))
-				print(string.format("  Position: (%.2f, %.2f)", component.position.x, component.position.y))
-				print(string.format("  Used Resource: %s", component.usedResource))
-			end
-		else
-			print("Components is nil")
-		end
-
-		if wires then
-			print("\nWires:")
-			for _, wire in ipairs(wires) do
-				print(string.format("Wire ID: %s", wire.id))
-				print(string.format("  From: %s (Target: %s)", wire.from.name, wire.from.target or "nil"))
-				print(string.format("  To: %s (Target: %s)", wire.to.name, wire.to.target or "nil"))
-			end
-		else
-			print("Wires is nil")
-		end
-		--]]
-		
-		--Check inventory for required components
-		local missing_components = blue_prints.check_inventory_for_requirements(components)
-
-		local all_needed_items_are_present = true
-		for _, count in pairs(missing_components) do
-			if count > 0 then
-				all_needed_items_are_present = false
-				break
-			end
-		end
-
-		if all_needed_items_are_present then
-			print("All required components are present! Now loading blueprint...")
-			GUI.AddMessage('File Loading...', Color.White)
-			blue_prints.clear_circuitbox()
-			Timer.Wait(function() blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos) end, 500)
-		else
-			print("You are missing: ")
-			GUI.AddMessage('Not Enough Components', Color.Red)
-			for name, count in pairs(missing_components) do
-				if count > 0 then
-					print(name .. ": " .. count)
-				end
-			end
-		end
-
-		
-
-		
-	else
-		print("file not found")
-		print("saved designs:")
-		blue_prints.print_all_saved_files()
-	end
+        if all_needed_items_are_present then
+            print("All required components are present! Now loading blueprint...")
+            GUI.AddMessage('File Loading...', Color.White)
+            blue_prints.clear_circuitbox()
+            Timer.Wait(function() blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos) end, 500)
+        else
+            print("You are missing: ")
+            GUI.AddMessage('Not Enough Components', Color.Red)
+            for name, count in pairs(missing_components) do
+                if count > 0 then
+                    print(name .. ": " .. count)
+                end
+            end
+        end
+    else
+        print("file not found")
+        print("saved designs:")
+        blue_prints.print_all_saved_files()
+    end
 end
 
 

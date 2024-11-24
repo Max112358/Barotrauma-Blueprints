@@ -23,44 +23,57 @@ local function generate_load_gui()
     local menuContent = GUI.Frame(GUI.RectTransform(Vector2(0.4, 0.6), blue_prints.current_gui_page.RectTransform, GUI.Anchor.Center))
     local menuList = GUI.ListBox(GUI.RectTransform(Vector2(1, 1), menuContent.RectTransform, GUI.Anchor.BottomCenter))
 
-    local title_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.1), menuList.Content.RectTransform), "LOAD", nil, nil, GUI.Alignment.Center)
+    local title_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.1), menuList.Content.RectTransform), "LOAD BLUEPRINT", nil, nil, GUI.Alignment.Center)
     title_text.TextScale = 2.0
     title_text.Wrap = false
 
-    local instruction_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.2), menuList.Content.RectTransform), 'Click on one of the buttons to load that blueprint. The FPGA cost is how many components are required to make it. If the base component is not available, FPGAs will be used instead. These components must be in your main inventory, not a toolbelt/backpack etc. The descriptions here come from a label in that circuit titled "Description". Click anywhere outside this box to cancel.', nil, nil, GUI.Alignment.Center)
+    local instruction_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.2), menuList.Content.RectTransform), 
+        'Click a button to load. Hover over the button to see its description. \n\nIf the base component is not available, FPGAs will be used instead. These components must be in your main inventory, not a toolbelt/backpack etc. \n\nClick anywhere outside this box to cancel.', 
+        nil, nil, GUI.Alignment.CenterLeft)
     instruction_text.Wrap = true
     instruction_text.Padding = Vector4(0, 0, 0, 0) --no idea why this is needed, but it wont wrap correctly without this.
 
     local saved_files = File.GetFiles(blue_prints.save_path)
     for name, value in pairs(saved_files) do
         if string.match(value, "%.txt$") then
-            local filename = value:match("([^\\]+)$") --capture after last backslash
-            local filename = string.gsub(filename, "%.txt$", "") --cut out the .txt at the end
+            local filename = value:match("([^\\]+)$")
+            local filename = string.gsub(filename, "%.txt$", "")
             
             local xml_of_file = blue_prints.readFile(value)
             local description_of_file = blue_prints.get_description_from_xml(xml_of_file)
+            local number_of_components_in_file = blue_prints.get_component_count_from_xml(xml_of_file)
             
+            -- Create button container
+            local buttonContainer = GUI.Frame(GUI.RectTransform(Vector2(1, 0.05), menuList.Content.RectTransform))
+            
+            -- Create load button with tooltip
+            local button_label = filename .. " - " .. tostring(number_of_components_in_file) .. " FPGAs"
+            local leftButton = GUI.Button(GUI.RectTransform(Vector2(0.90, 1), buttonContainer.RectTransform, GUI.Anchor.CenterLeft), 
+                tostring(button_label), GUI.Alignment.CenterLeft, "GUIButtonSmall")
+            
+            -- Set tooltip with description
             if description_of_file then
                 description_of_file = description_of_file:gsub("&#xA;", "\n") --turn baros weird formatting back into newlines. This is how it does "enter".
                 description_of_file = description_of_file:gsub("&#xD;", "\n") --2 versions of "enter" for some reason.
+                leftButton.ToolTip = description_of_file
+            else
+                leftButton.ToolTip = "No description available"
             end
             
-            local number_of_components_in_file = blue_prints.get_component_count_from_xml(xml_of_file)
-            
-            -- Add this new code for side-by-side buttons
-            local buttonContainer = GUI.Frame(GUI.RectTransform(Vector2(1, 0.025), menuList.Content.RectTransform))
-
-            local button_label = filename .. " - " .. tostring(number_of_components_in_file) .. " FPGAs"
-            local leftButton = GUI.Button(GUI.RectTransform(Vector2(0.90, 1), buttonContainer.RectTransform, GUI.Anchor.CenterLeft), tostring(button_label), GUI.Alignment.CenterLeft, "GUIButtonSmall")
             leftButton.OnClicked = function ()
                 blue_prints.most_recently_loaded_blueprint_name = filename
                 blue_prints.construct_blueprint(filename)
                 blue_prints.current_gui_page.Visible = not blue_prints.current_gui_page.Visible
             end
 
-            local rightButton = GUI.Button(GUI.RectTransform(Vector2(0.10, 1), buttonContainer.RectTransform, GUI.Anchor.CenterRight), "Delete", GUI.Alignment.Center, "GUIButtonSmall")
+            -- Create delete button with tooltip
+            local rightButton = GUI.Button(GUI.RectTransform(Vector2(0.10, 1), buttonContainer.RectTransform, GUI.Anchor.CenterRight), 
+                "Delete", GUI.Alignment.Center, "GUIButtonSmall")
+            rightButton.ToolTip = "Delete " .. filename
             rightButton.OnClicked = function ()
-                message_box = GUI.MessageBox('Are you sure you want to delete this blueprint?', '', {'Cancel', 'Delete Blueprint'}) 
+                message_box = GUI.MessageBox('Delete Blueprint?', 
+                    'Are you sure you want to delete "' .. filename .. '"?', 
+                    {'Cancel', 'Delete'}) 
     
                 cancel_button = nil
                 delete_button = nil
@@ -68,7 +81,7 @@ local function generate_load_gui()
                 if message_box.Buttons[0] == nil then --this is if no one has registered it. If some other mod registers it I dont want it to break.
                     cancel_button = message_box.Buttons[1]
                     delete_button = message_box.Buttons[2]
-                else --if its been registered, it will behave as a csharp table
+                else
                     cancel_button = message_box.Buttons[0]
                     delete_button = message_box.Buttons[1]
                 end
@@ -83,19 +96,14 @@ local function generate_load_gui()
                 delete_button.OnClicked = function ()
                     blue_prints.delete_blueprint(filename)
                     blue_prints.current_gui_page.Visible = not blue_prints.current_gui_page.Visible
-                    GUI.AddMessage('File Deleted', Color.White)
+                    GUI.AddMessage('Blueprint Deleted', Color.White)
                     message_box.Close()
                 end
             end
-            rightButton.Color = Color(255, 80, 80) -- Sets the button color to red
-                        
-            if description_of_file ~= nil then
-                local description_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.15), menuList.Content.RectTransform), description_of_file, nil, nil, GUI.Alignment.TopLeft)
-                description_text.Wrap = true
-                description_text.Padding = Vector4(0, 0, 0, 0) --no idea why this is needed, but it wont wrap correctly without this.
-            end
+            rightButton.Color = Color(255, 80, 80)
             
-            local spacer_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.025), menuList.Content.RectTransform), "", nil, nil, GUI.Alignment.TopLeft)
+            -- Add a small spacer between entries
+            local spacer = GUI.Frame(GUI.RectTransform(Vector2(1, 0.01), menuList.Content.RectTransform))
         end
     end
     

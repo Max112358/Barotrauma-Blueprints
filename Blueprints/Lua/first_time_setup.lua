@@ -2,41 +2,30 @@ if SERVER then return end --prevents it from running on the server
 
 -- Function to write text to a file
 local function writeFile(path, text)
-    local file = io.open(path, "w")
-    if file then
-        file:write(text)
-        file:close()
-    else
-        print("Error: Could not open file for writing")
-    end
+    return blue_prints.writeFile(path, text)
 end
 
-
-
 local function copy_all_txt_files(source, destination)
-
-    local saved_files = File.GetFiles(source)
+    local saved_files = blue_prints.getFiles(source)
     
     for name, value in pairs(saved_files) do
         if string.match(value, "%.txt$") then
-            --print(string.format("  %s: %s", name, value))
-			local filename = value:match("([^\\]+)$")
-			local file_to_copy = File.Read(value)
-			local save_path = destination .. "/" .. filename
-			if not File.Exists(save_path) then
-				writeFile(save_path , file_to_copy)
-			end
+            local filename = value:match("([^/\\]+)$") -- Match after last slash or backslash
+            local file_to_copy = blue_prints.readFileContents(value)
+            if file_to_copy then
+                local save_path = blue_prints.normalizePath(destination .. "/" .. filename)
+                if not File.Exists(save_path) then
+                    writeFile(save_path, file_to_copy)
+                end
+            end
         end
     end
 end
 
-
---on first run, create the directory
-if not File.DirectoryExists(blue_prints.save_path) then
-	local createDir = File.CreateDirectory(blue_prints.save_path)
-	copy_all_txt_files(blue_prints.path, blue_prints.save_path)
-	if not createDir then
-		print("Failed to create directory")
-		return nil
-	end
+--on first run, create the directory with our new helper function
+if not blue_prints.checkDirectory(blue_prints.save_path) then
+    print("Failed to create blueprint directory")
+    return nil
 end
+
+copy_all_txt_files(blue_prints.path, blue_prints.save_path)

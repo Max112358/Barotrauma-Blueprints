@@ -106,14 +106,16 @@ end
 
 
 
-local function check_file_against_string(file_path, comparison_string)
+function check_file_against_string(file_path, comparison_string)
+  local file_path = blue_prints.normalizePath(file_path)
+  local file_content = blue_prints.readFileContents(file_path)
+  if not file_content then
+      return false, "Unable to open file"
+  end
+  
   local include_prefixes = {'<InputNode' , '<OutputNode' , '<ConnectionLabelOverride', '<Component', '<From name=' , '<To name=', '<Label id='}
   local ignore_anywhere = {'header="Blueprints" body="Circuit made with Blueprints. &#xA; &#xA; Get it now on the steam workshop!"'}
 
-  local file = io.open(file_path, "r")
-  if not file then
-    return false, "Unable to open file"
-  end
 
   local file_lines = {}
   for line in file:lines() do
@@ -196,32 +198,26 @@ end
 
 
 function blue_prints.loading_complete_unit_test(path_to_loaded_file, loaded_circuit_xml)
-	local result = check_file_against_string(path_to_loaded_file, loaded_circuit_xml)
-	if result then
-		--do nothing, this is normal
-	else
-		print('‖color:red‖"blueprint that failed its test: "' .. path_to_loaded_file .. '‖end‖')
-		--print("blueprint that failed its test: " .. path_to_loaded_file)
-	end
-	return result
+  local result = check_file_against_string(path_to_loaded_file, loaded_circuit_xml)
+  if not result then
+      print('‖color:red‖"blueprint that failed its test: "' .. path_to_loaded_file .. '‖end‖')
+  end
+  return result
 end
 
 
 
 function blue_prints.unit_test_all_blueprint_files()
-
-    local saved_files = File.GetFiles(blue_prints.save_path)
-    current_delay = 0
-	
-    for name, value in pairs(saved_files) do
-        if string.match(value, "%.txt$") then
-			local filename = value:match("([^\\]+)$") --capture after last backslash
-			local filename = string.gsub(filename, "%.txt$", "") --cut out the .txt at the end
-			
-			
-			Timer.Wait(function() blue_prints.construct_blueprint(filename) end, current_delay)
-			current_delay = current_delay + 12000
-			
-        end
-    end
+  local saved_files = blue_prints.getFiles(blue_prints.save_path)
+  current_delay = 0
+  
+  for name, value in pairs(saved_files) do
+      if string.match(value, "%.txt$") then
+          local filename = value:match("([^/\\]+)$")
+          local filename = string.gsub(filename, "%.txt$", "")
+          
+          Timer.Wait(function() blue_prints.construct_blueprint(filename) end, current_delay)
+          current_delay = current_delay + 12000
+      end
+  end
 end
