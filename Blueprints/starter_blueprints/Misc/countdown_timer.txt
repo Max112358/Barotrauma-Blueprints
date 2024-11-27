@@ -1,0 +1,70 @@
+<Root>
+  <Item name="" identifier="circuitbox" ID="1013" markedfordeconstruction="false" flippedx="true" rect="208,-8,32,32" NonInteractable="False" NonPlayerTeamInteractable="False" AllowSwapping="True" Rotation="0" Scale="0.5" SpriteColor="255,255,255,255" InventoryIconColor="255,255,255,255" ContainerColor="255,255,255,255" InvulnerableToDamage="False" Tags="smallitem" DisplaySideBySideWhenLinked="False" DisallowedUpgrades="" SpriteDepth="0.8" HiddenInGame="False" conditionpercentage="100">
+    <Holdable Attached="True" SpriteDepthWhenDropped="0.55" PickingTime="5" CanBePicked="True" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgDetachWrench">
+      <requireditem items="wrench" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
+    </Holdable>
+    <ConnectionPanel Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgRewireScrewdriver">
+      <requireditem items="screwdriver" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
+      <input name="signal_in1" />
+      <input name="signal_in2" />
+      <input name="signal_in3" />
+      <input name="signal_in4" />
+      <input name="signal_in5" />
+      <input name="signal_in6" />
+      <input name="signal_in7" />
+      <input name="signal_in8" />
+      <output name="signal_out1" />
+      <output name="signal_out2" />
+      <output name="signal_out3" />
+      <output name="signal_out4" />
+      <output name="signal_out5" />
+      <output name="signal_out6" />
+      <output name="signal_out7" />
+      <output name="signal_out8" />
+    </ConnectionPanel>
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1138,1139,1140,1182,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1183,1184,1185,1186,,,,,," ExtraStackSize="0" />
+    <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
+      <requireditem items="idcard" type="Picked" characterinventoryslottype="None" optional="false" ignoreineditor="true" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" msg="UNAUTHORIZED ACCESS" />
+      <InputNode pos="-1814,46">
+        <ConnectionLabelOverride name="signal_in1" value="From Button Signal Out" />
+      </InputNode>
+      <OutputNode pos="1057,6">
+        <ConnectionLabelOverride name="signal_out1" value="To Text Display Set Text" />
+      </OutputNode>
+      <Component id="0" position="-920,114" backingitemid="0,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>SignalCheckComponent<<<STRINGEND>>> Output=<<<STRINGSTART>>>11<<<STRINGEND>>> FalseOutput=<<<STRINGSTART>>><<<STRINGEND>>> TargetSignal=<<<STRINGSTART>>>1<<<STRINGEND>>> item=<<<STRINGSTART>>>signalcheckcomponent<<<STRINGEND>>> />
+      <Component id="1" position="209,424" backingitemid="1,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>MemoryComponent<<<STRINGEND>>> Value=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>memorycomponent<<<STRINGEND>>> />
+      <Component id="2" position="228,-181" backingitemid="2,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>OscillatorComponent<<<STRINGEND>>> OutputType=<<<STRINGSTART>>>Pulse<<<STRINGEND>>> Frequency=<<<STRINGSTART>>>1<<<STRINGEND>>> item=<<<STRINGSTART>>>oscillator<<<STRINGEND>>> />
+      <Component id="3" position="221,88" backingitemid="3,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>SubtractComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>999999<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>0<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>subtractcomponent<<<STRINGEND>>> />
+      <Wire id="0" backingitemid="" prefab="redwire">
+        <From name="signal_in1" target="" />
+        <To name="signal_in" target="0" />
+      </Wire>
+      <Wire id="1" backingitemid="0,0" prefab="redwire">
+        <From name="signal_out" target="0" />
+        <To name="signal_in" target="1" />
+      </Wire>
+      <Wire id="2" backingitemid="1,0" prefab="orangewire">
+        <From name="signal_out" target="3" />
+        <To name="signal_in" target="1" />
+      </Wire>
+      <Wire id="3" backingitemid="2,0" prefab="greenwire">
+        <From name="signal_out" target="1" />
+        <To name="signal_in1" target="3" />
+      </Wire>
+      <Wire id="4" backingitemid="3,0" prefab="wire">
+        <From name="signal_out" target="2" />
+        <To name="signal_in2" target="3" />
+      </Wire>
+      <Wire id="5" backingitemid="" prefab="orangewire">
+        <From name="signal_out" target="3" />
+        <To name="signal_out1" target="" />
+      </Wire>
+      <Label id="0" color="#7ED3E0" position="-888,198" size="852,408" header="Reset to 10 on button push" body="Just change the output to pick a different starting time. Add one to whatever number you want, IE 10 becomes 11." />
+      <Label id="1" color="#7ED3E0" position="230,201" size="704,945" header="Timing Circuit" body="Subtracts 1 every second from the mem and saves it in the mem" />
+      <Label id="2" color="#7ED3E0" position="-1725,838" size="470,276" header="Description" body="A countdown timer that counts down from a number you specify. " />
+      <Label id="3" color="#0082FF" position="1697,6" size="512,256" header="Blueprints" body="Circuit made with Blueprints. &#xA; &#xA; Get it now on the steam workshop!" />
+    </CircuitBox>
+    <itemstats />
+  </Item>
+</Root>

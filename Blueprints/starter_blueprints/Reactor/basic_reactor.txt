@@ -22,22 +22,23 @@
       <output name="signal_out7" />
       <output name="signal_out8" />
     </ConnectionPanel>
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1138,1139,1140,1141,1142,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1143;1144;1145;1146,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1138,1139,1140,1182,1183,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1184;1185;1186;2928,,,,,,,,," ExtraStackSize="0" />
     <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
+      <requireditem items="idcard" type="Picked" characterinventoryslottype="None" optional="false" ignoreineditor="true" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" msg="UNAUTHORIZED ACCESS" />
       <InputNode pos="-1143,8">
-        <ConnectionLabelOverride name="signal_in1" value="FROM LOAD VALUE OUT" />
         <ConnectionLabelOverride name="signal_in2" value="FROM FUEL OUT" />
+        <ConnectionLabelOverride name="signal_in1" value="FROM LOAD VALUE OUT" />
       </InputNode>
       <OutputNode pos="1025,0">
-        <ConnectionLabelOverride name="signal_out2" value="TO SET TURBINE OUTPUT" />
         <ConnectionLabelOverride name="signal_out1" value="TO SET FISSION RATE" />
+        <ConnectionLabelOverride name="signal_out2" value="TO SET TURBINE OUTPUT" />
       </OutputNode>
-      <Component id="0" position="240,461" backingitemid="0,0" usedresource="fpgacircuit"  Class="DivideComponent"  ClampMax="100"  ClampMin="0"  TimeFrame="0"  item="dividecomponent" />
-      <Component id="1" position="236,266" backingitemid="1,0" usedresource="fpgacircuit"  Class="DivideComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
-      <Component id="2" position="238,63" backingitemid="2,0" usedresource="fpgacircuit"  Class="DivideComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
-      <Component id="3" position="-485,446" backingitemid="3,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="30"  item="memorycomponent" />
-      <Component id="4" position="-464,71" backingitemid="4,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="75"  item="memorycomponent" />
+      <Component id="0" position="240,461" backingitemid="0,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>DivideComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>100<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>0<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>dividecomponent<<<STRINGEND>>> />
+      <Component id="1" position="236,266" backingitemid="1,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>DivideComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>999999<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>-999999<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>dividecomponent<<<STRINGEND>>> />
+      <Component id="2" position="238,63" backingitemid="2,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>DivideComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>999999<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>-999999<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>dividecomponent<<<STRINGEND>>> />
+      <Component id="3" position="-485,446" backingitemid="3,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>MemoryComponent<<<STRINGEND>>> Value=<<<STRINGSTART>>>30<<<STRINGEND>>> item=<<<STRINGSTART>>>memorycomponent<<<STRINGEND>>> />
+      <Component id="4" position="-464,71" backingitemid="4,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>MemoryComponent<<<STRINGEND>>> Value=<<<STRINGSTART>>>75<<<STRINGEND>>> item=<<<STRINGSTART>>>memorycomponent<<<STRINGEND>>> />
       <Wire id="0" backingitemid="0,0" prefab="redwire">
         <From name="signal_out" target="4" />
         <To name="signal_in2" target="2" />

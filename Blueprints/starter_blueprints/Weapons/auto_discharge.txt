@@ -23,18 +23,19 @@
       <output name="signal_out8" />
     </ConnectionPanel>
     <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1138,1139,1140,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1141;1142,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1182;1183,,,,,,,,," ExtraStackSize="0" />
     <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
+      <requireditem items="idcard" type="Picked" characterinventoryslottype="None" optional="false" ignoreineditor="true" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" msg="UNAUTHORIZED ACCESS" />
       <InputNode pos="-1075,16">
-        <ConnectionLabelOverride name="signal_in2" value="MOTION DETECTOR FOR HUMANS" />
         <ConnectionLabelOverride name="signal_in1" value="MOTION DETECTOR FOR MONSTERS" />
+        <ConnectionLabelOverride name="signal_in2" value="MOTION DETECTOR FOR HUMANS" />
       </InputNode>
       <OutputNode pos="1245,27">
         <ConnectionLabelOverride name="signal_out1" value="TO DISCHARGE COIL TRIGGER" />
       </OutputNode>
-      <Component id="0" position="-232,107" backingitemid="0,0" usedresource="fpgacircuit"  Class="OscillatorComponent"  OutputType="Pulse"  Frequency="0.25"  item="oscillator" />
-      <Component id="1" position="550,-94" backingitemid="1,0" usedresource="fpgacircuit"  Class="AndComponent"  TimeFrame="0"  Output="1"  FalseOutput="0"  item="andcomponent" />
-      <Component id="2" position="-202,-127" backingitemid="2,0" usedresource="fpgacircuit"  Class="AndComponent"  TimeFrame="0"  Output="1"  FalseOutput="0"  item="andcomponent" />
+      <Component id="0" position="-232,107" backingitemid="0,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>OscillatorComponent<<<STRINGEND>>> OutputType=<<<STRINGSTART>>>Pulse<<<STRINGEND>>> Frequency=<<<STRINGSTART>>>0.25<<<STRINGEND>>> item=<<<STRINGSTART>>>oscillator<<<STRINGEND>>> />
+      <Component id="1" position="550,-94" backingitemid="1,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>AndComponent<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> Output=<<<STRINGSTART>>>1<<<STRINGEND>>> FalseOutput=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>andcomponent<<<STRINGEND>>> />
+      <Component id="2" position="-202,-127" backingitemid="2,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>AndComponent<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> Output=<<<STRINGSTART>>>1<<<STRINGEND>>> FalseOutput=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>andcomponent<<<STRINGEND>>> />
       <Wire id="0" backingitemid="" prefab="redwire">
         <From name="signal_in1" target="" />
         <To name="signal_in1" target="2" />

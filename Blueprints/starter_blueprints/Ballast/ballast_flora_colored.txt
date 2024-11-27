@@ -22,24 +22,25 @@
       <output name="signal_out7" />
       <output name="signal_out8" />
     </ConnectionPanel>
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1138,1139,1140,1141,1142,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1143;1144;1145,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1138,1139,1140,1182,1183,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1184;2928;2929,,,,,,,,," ExtraStackSize="0" />
     <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
+      <requireditem items="idcard" type="Picked" characterinventoryslottype="None" optional="false" ignoreineditor="true" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" msg="UNAUTHORIZED ACCESS" />
       <InputNode pos="-756,52">
-        <ConnectionLabelOverride name="signal_in2" value="Nav Velocity Y Out" />
         <ConnectionLabelOverride name="signal_in1" value="Lever Signal" />
+        <ConnectionLabelOverride name="signal_in2" value="Nav Velocity Y Out" />
         <ConnectionLabelOverride name="signal_in3" value="Water Detector Signal" />
       </InputNode>
-      <OutputNode pos="837,-113">
+      <OutputNode pos="1029,-113">
         <ConnectionLabelOverride name="signal_out3" value="Pump Set State" />
         <ConnectionLabelOverride name="signal_out2" value="Pump Set Target Level" />
         <ConnectionLabelOverride name="signal_out1" value="Lamp Set State and Set Color" />
       </OutputNode>
-      <Component id="0" position="-191,-91" backingitemid="0,0" usedresource="fpgacircuit"  Class="OrComponent"  TimeFrame="0"  Output="1"  FalseOutput="0"  item="orcomponent" />
-      <Component id="1" position="-69,152" backingitemid="1,0" usedresource="fpgacircuit"  Class="SignalCheckComponent"  Output="4.5999985"  FalseOutput="-100"  TargetSignal="1"  item="signalcheckcomponent" />
-      <Component id="2" position="386,-239" backingitemid="2,0" usedresource="fpgacircuit"  Class="ColorComponent"  UseHSV="false"  item="colorcomponent" />
-      <Component id="3" position="-203,-255" backingitemid="3,0" usedresource="fpgacircuit"  Class="NotComponent"  ContinuousOutput="false"  item="notcomponent" />
-      <Component id="4" position="-667,-327" backingitemid="4,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="0.3"  item="memorycomponent" />
+      <Component id="0" position="-191,-91" backingitemid="0,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>OrComponent<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> Output=<<<STRINGSTART>>>1<<<STRINGEND>>> FalseOutput=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>orcomponent<<<STRINGEND>>> />
+      <Component id="1" position="-69,152" backingitemid="1,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>SignalCheckComponent<<<STRINGEND>>> Output=<<<STRINGSTART>>>4.5999985<<<STRINGEND>>> FalseOutput=<<<STRINGSTART>>>-100<<<STRINGEND>>> TargetSignal=<<<STRINGSTART>>>1<<<STRINGEND>>> item=<<<STRINGSTART>>>signalcheckcomponent<<<STRINGEND>>> />
+      <Component id="2" position="386,-239" backingitemid="2,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>ColorComponent<<<STRINGEND>>> UseHSV=<<<STRINGSTART>>>false<<<STRINGEND>>> item=<<<STRINGSTART>>>colorcomponent<<<STRINGEND>>> />
+      <Component id="3" position="-203,-255" backingitemid="3,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>NotComponent<<<STRINGEND>>> ContinuousOutput=<<<STRINGSTART>>>false<<<STRINGEND>>> item=<<<STRINGSTART>>>notcomponent<<<STRINGEND>>> />
+      <Component id="4" position="-820,-317" backingitemid="4,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>MemoryComponent<<<STRINGEND>>> Value=<<<STRINGSTART>>>0.3<<<STRINGEND>>> item=<<<STRINGSTART>>>memorycomponent<<<STRINGEND>>> />
       <Wire id="0" backingitemid="" prefab="orangewire">
         <From name="signal_in1" target="" />
         <To name="signal_in1" target="0" />
@@ -86,7 +87,7 @@
       </Wire>
       <Label id="0" color="#7ED3E0" position="-101,398" size="596,192" header="Signal Check" body="output = empty&#xA;false output = -100&#xA;target signal = 1" />
       <Label id="1" color="#7ED3E0" position="-124,-516" size="473,207" header="Colour Logic" body="Lever: 1 - Red&#xA;Lever: 0, Pump:1 - Yellow&#xA;Lever: 0, Pump 0 - Green" />
-      <Label id="2" color="#7ED3E0" position="-680,-533" size="369,162" header="Memory" body="Lamp Brightness 0.0-1.0" />
+      <Label id="2" color="#7ED3E0" position="-724,-538" size="369,162" header="Memory" body="Lamp Brightness 0.0-1.0" />
       <Label id="3" color="#7ED3E0" position="-745,414" size="535,142" header="Lever" body="Off = Drain&#xA;On = Normal Operation" />
       <Label id="4" color="#7ED3E0" position="777,351" size="710,320" header="Description" body="Lets you easily drain water from a balast tank so you can cut out ballast flora easier. Ballast flora in a dry environment takes double damage. &#xA;&#xA;Start cutting when the light turns green." />
       <Label id="5" color="#7ED3E0" position="796,-549" size="527,246" header="Purpose" body="Extension of Max's Ballast Flora circuit adding a colour output for the ballast lamp to indicate the state of the circuit." />

@@ -22,35 +22,36 @@
       <output name="signal_out7" />
       <output name="signal_out8" />
     </ConnectionPanel>
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1138,1139,1140,1141,1142,1143,1144,1145,1146,2787,2788,2789,2790,2791,2792,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="2793;2794;2795;2796;2797;2798;2799;2800;2801;2802;2803;2804,2805;2813;2872,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1138,1139,1140,1182,1183,1184,1185,1186,2928,2929,2930,2931,2932,2933,2944,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="2945;2946;2947;2948;2949;3010;3011;3012;3013;3016;3017;3018,3019;3020;3021,,,,,,,," ExtraStackSize="0" />
     <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
+      <requireditem items="idcard" type="Picked" characterinventoryslottype="None" optional="false" ignoreineditor="true" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" msg="UNAUTHORIZED ACCESS" />
       <InputNode pos="-512,0">
-        <ConnectionLabelOverride name="signal_in4" value="FROM TEMP OUT" />
-        <ConnectionLabelOverride name="signal_in2" value="FROM FUEL OUT" />
-        <ConnectionLabelOverride name="signal_in5" value="FROM NAV TERMINAL VELOCITY X OUT" />
         <ConnectionLabelOverride name="signal_in1" value="FROM LOAD VALUE OUT" />
         <ConnectionLabelOverride name="signal_in3" value="FROM POWER VALUE OUT" />
+        <ConnectionLabelOverride name="signal_in5" value="FROM NAV TERMINAL VELOCITY X OUT" />
+        <ConnectionLabelOverride name="signal_in4" value="FROM TEMP OUT" />
+        <ConnectionLabelOverride name="signal_in2" value="FROM FUEL OUT" />
       </InputNode>
       <OutputNode pos="512,0">
-        <ConnectionLabelOverride name="signal_out2" value="TO SET TURBINE OUTPUT" />
         <ConnectionLabelOverride name="signal_out1" value="TO SET FISSION RATE" />
+        <ConnectionLabelOverride name="signal_out2" value="TO SET TURBINE OUTPUT" />
       </OutputNode>
-      <Component id="0" position="-1541,-84" backingitemid="0,0" usedresource="fpgacircuit"  Class="AdderComponent"  ClampMax="999999"  ClampMin="1"  TimeFrame="0"  item="addercomponent" />
-      <Component id="1" position="-1932,190" backingitemid="1,0" usedresource="fpgacircuit"  Class="DivideComponent"  ClampMax="999999"  ClampMin="0.10000000149011612"  TimeFrame="0"  item="dividecomponent" />
-      <Component id="2" position="-746,455" backingitemid="2,0" usedresource="fpgacircuit"  Class="SubtractComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="subtractcomponent" />
-      <Component id="3" position="-1341,451" backingitemid="3,0" usedresource="fpgacircuit"  Class="AdderComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="addercomponent" />
-      <Component id="4" position="-2149,697" backingitemid="4,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  ClampMax="2500"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
-      <Component id="5" position="-1076,1258" backingitemid="5,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  ClampMax="100"  ClampMin="15"  TimeFrame="0"  item="multiplycomponent" />
-      <Component id="6" position="-1680,1258" backingitemid="6,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="1.0625"  item="memorycomponent" />
-      <Component id="7" position="-1206,1034" backingitemid="7,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
-      <Component id="8" position="-1849,1034" backingitemid="8,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="50"  item="memorycomponent" />
-      <Component id="9" position="-1404,752" backingitemid="9,0" usedresource="fpgacircuit"  Class="AdderComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="addercomponent" />
-      <Component id="10" position="-221,767" backingitemid="10,0" usedresource="fpgacircuit"  Class="DivideComponent"  ClampMax="80"  ClampMin="-999999"  TimeFrame="0"  item="dividecomponent" />
-      <Component id="11" position="-147,-383" backingitemid="11,0" usedresource="fpgacircuit"  Class="MultiplyComponent"  ClampMax="999999"  ClampMin="-999999"  TimeFrame="0"  item="multiplycomponent" />
-      <Component id="12" position="-923,-418" backingitemid="12,0" usedresource="fpgacircuit"  Class="GreaterComponent"  Output="1.15"  FalseOutput="0.85"  TimeFrame="0"  item="greatercomponent" />
-      <Component id="13" position="-1984,-557" backingitemid="13,0" usedresource="fpgacircuit"  Class="MemoryComponent"  Value="10"  item="memorycomponent" />
-      <Component id="14" position="-1734,-351" backingitemid="14,0" usedresource="fpgacircuit"  Class="FunctionComponent"  item="abscomponent" />
+      <Component id="0" position="-1541,-84" backingitemid="0,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>AdderComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>999999<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>1<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>addercomponent<<<STRINGEND>>> />
+      <Component id="1" position="-1932,190" backingitemid="1,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>DivideComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>999999<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>0.10000000149011612<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>dividecomponent<<<STRINGEND>>> />
+      <Component id="2" position="-746,455" backingitemid="2,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>SubtractComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>999999<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>-999999<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>subtractcomponent<<<STRINGEND>>> />
+      <Component id="3" position="-1341,451" backingitemid="3,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>AdderComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>999999<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>-999999<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>addercomponent<<<STRINGEND>>> />
+      <Component id="4" position="-2149,697" backingitemid="4,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>MultiplyComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>2500<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>-999999<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>multiplycomponent<<<STRINGEND>>> />
+      <Component id="5" position="-1076,1258" backingitemid="5,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>MultiplyComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>100<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>15<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>multiplycomponent<<<STRINGEND>>> />
+      <Component id="6" position="-1680,1258" backingitemid="6,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>MemoryComponent<<<STRINGEND>>> Value=<<<STRINGSTART>>>1.0625<<<STRINGEND>>> item=<<<STRINGSTART>>>memorycomponent<<<STRINGEND>>> />
+      <Component id="7" position="-1206,1034" backingitemid="7,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>MultiplyComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>999999<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>-999999<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>multiplycomponent<<<STRINGEND>>> />
+      <Component id="8" position="-1849,1034" backingitemid="8,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>MemoryComponent<<<STRINGEND>>> Value=<<<STRINGSTART>>>50<<<STRINGEND>>> item=<<<STRINGSTART>>>memorycomponent<<<STRINGEND>>> />
+      <Component id="9" position="-1404,752" backingitemid="9,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>AdderComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>999999<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>-999999<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>addercomponent<<<STRINGEND>>> />
+      <Component id="10" position="-221,767" backingitemid="10,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>DivideComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>80<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>-999999<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>dividecomponent<<<STRINGEND>>> />
+      <Component id="11" position="-147,-383" backingitemid="11,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>MultiplyComponent<<<STRINGEND>>> ClampMax=<<<STRINGSTART>>>999999<<<STRINGEND>>> ClampMin=<<<STRINGSTART>>>-999999<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>multiplycomponent<<<STRINGEND>>> />
+      <Component id="12" position="-923,-418" backingitemid="12,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>GreaterComponent<<<STRINGEND>>> Output=<<<STRINGSTART>>>1.15<<<STRINGEND>>> FalseOutput=<<<STRINGSTART>>>0.85<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>greatercomponent<<<STRINGEND>>> />
+      <Component id="13" position="-1984,-557" backingitemid="13,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>MemoryComponent<<<STRINGEND>>> Value=<<<STRINGSTART>>>10<<<STRINGEND>>> item=<<<STRINGSTART>>>memorycomponent<<<STRINGEND>>> />
+      <Component id="14" position="-1734,-351" backingitemid="14,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>FunctionComponent<<<STRINGEND>>> item=<<<STRINGSTART>>>abscomponent<<<STRINGEND>>> />
       <Wire id="0" backingitemid="" prefab="redwire">
         <From name="signal_in3" target="" />
         <To name="signal_in1" target="0" />
@@ -131,23 +132,23 @@
         <From name="signal_in5" target="" />
         <To name="signal_in" target="14" />
       </Wire>
-      <Wire id="19" backingitemid="0,10" prefab="redwire">
+      <Wire id="20" backingitemid="0,10" prefab="redwire">
         <From name="signal_out" target="11" />
         <To name="signal_in1" target="2" />
       </Wire>
-      <Wire id="19" backingitemid="0,11" prefab="redwire">
+      <Wire id="20" backingitemid="0,11" prefab="redwire">
         <From name="signal_out" target="11" />
         <To name="signal_in1" target="3" />
       </Wire>
-      <Wire id="19" backingitemid="1,0" prefab="bluewire">
+      <Wire id="20" backingitemid="1,0" prefab="bluewire">
         <From name="signal_out" target="12" />
         <To name="signal_in2" target="11" />
       </Wire>
-      <Wire id="20" backingitemid="1,1" prefab="bluewire">
+      <Wire id="21" backingitemid="1,1" prefab="bluewire">
         <From name="signal_out" target="14" />
         <To name="signal_in1" target="12" />
       </Wire>
-      <Wire id="21" backingitemid="1,2" prefab="bluewire">
+      <Wire id="22" backingitemid="1,2" prefab="bluewire">
         <From name="signal_out" target="13" />
         <To name="signal_in2" target="12" />
       </Wire>

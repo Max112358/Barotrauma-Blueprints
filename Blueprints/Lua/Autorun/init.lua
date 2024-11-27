@@ -12,7 +12,8 @@ blue_prints.save_path = "LocalMods/Blueprints_saved_blueprints"
 blue_prints.most_recent_circuitbox = nil 
 blue_prints.time_delay_between_loops = 100
 blue_prints.current_gui_page = nil
-blue_prints.most_recently_loaded_blueprint_name = nil
+blue_prints.most_recently_used_blueprint_name = nil
+blue_prints.most_recent_folder = "[Root Directory]" -- Default to root directory
 blue_prints.unit_tests_enabled = false
 
 dofile(blue_prints.path .. "/Lua/gui/cs_required_warning.lua")
