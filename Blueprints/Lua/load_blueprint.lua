@@ -15,190 +15,201 @@ local has_load_completed_array = {
 
 
 
-
-
 function blue_prints.parseXML(xmlString)
-	local inputs = {}
-	local outputs = {}
-	local components = {}
-	local wires = {}
-	local labels = {}
-	local inputNodePos = {}
-	local outputNodePos = {}
 
-	-- Parse InputNode
-	local inputNode = xmlString:match("<InputNode[^>]+>")
-	if inputNode then
-		local posX, posY = inputNode:match('pos="([%d%.%-]+),([%d%.%-]+)"')
-		inputNodePos = { x = tonumber(posX), y = tonumber(posY) }
-	end
+	-- Define HTML entities for backwards compatibility
+    local html_entities = {
+        ['&quot;'] = '"',
+        ['&amp;'] = '&',
+        ['&lt;'] = '<',
+        ['&gt;'] = '>',
+        ['&nbsp;'] = ' ',
+        ['&iexcl;'] = '¡',
+        ['&cent;'] = '¢',
+        ['&pound;'] = '£',
+        ['&curren;'] = '¤',
+        ['&yen;'] = '¥',
+        ['&brvbar;'] = '¦',
+        ['&sect;'] = '§',
+        ['&uml;'] = '¨',
+        ['&copy;'] = '©',
+        ['&ordf;'] = 'ª',
+        ['&laquo;'] = '«',
+        ['&not;'] = '¬',
+        ['&shy;'] = '­',
+        ['&reg;'] = '®',
+        ['&macr;'] = '¯',
+        ['&deg;'] = '°',
+        ['&plusmn;'] = '±',
+        ['&sup2;'] = '²',
+        ['&sup3;'] = '³',
+        ['&acute;'] = '´',
+        ['&micro;'] = 'µ',
+        ['&para;'] = '¶',
+        ['&middot;'] = '·',
+        ['&cedil;'] = '¸',
+        ['&sup1;'] = '¹',
+        ['&ordm;'] = 'º',
+        ['&raquo;'] = '»',
+        ['&frac14;'] = '¼',
+        ['&frac12;'] = '½',
+        ['&frac34;'] = '¾',
+        ['&iquest;'] = '¿',
+        ['&#xA;'] = '\n',
+        ['&#xD;'] = '\n'
+    }
 
-	-- Parse OutputNode
-	local outputNode = xmlString:match("<OutputNode[^>]+>")
-	if outputNode then
-		local posX, posY = outputNode:match('pos="([%d%.%-]+),([%d%.%-]+)"')
-		outputNodePos = { x = tonumber(posX), y = tonumber(posY) }
-	end
+	local function contains_html_entities(str)
+        return str and str:find('&[^;]+;')
+    end
 
-	-- Parse input and output labels (if any)
-	for name, value in xmlString:gmatch('<ConnectionLabelOverride name="([^"]+)" value="([^"]+)"') do
-		if name:match("^signal_in") then
-			inputs[name] = value
-		elseif name:match("^signal_out") then
-			outputs[name] = value
-		end
-	end
+    local function decode_html_entities(str)
+        if not str or not contains_html_entities(str) then
+            return str
+        end
+        return (str:gsub('(&[^;]+;)', function(entity)
+            return html_entities[entity] or entity
+        end))
+    end
 
-	-- Parse Components
-	for component in xmlString:gmatch('<Component.-/>') do
-		local id = component:match('id="(%d+)"')
-		local positionX, positionY = component:match('position="([%-%d%.]+),([%-%d%.]+)"')
-		local usedResource = component:match('usedresource="([^"]+)"')
+    -- Function to decode a string that might be in either format
+    local function decode_string(str)
+        if not str then return "" end
+        
+        -- First try new format
+        local delimited_content = str:match("<<<STRINGSTART>>>(.-)<<<STRINGEND>>>")
+        if delimited_content then
+            -- Unescape any escaped delimiters
+            return delimited_content:gsub("\\<<<STRINGSTART>>>", "<<<STRINGSTART>>>")
+                                  :gsub("\\<<<STRINGEND>>>", "<<<STRINGEND>>>")
+        end
+        
+        -- If not in new format, try old format with HTML entities
+        return decode_html_entities(str)
+    end
 
-		-- Try new format first, then fall back to old format
-		local item = component:match('item=<<<STRINGSTART>>>([^<]+)<<<STRINGEND>>>') or component:match('item="([^"]+)"')
-		local class = component:match('Class=<<<STRINGSTART>>>([^<]+)<<<STRINGEND>>>') or
-		component:match('Class="([^"]+)"')
+    local inputs = {}
+    local outputs = {}
+    local components = {}
+    local wires = {}
+    local labels = {}
+    local inputNodePos = {}
+    local outputNodePos = {}
 
+    -- Parse InputNode
+    local inputNode = xmlString:match("<InputNode[^>]+>")
+    if inputNode then
+        local posX, posY = inputNode:match('pos="([%d%.%-]+),([%d%.%-]+)"')
+        inputNodePos = { x = tonumber(posX), y = tonumber(posY) }
+    end
 
-		local componentData = {
-			id = id,
-			position = { x = tonumber(positionX), y = tonumber(positionY) },
-			usedResource = usedResource,
-			item = item,
-			class = {
-				name = class,
-				attributes = {}
-			}
-		}
+    -- Parse OutputNode
+    local outputNode = xmlString:match("<OutputNode[^>]+>")
+    if outputNode then
+        local posX, posY = outputNode:match('pos="([%d%.%-]+),([%d%.%-]+)"')
+        outputNodePos = { x = tonumber(posX), y = tonumber(posY) }
+    end
 
+    -- Parse input and output labels (if any)
+    for name, value in xmlString:gmatch('<ConnectionLabelOverride name="([^"]+)" value="([^"]+)"') do
+        if name:match("^signal_in") then
+            inputs[name] = decode_string(value)
+        elseif name:match("^signal_out") then
+            outputs[name] = decode_string(value)
+        end
+    end
+    
+    -- Parse Components
+    for component in xmlString:gmatch('<Component.-/>') do
+        local id = component:match('id="(%d+)"')
+        local positionX, positionY = component:match('position="([%-%d%.]+),([%-%d%.]+)"')
+        local usedResource = component:match('usedresource="([^"]+)"')
 
-		-- Parse additional attributes for the class, including Value
-		-- First try new format with STRINGSTART/STRINGEND
-		for attr, value in component:gmatch('(%w+)=<<<STRINGSTART>>>(.-)<<<STRINGEND>>>') do
-			if attr ~= "id" and attr ~= "position" and attr ~= "backingitemid" and
-				attr ~= "usedresource" and attr ~= "item" and attr ~= "Class" then
-				componentData.class.attributes[attr] = value
-			end
-		end
+        -- Try both formats for item and class
+        local item = decode_string(component:match('item=<<<STRINGSTART>>>([^<]+)<<<STRINGEND>>>')) or
+                    component:match('item="([^"]+)"')
+        local class = decode_string(component:match('Class=<<<STRINGSTART>>>([^<]+)<<<STRINGEND>>>')) or
+                     component:match('Class="([^"]+)"')
 
-		-- If no attributes found, try old format
-		if next(componentData.class.attributes) == nil then
-			for attr, value in component:gmatch('(%w+)="(.-)"  ') do
-				if attr ~= "id" and attr ~= "position" and attr ~= "backingitemid" and
-					attr ~= "usedresource" and attr ~= "item" and attr ~= "Class" then
-					componentData.class.attributes[attr] = value
-				end
-			end
-		end
+        local componentData = {
+            id = id,
+            position = { x = tonumber(positionX), y = tonumber(positionY) },
+            usedResource = usedResource,
+            item = item,
+            class = {
+                name = class,
+                attributes = {}
+            }
+        }
 
+        -- Parse attributes in both new and old formats
+        -- First try new format
+        for attr, value in component:gmatch('(%w+)=<<<STRINGSTART>>>(.-)<<<STRINGEND>>>') do
+            if attr ~= "id" and attr ~= "position" and attr ~= "backingitemid" and
+                attr ~= "usedresource" and attr ~= "item" and attr ~= "Class" then
+                componentData.class.attributes[attr] = decode_string(value)
+            end
+        end
 
-		table.insert(components, componentData)
-	end
+        -- If no attributes found in new format, try old format
+        if next(componentData.class.attributes) == nil then
+            for attr, value in component:gmatch('(%w+)="(.-)"') do
+                if attr ~= "id" and attr ~= "position" and attr ~= "backingitemid" and
+                    attr ~= "usedresource" and attr ~= "item" and attr ~= "Class" then
+                    componentData.class.attributes[attr] = decode_html_entities(value)
+                end
+            end
+        end
 
-	-- Parse Wires
-	wires = {}
-	for wire in xmlString:gmatch("<Wire.-</Wire>") do
-		local wireData = {
-			id = wire:match('id="(%d+)"'),
-			prefab = wire:match('prefab="([^"]+)"')
-		}
+        table.insert(components, componentData)
+    end
 
-		local fromName, fromTarget = wire:match('<From name="([^"]+)" target="([^"]*)"')
-		local toName, toTarget = wire:match('<To name="([^"]+)" target="([^"]*)"')
+    -- Parse Wires
+    wires = {}
+    for wire in xmlString:gmatch("<Wire.-</Wire>") do
+        local wireData = {
+            id = wire:match('id="(%d+)"'),
+            prefab = wire:match('prefab="([^"]+)"')
+        }
 
-		wireData.from = { name = fromName, target = fromTarget ~= "" and fromTarget or nil }
-		wireData.to = { name = toName, target = toTarget ~= "" and toTarget or nil }
+        local fromName, fromTarget = wire:match('<From name="([^"]+)" target="([^"]*)"')
+        local toName, toTarget = wire:match('<To name="([^"]+)" target="([^"]*)"')
 
-		table.insert(wires, wireData)
-	end
+        wireData.from = { name = fromName, target = fromTarget ~= "" and fromTarget or nil }
+        wireData.to = { name = toName, target = toTarget ~= "" and toTarget or nil }
 
-	-- Parse Labels
-	for label in xmlString:gmatch('<Label[^>]+/>') do
-		local id = label:match('id="(%d+)"')
-		local color = label:match('color="([^"]+)"')
-		local posX, posY = label:match('position="([%d%.%-]+),([%d%.%-]+)"')
-		local sizeW, sizeH = label:match('size="([%d%.%-]+),([%d%.%-]+)"')
-		local header = label:match('header="([^"]+)"')
-		local body = label:match('body="([^"]+)"')
+        table.insert(wires, wireData)
+    end
 
+    -- Parse Labels with correct pattern matching
+    for label in xmlString:gmatch('<Label.-/>') do
+        -- Extract all attributes using individual pattern matches
+        local id = label:match('id="(%d+)"')
+        local color = label:match('color="([^"]+)"')
+        local posX, posY = label:match('position="([%d%.%-]+),([%d%.%-]+)"')
+        local sizeW, sizeH = label:match('size="([%d%.%-]+),([%d%.%-]+)"')
 
-		local html_entities = {
-			['&quot;'] = '"',
-			['&amp;'] = '&',
-			['&lt;'] = '<',
-			['&gt;'] = '>',
-			['&nbsp;'] = ' ',
-			['&iexcl;'] = '¡',
-			['&cent;'] = '¢',
-			['&pound;'] = '£',
-			['&curren;'] = '¤',
-			['&yen;'] = '¥',
-			['&brvbar;'] = '¦',
-			['&sect;'] = '§',
-			['&uml;'] = '¨',
-			['&copy;'] = '©',
-			['&ordf;'] = 'ª',
-			['&laquo;'] = '«',
-			['&not;'] = '¬',
-			['&shy;'] = '­',
-			['&reg;'] = '®',
-			['&macr;'] = '¯',
-			['&deg;'] = '°',
-			['&plusmn;'] = '±',
-			['&sup2;'] = '²',
-			['&sup3;'] = '³',
-			['&acute;'] = '´',
-			['&micro;'] = 'µ',
-			['&para;'] = '¶',
-			['&middot;'] = '·',
-			['&cedil;'] = '¸',
-			['&sup1;'] = '¹',
-			['&ordm;'] = 'º',
-			['&raquo;'] = '»',
-			['&frac14;'] = '¼',
-			['&frac12;'] = '½',
-			['&frac34;'] = '¾',
-			['&iquest;'] = '¿',
-			['&#xA;'] = '\n',
-			['&#xD;'] = '\n'
-		}
+        -- Use decode_string for both header and body
+        local header = decode_string(label:match('header="(.-)"'))
+        local body = decode_string(label:match('body="(.-)"'))
 
-		local function contains_html_entities(str)
-			return str:find('&[^;]+;')
-		end
+        table.insert(labels, {
+            id = id,
+            color = color,
+            position = { x = tonumber(posX), y = tonumber(posY) },
+            size = { width = tonumber(sizeW), height = tonumber(sizeH) },
+            header = header,
+            body = body
+        })
+    end
 
-		local function decode_html_entities(str)
-			if not contains_html_entities(str) then
-				return str
-			end
-			return (str:gsub('(&[^;]+;)', function(entity)
-				return html_entities[entity] or entity
-			end))
-		end
+    blue_prints.add_advertisement_label(components, labels, inputNodePos, outputNodePos) --if there is no ad, add one
 
-		if header then
-			header = decode_html_entities(header)
-		end
-		if body then
-			body = decode_html_entities(body)
-		end
-
-
-		table.insert(labels, {
-			id = id,
-			color = color,
-			position = { x = tonumber(posX), y = tonumber(posY) },
-			size = { width = tonumber(sizeW), height = tonumber(sizeH) },
-			header = header,
-			body = body
-		})
-	end
-
-	blue_prints.add_advertisement_label(components, labels, inputNodePos, outputNodePos) --if there is no ad, add one
-
-	return inputs, outputs, components, wires, labels, inputNodePos, outputNodePos
+    return inputs, outputs, components, wires, labels, inputNodePos, outputNodePos
 end
+
+
+
 
 function blue_prints.check_inventory_for_requirements(components)
 	--print("Game mode: ", Game.IsSubEditor)

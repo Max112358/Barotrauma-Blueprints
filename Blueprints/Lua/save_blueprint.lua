@@ -13,10 +13,12 @@ local function encodeAttributeString(str)
     local escaped = str:gsub(STRING_START, "\\<<<STRINGSTART>>>")
                       :gsub(STRING_END, "\\<<<STRINGEND>>>")
     
+    -- Clean the string of control characters
+    escaped = blue_prints.clean_string(escaped)
+    
     -- Wrap the escaped content with delimiters
     return STRING_START .. escaped .. STRING_END
 end
-
 
 -- Decodes a string that was stored in XML attributes
 local function decodeAttributeString(str)
@@ -34,6 +36,38 @@ local function decodeAttributeString(str)
                  :gsub("\\<<<STRINGEND>>>", STRING_END)
 end
 
+local function processLabelStrings(xmlString)
+    -- Process header and body attributes in Label tags
+    return xmlString:gsub('(<Label[^>]-)(header="([^"]*)")', function(prefix, full, content)
+        return prefix .. 'header="' .. encodeAttributeString(content) .. '"'
+    end):gsub('(<Label[^>]-)(body="([^"]*)")', function(prefix, full, content)
+        return prefix .. 'body="' .. encodeAttributeString(content) .. '"'
+    end)
+end
+
+
+-- Function to process input/output node labels
+local function processNodeLabels(xmlString)
+    -- Pattern to match InputNode or OutputNode sections
+    local function processNodeSection(nodeSection)
+        -- Process ConnectionLabelOverride tags within the node section
+        return nodeSection:gsub('(<ConnectionLabelOverride[^>]-value=)"([^"]*)"', function(prefix, content)
+            -- Don't re-encode if already encoded
+            if content:match("^" .. STRING_START .. ".*" .. STRING_END .. "$") then
+                return prefix .. '"' .. content .. '"'
+            end
+            return prefix .. '"' .. encodeAttributeString(content) .. '"'
+        end)
+    end
+
+    -- Process InputNode sections
+    xmlString = xmlString:gsub("(<InputNode.-</InputNode>)", processNodeSection)
+    
+    -- Process OutputNode sections
+    xmlString = xmlString:gsub("(<OutputNode.-</OutputNode>)", processNodeSection)
+    
+    return xmlString
+end
 
 
 -- Modified function to add encoded attributes to components
@@ -70,19 +104,6 @@ local function add_encoded_attribute_to_component(xmlContent, targetId, attribut
     -- Replace the original CircuitBox content with the modified content
     return xmlContent:sub(1, circuitBoxEnd) .. modifiedCircuitBoxContent .. xmlContent:sub(circuitBoxEndTag)
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -264,41 +285,6 @@ end
 
 
 
-
-
-
-local function add_attribute_to_component_in_xml(xmlContent, targetId, attributeString)
-	-- Function to add the attribute to the specific Component element
-	local function modifyComponent(componentString)
-		local id = componentString:match('id="(%d+)"')
-		if id and tonumber(id) == targetId then
-			local escapedAttributeString = attributeString:gsub('%%', '%%%%')
-			return componentString:gsub('/>$', ' ' .. escapedAttributeString .. ' />')
-		else
-			return componentString
-		end
-	end
-
-	-- Find the CircuitBox element
-	local circuitBoxStart, circuitBoxEnd = xmlContent:find('<CircuitBox.->')
-	local circuitBoxEndTag = xmlContent:find('</CircuitBox>', circuitBoxEnd)
-	if not circuitBoxStart or not circuitBoxEndTag then
-		print("CircuitBox element not found")
-		return xmlContent
-	end
-
-	-- Extract the CircuitBox content
-	local circuitBoxContent = xmlContent:sub(circuitBoxEnd + 1, circuitBoxEndTag - 1)
-
-	-- Modify the specific Component element
-	local modifiedCircuitBoxContent = circuitBoxContent:gsub('<Component.-/>', modifyComponent)
-
-	-- Replace the original CircuitBox content with the modified content
-	return xmlContent:sub(1, circuitBoxEnd) .. modifiedCircuitBoxContent .. xmlContent:sub(circuitBoxEndTag)
-end
-
-
-
 local function remove_attribute_from_components(xmlContent, attributeName)
     -- Function to remove the specified attribute from a component
     local function removeAttribute(componentString)
@@ -436,7 +422,6 @@ end
 
 
 
--- Modified prepare_circuitbox_xml_for_saving function
 function blue_prints.prepare_circuitbox_xml_for_saving()
     if blue_prints.most_recent_circuitbox == nil then print("no circuitbox detected") return end
 
@@ -466,16 +451,12 @@ function blue_prints.prepare_circuitbox_xml_for_saving()
         -- Add any values stored inside the component
         local my_editables = component.Item.GetInGameEditableProperties(false)
         for tuple in my_editables do 
-		
-			local field_name = tostring(tuple.Item2.name)
-			local field_value = tostring(tuple.Item2.GetValue(tuple.Item1))
-			
-			field_name = blue_prints.clean_string(field_name)
-			field_value = blue_prints.clean_string(field_value)
-			
-			--print(field_name)
-			--print(field_value)
-		
+            local field_name = tostring(tuple.Item2.name)
+            local field_value = tostring(tuple.Item2.GetValue(tuple.Item1))
+            
+            field_name = blue_prints.clean_string(field_name)
+            field_value = blue_prints.clean_string(field_value)
+            
             circuitbox_xml = add_encoded_attribute_to_component(
                 circuitbox_xml, 
                 component.ID, 
@@ -493,7 +474,13 @@ function blue_prints.prepare_circuitbox_xml_for_saving()
         )
     end
     
-    -- Cleanup to deal with deleted components
+    -- Process Label strings
+    circuitbox_xml = processLabelStrings(circuitbox_xml)
+    
+    -- Process Input/Output node labels
+    circuitbox_xml = processNodeLabels(circuitbox_xml)
+    
+    -- Cleanup and formatting
     circuitbox_xml = put_components_in_order(circuitbox_xml)
     circuitbox_xml = renumber_components(circuitbox_xml)
     circuitbox_xml = round_position_values(circuitbox_xml)
@@ -504,7 +491,6 @@ function blue_prints.prepare_circuitbox_xml_for_saving()
     
     return circuitbox_xml
 end
-
 
 
 
