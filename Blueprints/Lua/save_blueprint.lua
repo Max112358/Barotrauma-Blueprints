@@ -284,13 +284,20 @@ local function put_components_in_order(xmlContent)
 end
 
 
-
 local function remove_attribute_from_components(xmlContent, attributeName)
     -- Function to remove the specified attribute from a component
     local function removeAttribute(componentString)
-        -- Pattern to match the attribute and its value
-        local pattern = '%s*' .. attributeName .. '="[^"]+"'
-        return componentString:gsub(pattern, '')
+        -- Pattern to match traditional XML attributes
+        local pattern1 = '%s*' .. attributeName .. '="[^"]+"'
+        
+        -- Pattern to match encoded strings with delimiters
+        local pattern2 = '%s*' .. attributeName .. '=<<<STRINGSTART>>>[^<]*<<<STRINGEND>>>'
+        
+        -- Remove both types of attributes
+        local result = componentString:gsub(pattern1, '')
+        result = result:gsub(pattern2, '')
+        
+        return result
     end
 
     -- Find all Component elements and process them
@@ -429,6 +436,8 @@ function blue_prints.prepare_circuitbox_xml_for_saving()
     blue_prints.most_recent_circuitbox.Save(sacrificial_xml)
     local circuitbox_xml = tostring(sacrificial_xml)
 
+
+
     local components = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Components
     
     for i, component in ipairs(components) do
@@ -474,6 +483,11 @@ function blue_prints.prepare_circuitbox_xml_for_saving()
         )
     end
     
+    --remove stuff that shouldnt be there that gets added inside sub editor only
+    circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "InventoryIconColor")
+    circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "ContainerColor")
+    circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "SpriteDepthWhenDropped")
+
     -- Process Label strings
     circuitbox_xml = processLabelStrings(circuitbox_xml)
     
@@ -484,9 +498,6 @@ function blue_prints.prepare_circuitbox_xml_for_saving()
     circuitbox_xml = put_components_in_order(circuitbox_xml)
     circuitbox_xml = renumber_components(circuitbox_xml)
     circuitbox_xml = round_position_values(circuitbox_xml)
-    circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "InventoryIconColor")
-    circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "ContainerColor")
-    circuitbox_xml = remove_attribute_from_components(circuitbox_xml, "SpriteDepthWhenDropped")
     circuitbox_xml = clean_component_whitespace(circuitbox_xml)
     
     return circuitbox_xml
