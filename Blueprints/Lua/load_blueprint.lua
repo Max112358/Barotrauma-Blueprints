@@ -783,6 +783,13 @@ function blue_prints.construct_blueprint(provided_path)
 		return
 	end
 
+	local is_locked = blue_prints.get_circuit_box_lock_status()
+	if is_locked then
+		print("Circuit box is locked. Wiring is not possible.")
+		GUI.AddMessage('Wiring Locked', Color.Red)
+		return
+	end
+
 	wires_added_complete = false
 	labels_changed_complete = false
 

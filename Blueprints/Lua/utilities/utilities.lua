@@ -344,6 +344,28 @@ end
 
 
 
+function blue_prints.get_circuit_box_lock_status()
+    -- First verify we have a selected circuitbox
+    if blue_prints.most_recent_circuitbox == nil then
+        print("No circuitbox detected")
+        return false
+    end
+    
+    -- Get the CircuitBox component
+    local circuit_box = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox")
+    if circuit_box == nil then
+        print("Could not find CircuitBox component")
+        return false
+    end
+    
+    -- Return true if either permanently or temporarily locked
+    return circuit_box.Locked or circuit_box.TemporarilyLocked
+end
+-- Usage example:
+-- local is_locked = blue_prints.get_circuit_box_lock_status()
+
+
+
 
 --save a reference to the most recently interacted circuit box
 Hook.Patch("Barotrauma.Items.Components.CircuitBox", "AddToGUIUpdateList", function(instance, ptable)
