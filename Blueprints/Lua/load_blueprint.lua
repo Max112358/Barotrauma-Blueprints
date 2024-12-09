@@ -74,7 +74,7 @@ function blue_prints.parseXML(xmlString)
 
     -- Function to decode a string that might be in either format
     local function decode_string(str)
-        if not str then return "" end
+		if not str then return "" end
         
         -- First try new format
         local delimited_content = str:match("<<<STRINGSTART>>>(.-)<<<STRINGEND>>>")
@@ -121,15 +121,22 @@ function blue_prints.parseXML(xmlString)
     
     -- Parse Components
     for component in xmlString:gmatch('<Component.-/>') do
+
         local id = component:match('id="(%d+)"')
         local positionX, positionY = component:match('position="([%-%d%.]+),([%-%d%.]+)"')
         local usedResource = component:match('usedresource="([^"]+)"')
 
-        -- Try both formats for item and class
-        local item = decode_string(component:match('item=<<<STRINGSTART>>>([^<]+)<<<STRINGEND>>>')) or
-                    component:match('item="([^"]+)"')
-        local class = decode_string(component:match('Class=<<<STRINGSTART>>>([^<]+)<<<STRINGEND>>>')) or
-                     component:match('Class="([^"]+)"')
+		--try both formats for backwards compatibility
+
+		local item = component:match('item=<<<STRINGSTART>>>([^<]+)<<<STRINGEND>>>')
+		if not item or item == "" then
+			item = component:match('%sitem="([^"]+)"')
+		end
+		
+		local class = component:match('Class=<<<STRINGSTART>>>([^<]+)<<<STRINGEND>>>')
+		if not class or class == "" then
+			class = component:match('%sClass="([^"]+)"')
+		end
 
         local componentData = {
             id = id,
@@ -204,6 +211,23 @@ function blue_prints.parseXML(xmlString)
     end
 
     blue_prints.add_advertisement_label(components, labels, inputNodePos, outputNodePos) --if there is no ad, add one
+
+	--[[
+	-- Add this right before the return statement in blue_prints.parseXML:
+	print("Parsed Components:")
+	for i, component in ipairs(components) do
+		print(string.format("Component %d:", i))
+		print(string.format("  ID: %s", component.id))
+		print(string.format("  Position: (%.2f, %.2f)", component.position.x, component.position.y))
+		print(string.format("  Item: %s", component.item))
+		print(string.format("  Class: %s", component.class.name))
+		print("  Attributes:")
+		for attr, value in pairs(component.class.attributes) do
+			print(string.format("    %s: %s", attr, value))
+		end
+		print("----------")
+	end
+	--]]
 
     return inputs, outputs, components, wires, labels, inputNodePos, outputNodePos
 end
@@ -291,6 +315,18 @@ function blue_prints.add_component_to_circuitbox(component, use_fpga)
 	local component_position = Vector2(component.position.x, component.position.y)
 	--print(tostring(component))
 	--print(item_to_add)
+	--print(blue_prints.most_recent_circuitbox)
+	--print(blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox"))
+	--print(item_to_add)
+	--print(component.name)
+	--print(component_position)
+	--print(component.item)
+
+	if item_to_add == nil then
+        print("Error: Invalid component data")
+        return false
+    end
+
 	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").AddComponent(item_to_add, component_position)
 	--print(string.format("Added component %s at position (%.2f, %.2f)", use_fpga and "fpgacircuit" or component.item, component_position.x, component_position.y))
 end
@@ -787,6 +823,15 @@ function blue_prints.construct_blueprint(provided_path)
 	if is_locked then
 		print("Circuit box is locked. Wiring is not possible.")
 		GUI.AddMessage('Wiring Locked', Color.Red)
+		return
+	end
+
+	local isValid, message = blue_prints.validate_blueprint_file(provided_path)
+	if isValid then
+		--print("Blueprint file is valid")
+	else
+		print("Blueprint validation failed: " .. message)
+		GUI.AddMessage('Blueprint File Invalid', Color.Red)
 		return
 	end
 

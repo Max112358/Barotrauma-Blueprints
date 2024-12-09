@@ -26,6 +26,7 @@ if CSActive then --CSActive is if csharp scripts are enabled. This mod requires 
     
     --utilities
     dofile(blue_prints.path .. "/Lua/utilities/utilities.lua")
+    dofile(blue_prints.path .. "/Lua/utilities/safety_checks.lua")
     
     --core logic
     dofile(blue_prints.path .. "/Lua/save_blueprint.lua")
