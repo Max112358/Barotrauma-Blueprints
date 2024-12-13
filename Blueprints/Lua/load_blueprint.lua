@@ -726,75 +726,125 @@ function blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
 	has_load_completed_array["move_input_output_nodes_complete"] = true
 end
 
+function blue_prints.clear_circuitbox_recursive(batch_size)
+    if blue_prints.most_recent_circuitbox == nil then
+        print("no circuitbox detected")
+        return
+    end
+
+    batch_size = batch_size or 10 -- Default batch size of 10
+    local circuit_box = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox")
+    local something_cleared = false
+
+    -- Clear components in batches
+    local components = circuit_box.Components
+    if #components > 0 then
+        local batch = blue_prints.immutable_array_type.Create(blue_prints.getNthValue(components, 1))
+        local count = 0
+        
+        for _, component in ipairs(components) do
+            if count < batch_size then
+                batch = batch.Add(component)
+                count = count + 1
+                something_cleared = true
+            else
+                break
+            end
+        end
+        
+        if count > 0 then
+            circuit_box.RemoveComponents(batch)
+        end
+    end
+
+    -- Clear labels in batches
+    local labels = circuit_box.Labels
+    if #labels > 0 and not something_cleared then
+        local batch = blue_prints.immutable_array_type.Create(blue_prints.getNthValue(labels, 1))
+        local count = 0
+        
+        for _, label in ipairs(labels) do
+            if count < batch_size then
+                batch = batch.Add(label)
+                count = count + 1
+                something_cleared = true
+            else
+                break
+            end
+        end
+        
+        if count > 0 then
+            circuit_box.RemoveLabel(batch)
+        end
+    end
+
+    -- Clear wires in batches
+    local wires = circuit_box.Wires
+    if #wires > 0 and not something_cleared then
+        local batch = blue_prints.immutable_array_type.Create(blue_prints.getNthValue(wires, 1))
+        local count = 0
+        
+        for _, wire in ipairs(wires) do
+            if count < batch_size then
+                batch = batch.Add(wire)
+                count = count + 1
+                something_cleared = true
+            else
+                break
+            end
+        end
+        
+        if count > 0 then
+            circuit_box.RemoveWires(batch)
+        end
+    end
+
+    -- If we cleared something, schedule next batch
+    if something_cleared then
+        Timer.Wait(function() 
+            blue_prints.clear_circuitbox_recursive(batch_size)
+        end, blue_prints.time_delay_between_loops)
+    else
+        -- Everything is cleared, reset positions and labels
+        local move_input_vector = Vector2(-512, 0)
+        local move_output_vector = Vector2(512, 0)
+        blue_prints.move_input_output_nodes(move_input_vector, move_output_vector)
+
+        -- Reset the labels on the input output panels
+        local empty_input = {
+            signal_in1 = "", signal_in2 = "", signal_in3 = "", signal_in4 = "",
+            signal_in5 = "", signal_in6 = "", signal_in7 = "", signal_in8 = ""
+        }
+        local empty_output = {
+            signal_out1 = "", signal_out2 = "", signal_out3 = "", signal_out4 = "",
+            signal_out5 = "", signal_out6 = "", signal_out7 = "", signal_out8 = ""
+        }
+        blue_prints.change_input_output_labels(empty_input, empty_output)
+        has_load_completed_array["clear_circuitbox_complete"] = true
+		--print(os.time()) --print the system time
+    end
+end
+
+-- Update the original clear_circuitbox function to use the recursive version
 function blue_prints.clear_circuitbox()
-	if blue_prints.most_recent_circuitbox == nil then
-		print("no circuitbox detected")
-		return
-	end
-
-	local components = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Components
-	if #components > 0 then
-		local first_component = blue_prints.getNthValue(components, 1)
-		local component_immutable_array = blue_prints.immutable_array_type.Create(first_component)
-
-		for _, component in ipairs(components) do
-			component_immutable_array = component_immutable_array.Add(component)
-		end
-		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").RemoveComponents(component_immutable_array)
-	end
-
-	local labels = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Labels
-	if #labels > 0 then
-		local first_label = blue_prints.getNthValue(labels, 1)
-		local label_immutable_array = blue_prints.immutable_array_type.Create(first_label)
-
-		for _, label in ipairs(labels) do
-			label_immutable_array = label_immutable_array.Add(label)
-		end
-		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").RemoveLabel(label_immutable_array)
-	end
-
-
-
-	local wires = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Wires
-	if #wires > 0 then
-		local first_wire = blue_prints.getNthValue(wires, 1)
-		local wire_immutable_array = blue_prints.immutable_array_type.Create(first_wire)
-
-		for _, wire in ipairs(wires) do
-			wire_immutable_array = wire_immutable_array.Add(wire)
-		end
-		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").RemoveWires(wire_immutable_array)
-	end
-
-
-
-	--move the input output panels back to their original location
-	local move_input_vector = Vector2(-512, 0)
-	local move_output_vector = Vector2(512, 0)
-	blue_prints.move_input_output_nodes(move_input_vector, move_output_vector)
-
-	--reset the labels on the input output panels
-	local empty_input = { signal_in1 = "", signal_in2 = "", signal_in3 = "", signal_in4 = "", signal_in5 = "", signal_in6 =
-	"", signal_in7 = "", signal_in8 = "" }
-	local empty_output = { signal_out1 = "", signal_out2 = "", signal_out3 = "", signal_out4 = "", signal_out5 = "", signal_out6 =
-	"", signal_out7 = "", signal_out8 = "" }
-	blue_prints.change_input_output_labels(empty_input, empty_output)
-
-	has_load_completed_array["clear_circuitbox_complete"] = true
+	--If you remove too fast it causes baro to have event system problems.
+	--without this you get unpredictable results
+    blue_prints.clear_circuitbox_recursive(blue_prints.component_batch_size)
 end
 
 function blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos)
 	local number_of_components = #components
 	local number_of_labels = #labels
 	local number_of_wires = #wires
-	local time_delay_for_components = (number_of_components + 10) * blue_prints.time_delay_between_loops + 50
-	local time_delay_for_labels = (number_of_labels + 40) * blue_prints.time_delay_between_loops +
-	50                                                                                             --labels seem to take a long time in game
-	local time_delay_for_wire_completion = (number_of_wires + 10) * blue_prints.time_delay_between_loops + 50
+
+	local clear_delay = blue_prints.calculate_clear_delay()
+
+	local time_delay_for_components = ((number_of_components + 10) * blue_prints.time_delay_between_loops + 50) + clear_delay
+	local time_delay_for_labels = (number_of_labels + 40) * blue_prints.time_delay_between_loops + 50 + clear_delay --labels seem to take a long time in game
+	local time_delay_for_wire_completion = (number_of_wires + 10) * blue_prints.time_delay_between_loops + 50 + clear_delay
 
 	local longer_delay = math.max(time_delay_for_components + time_delay_for_wire_completion,
-		time_delay_for_labels + 1000) + 1000
+		time_delay_for_labels + 1000) + 1000 + clear_delay
 
 	blue_prints.add_all_components_to_circuitbox(components)
 	Timer.Wait(function() blue_prints.add_labels_to_circuitbox_recursive(labels, 1) end, 50)
@@ -892,10 +942,13 @@ function blue_prints.construct_blueprint(provided_path)
 			blue_prints.most_recently_used_blueprint_name = filename:gsub("%.txt$", "") -- Remove .txt if present
 			blue_prints.most_recent_folder = folder
 		
+			
+			local clear_delay = blue_prints.calculate_clear_delay()
 			blue_prints.clear_circuitbox()
+
 			Timer.Wait(
 			function() blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos,
-					outputNodePos) end, 500)
+					outputNodePos) end, clear_delay)
 		else
 			print("You are missing: ")
 			GUI.AddMessage('Not Enough Components', Color.Red)

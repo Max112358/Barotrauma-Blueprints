@@ -38,24 +38,31 @@ function blue_prints.getScreenResolution()
     return nil
 end
 
+
+
 function blue_prints.get_description_from_xml(xmlString)
+    --remove all whitespace
     local function trim(s)
         return s:match("^%s*(.-)%s*$")
     end
 
-    -- Find the Label tag with header="Description"
-    --local labelTag = xmlString:match('<Label[^>]+header="Description".-/>') --case sensitive
-	local labelTag = xmlString:match('<Label[^>]*header="[%s]*[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN][%s]*".-/>')
-    if not labelTag then
-        return nil
+    -- Define both patterns
+    local newFormatPattern = '<Label[^>]-header="<<<STRINGSTART>>>[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN]<<<STRINGEND>>>"[^>]-body="([^"]*)"[^>]*/>'
+    local oldFormatPattern = '<Label[^>]-header="[dD][eE][sS][cC][rR][iI][pP][tT][iI][oO][nN]"[^>]-body="([^"]*)"[^>]*/>'
+
+    -- Try matching new format first
+    local body = xmlString:match(newFormatPattern)
+    
+    -- If not found, try old format
+    if not body then
+        body = xmlString:match(oldFormatPattern)
     end
 
-    -- Extract the body attribute
-    local body = labelTag:match('body="([^"]*)"')
     if not body then
         return nil
     end
 
+    --The trim(body) call takes the description text we found and removes any whitespace (spaces, tabs, newlines) from the beginning and end of the text before returning it.
     return trim(body)
 end
 
@@ -366,6 +373,64 @@ end
 
 
 
+function blue_prints.count_circuit_elements()
+    if blue_prints.most_recent_circuitbox == nil then
+        print("no circuitbox detected")
+        return 0, 0, 0
+    end
+
+    local circuit_box = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox")
+    
+    -- Initialize counts to 0
+    local num_components = 0
+    local num_labels = 0
+    local num_wires = 0
+
+    -- Only count if the collections exist
+    if circuit_box.Components then
+        num_components = #circuit_box.Components
+    end
+
+    if circuit_box.Labels then
+        num_labels = #circuit_box.Labels
+    end
+
+    if circuit_box.Wires then
+        num_wires = #circuit_box.Wires
+    end
+
+    return num_components, num_labels, num_wires
+end
+
+function blue_prints.calculate_clear_delay()
+    -- Get current counts of all elements
+    local num_components, num_labels, num_wires = blue_prints.count_circuit_elements()
+
+    -- Calculate individual delays for each type
+    local component_delay = 0
+    local label_delay = 0 
+    local wire_delay = 0
+
+    -- Only calculate delays if we have elements to clear
+    if num_components > 0 then
+        component_delay = math.ceil(num_components / blue_prints.component_batch_size) * blue_prints.time_delay_between_loops
+    end
+    
+    if num_labels > 0 then
+        label_delay = math.ceil(num_labels / blue_prints.component_batch_size) * blue_prints.time_delay_between_loops
+    end
+    
+    if num_wires > 0 then
+        wire_delay = math.ceil(num_wires / blue_prints.component_batch_size) * blue_prints.time_delay_between_loops
+    end
+
+    -- Get minimum delay and add buffer time
+    --wire delay doesnt matter because wires are automatically removed when comps are removed
+    --there is some extra buffer in there to account for wires directly from input to output
+    local time_delay = component_delay + label_delay + 500 
+    
+    return time_delay
+end
 
 --save a reference to the most recently interacted circuit box
 Hook.Patch("Barotrauma.Items.Components.CircuitBox", "AddToGUIUpdateList", function(instance, ptable)

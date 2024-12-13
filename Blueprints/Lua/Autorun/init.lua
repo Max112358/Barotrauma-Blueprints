@@ -10,7 +10,8 @@ blue_prints.path = blue_prints.path and blue_prints.path:gsub("\\", "/") or ""
 blue_prints.save_path = "LocalMods/Blueprints_saved_blueprints"
 
 blue_prints.most_recent_circuitbox = nil 
-blue_prints.time_delay_between_loops = 100
+blue_prints.time_delay_between_loops = 150
+blue_prints.component_batch_size = 10
 blue_prints.current_gui_page = nil
 blue_prints.most_recently_used_blueprint_name = nil
 blue_prints.most_recent_folder = "[Root Directory]" -- Default to root directory
