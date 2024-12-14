@@ -18,10 +18,10 @@ local function check_and_rebuild_frame()
 		button.RectTransform.AbsoluteOffset = Point(25, 140)
 		button.OnClicked = function ()
 			
-			message_box = GUI.MessageBox('Are you sure you want to clear the box?', 'This will remove all components, labels and wires.', {'Cancel', 'Clear Box'}) 
+			local message_box = GUI.MessageBox('Are you sure you want to clear the box?', 'This will remove all components, labels and wires.', {'Cancel', 'Clear Box'}) 
 			
-			cancel_button = nil
-			clear_button = nil
+			local cancel_button = nil
+			local clear_button = nil
 			
 			if message_box.Buttons[0] == nil then --this is if no one has registered it. If some other mod registers it I dont want it to break.
 				cancel_button = message_box.Buttons[1]
@@ -31,6 +31,9 @@ local function check_and_rebuild_frame()
 				clear_button = message_box.Buttons[1]
 			end
 			
+			clear_button.Color = Color(160, 160, 255) -- Base color (more blue)
+			clear_button.HoverColor = Color(190, 190, 255) -- Lighter blue when hovering
+
 			cancel_button.OnClicked = function ()
 				message_box.Close()
 			end

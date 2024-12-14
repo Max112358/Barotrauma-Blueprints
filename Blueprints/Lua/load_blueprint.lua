@@ -3,6 +3,8 @@ if SERVER then return end --prevents it from running on the server
 local path_to_loaded_file = nil
 local has_load_completed_array = {
 	["clear_circuitbox_complete"] = false,
+	["clear_IO_label_complete"] = false,
+	["clear_IO_position_complete"] = false,
 	["add_components_complete"] = false,
 	["add_wires_complete"] = false,
 	["add_labels_complete"] = false,
@@ -442,7 +444,12 @@ function blue_prints.change_input_output_labels(input_dict, output_dict)
 	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").SetConnectionLabelOverrides(
 	output_connection_node, output_dict)
 
-	has_load_completed_array["change_input_output_labels_complete"] = true
+	--This function gets called twice, once to clear the box, one to change the IO
+	if has_load_completed_array["clear_IO_label_complete"] == false then
+		has_load_completed_array["clear_IO_label_complete"] = true
+	else 
+		has_load_completed_array["change_input_output_labels_complete"] = true
+	end
 end
 
 function blue_prints.add_advertisement_label(components, labels, inputNodePos, outputNodePos)
@@ -723,7 +730,12 @@ function blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
 	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").MoveComponent(move_output_vector,
 		output_connection_node_in_immutable_aray)
 
-	has_load_completed_array["move_input_output_nodes_complete"] = true
+	--this is used by both clear circuitbox and to reposition later
+	if has_load_completed_array["clear_IO_position_complete"] == false then
+		has_load_completed_array["clear_IO_position_complete"] = true
+	else 
+		has_load_completed_array["move_input_output_nodes_complete"] = true
+	end
 end
 
 function blue_prints.clear_circuitbox_recursive(batch_size)
@@ -832,32 +844,164 @@ function blue_prints.clear_circuitbox()
     blue_prints.clear_circuitbox_recursive(blue_prints.component_batch_size)
 end
 
-function blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos)
-	local number_of_components = #components
-	local number_of_labels = #labels
-	local number_of_wires = #wires
 
-	local clear_delay = blue_prints.calculate_clear_delay()
 
-	local time_delay_for_components = ((number_of_components + 10) * blue_prints.time_delay_between_loops + 50) + clear_delay
-	local time_delay_for_labels = (number_of_labels + 40) * blue_prints.time_delay_between_loops + 50 + clear_delay --labels seem to take a long time in game
-	local time_delay_for_wire_completion = (number_of_wires + 10) * blue_prints.time_delay_between_loops + 50 + clear_delay
 
-	local longer_delay = math.max(time_delay_for_components + time_delay_for_wire_completion,
-		time_delay_for_labels + 1000) + 1000 + clear_delay
 
-	blue_prints.add_all_components_to_circuitbox(components)
-	Timer.Wait(function() blue_prints.add_labels_to_circuitbox_recursive(labels, 1) end, 50)
-	Timer.Wait(function() blue_prints.add_wires_to_circuitbox_recursive(wires, 1) end, time_delay_for_components)
-	Timer.Wait(function() blue_prints.rename_all_labels_in_circuitbox(labels) end, time_delay_for_labels)
-	blue_prints.change_input_output_labels(inputs, outputs)
-	Timer.Wait(function() blue_prints.update_values_in_components(components) end, time_delay_for_components)
-	Timer.Wait(function() blue_prints.resize_labels(labels) end, time_delay_for_labels)
-	Timer.Wait(function() blue_prints.move_input_output_nodes(inputNodePos, outputNodePos) end, time_delay_for_components) --delayed because the change also changes the position
 
-	Timer.Wait(function() blue_prints.delayed_loading_complete_array_check() end, longer_delay)
-	Timer.Wait(function() blue_prints.delayed_loading_complete_unit_test() end, longer_delay)
+
+
+function blue_prints.construct_blueprint_steps(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos)
+    -- Reset all completion flags
+    for key, _ in pairs(has_load_completed_array) do
+        has_load_completed_array[key] = false
+    end
+    
+    -- Track which steps have been started
+    local steps_started = {}
+    
+	local largest_component_count = math.max(#components, #wires, #labels) --it resets every time, so you can just use largest
+
+    -- Maximum time to wait for each step (in milliseconds)
+    local TIMEOUT_PER_STEP = ((blue_prints.time_delay_between_loops * largest_component_count) / 1000) + 2  -- if wait longer than this, something has gone wrong
+    local step_start_time = nil
+
+	local function check_timeout()
+		--if step_start_time then
+		--	print(os.time() - step_start_time)
+		--end
+
+        if step_start_time and os.time() - step_start_time > TIMEOUT_PER_STEP then
+            return true
+        end
+        return false
+    end
+
+
+    local function check_progress()
+
+		-- Check for timeouts
+		if check_timeout() then
+			print("Step has timed out.")
+			blue_prints.delayed_loading_complete_array_check()
+        	blue_prints.delayed_loading_complete_unit_test()
+			return
+        end
+
+        -- Step 1: Clear circuitbox must complete first
+        if not has_load_completed_array["clear_circuitbox_complete"] and 
+		not has_load_completed_array["clear_IO_position_complete"] and
+		not has_load_completed_array["clear_IO_label_complete"] then
+            if not steps_started["clear"] then
+                steps_started["clear"] = true
+                step_start_time = os.time()
+                blue_prints.clear_circuitbox()
+            end
+            return Timer.Wait(check_progress, blue_prints.time_delay_between_loops)
+        end
+
+        -- After clear is complete, these steps can run in parallel:
+
+        -- Parallel Step: Add components
+        if not has_load_completed_array["add_components_complete"] then
+            if not steps_started["components"] then
+                steps_started["components"] = true
+                step_start_time = os.time()
+                blue_prints.add_all_components_to_circuitbox(components)
+            end
+        end
+
+        -- Parallel Step: Add labels
+        if not has_load_completed_array["add_labels_complete"] then
+            if not steps_started["labels"] then
+                steps_started["labels"] = true
+                step_start_time = os.time()
+                blue_prints.add_labels_to_circuitbox_recursive(labels, 1)
+            end
+        end
+
+        -- Parallel Step: Change I/O labels
+        if not has_load_completed_array["change_input_output_labels_complete"] then
+            if not steps_started["io_labels"] then
+                steps_started["io_labels"] = true
+                step_start_time = os.time()
+                blue_prints.change_input_output_labels(inputs, outputs)
+            end
+        end
+
+        -- These steps need to wait for their dependencies:
+
+        -- Add wires (needs components)
+        if has_load_completed_array["add_components_complete"] and 
+           not has_load_completed_array["add_wires_complete"] then
+            if not steps_started["wires"] then
+                steps_started["wires"] = true
+				step_start_time = os.time()
+                blue_prints.add_wires_to_circuitbox_recursive(wires, 1)
+            end
+        end
+
+        -- Update component values (needs components)
+        if has_load_completed_array["add_components_complete"] and 
+           not has_load_completed_array["update_values_in_components_complete"] then
+            if not steps_started["update_values"] then
+                steps_started["update_values"] = true
+				step_start_time = os.time()
+                blue_prints.update_values_in_components(components)
+            end
+        end
+
+        -- Rename labels (needs labels)
+        if has_load_completed_array["add_labels_complete"] and 
+           not has_load_completed_array["rename_labels_complete"] then
+            if not steps_started["rename"] then
+                steps_started["rename"] = true
+				step_start_time = os.time()
+                blue_prints.rename_all_labels_in_circuitbox(labels)
+            end
+        end
+
+        -- Resize labels (needs rename labels)
+        if has_load_completed_array["rename_labels_complete"] and 
+           not has_load_completed_array["resize_labels_complete"] then
+            if not steps_started["resize"] then
+                steps_started["resize"] = true
+				step_start_time = os.time()
+                blue_prints.resize_labels(labels)
+            end
+        end
+
+        -- Move I/O nodes (needs I/O labels)
+        if has_load_completed_array["change_input_output_labels_complete"] and 
+           not has_load_completed_array["move_input_output_nodes_complete"] then
+            if not steps_started["move_nodes"] then
+                steps_started["move_nodes"] = true
+				step_start_time = os.time()
+                blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
+            end
+        end
+
+        -- Continue checking progress
+        if not (has_load_completed_array["move_input_output_nodes_complete"] and
+                has_load_completed_array["resize_labels_complete"] and
+                has_load_completed_array["update_values_in_components_complete"] and
+                has_load_completed_array["add_wires_complete"]) then
+            return Timer.Wait(check_progress, blue_prints.time_delay_between_loops)
+        end
+
+        -- Final checks when everything is complete
+        blue_prints.delayed_loading_complete_array_check()
+        blue_prints.delayed_loading_complete_unit_test()
+    end
+
+    -- Start the process
+    check_progress()
 end
+
+
+
+
+
 
 function blue_prints.construct_blueprint(provided_path)
 	if Character.Controlled == nil then
@@ -910,11 +1054,6 @@ function blue_prints.construct_blueprint(provided_path)
 		-- Parse the XML content
 		local inputs, outputs, components, wires, labels, inputNodePos, outputNodePos = blue_prints.parseXML(xmlContent)
 
-		-- Set the entire array to false
-		for key, _ in pairs(has_load_completed_array) do
-			has_load_completed_array[key] = false
-		end
-
 		-- Check inventory for required components
 		local missing_components = blue_prints.check_inventory_for_requirements(components)
 
@@ -941,14 +1080,9 @@ function blue_prints.construct_blueprint(provided_path)
 			local filename = provided_path:match("([^/\\]+)$") or provided_path  -- Get everything after last / or \
 			blue_prints.most_recently_used_blueprint_name = filename:gsub("%.txt$", "") -- Remove .txt if present
 			blue_prints.most_recent_folder = folder
-		
-			
-			local clear_delay = blue_prints.calculate_clear_delay()
-			blue_prints.clear_circuitbox()
 
-			Timer.Wait(
-			function() blue_prints.wait_for_clear_circuitbox(inputs, outputs, components, wires, labels, inputNodePos,
-					outputNodePos) end, clear_delay)
+			blue_prints.construct_blueprint_steps(inputs, outputs, components, wires, labels, inputNodePos,outputNodePos)
+
 		else
 			print("You are missing: ")
 			GUI.AddMessage('Not Enough Components', Color.Red)
@@ -982,16 +1116,11 @@ function blue_prints.delayed_loading_complete_array_check()
 	else
 		GUI.AddMessage('Loading Failed', Color.Red)
 
-		message_box = GUI.MessageBox('Load Failed',
-			'Your circuit has failed to load. One of the load functions has failed to complete. Hit F3 for more details. \n \nTry loading it again. \n \nIf the problem persists please report this bug on the steam workshop page. Include a download link to your saved blueprint file and a screenshot of your console text (you can see that by hitting F3)',
-			{ 'OK' })
-		ok_button = nil
+		local message_box = GUI.MessageBox('Load Failed',
+		'Your circuit has failed to load. One of the load functions has failed to complete. Hit F3 for more details. \n \nTry loading it again. \n \nIf the problem persists please report this bug on the steam workshop page. Include a download link to your saved blueprint file and a screenshot of your console text (you can see that by hitting F3)',
+		{ 'OK' })
 
-		if message_box.Buttons[0] == nil then --this is if no one has registered it. If some other mod registers it I dont want it to break.
-			ok_button = message_box.Buttons[1]
-		else                            --if its been registered, it will behave as a csharp table
-			ok_button = message_box.Buttons[0]
-		end
+		local ok_button = message_box.Buttons[0] or message_box.Buttons[1]
 
 		ok_button.OnClicked = function()
 			message_box.Close()
@@ -1014,21 +1143,21 @@ function blue_prints.delayed_loading_complete_unit_test()
 			--GUI.AddMessage('Load Complete!', Color.White)
 		else
 			GUI.AddMessage('Load Failed!', Color.Red)
-			message_box = GUI.MessageBox('Load Failed',
-				'Your circuit has failed to load. Your blueprint file might be from an earlier version of Blueprints and nothing is actually wrong. Try saving it again (overwriting the original) to update your blueprint file to the latest version. \n \nIf you are certain your file is up to date try loading it again. Do not move or change anything during loading: the loaded circuit must match the blueprint file EXACTLY in order for you not to see this message. \n \nThis also means if the inputs change any values in any component the unit test will also fail. Same thing if you have some value that changes over time, like RGB or timing values from an oscillator. So the circuit might still be ok, it just does not match your save exactly. \n \nIf none of these exceptions apply and the problem persists please report this bug on the steam workshop page or the discord. Include a download link to your saved blueprint file and a screenshot of your console text (you can see that by hitting F3)',
-				{ 'OK' })
 
-			ok_button = nil
-
-			if message_box.Buttons[0] == nil then --this is if no one has registered it. If some other mod registers it I dont want it to break.
-				ok_button = message_box.Buttons[1]
-			else                         --if its been registered, it will behave as a csharp table
-				ok_button = message_box.Buttons[0]
-			end
-
+			local message_box = GUI.MessageBox('Load Failed',
+			'Your circuit has failed to load.\n\nYour blueprint file might be from an earlier version of Blueprints and nothing is actually wrong. Try saving it again (overwriting the original) to update your blueprint file to the latest version.\n\nIf you are certain your file is up to date try loading it again. Do not move or change anything during loading: the loaded circuit must match the blueprint file EXACTLY in order for you not to see this message.\n\nThis also means if the inputs change any values in any component the unit test will also fail. Same thing if you have some value that changes over time, like RGB or timing values from an oscillator. So the circuit might still be ok, it just does not match your save exactly.\n\nIf none of these exceptions apply and the problem persists please report this bug on the steam workshop page or the discord. Include a download link to your saved blueprint file and a screenshot of your console text (you can see that by hitting F3)',
+			{ 'OK' })
+	
+			local ok_button = message_box.Buttons[0] or message_box.Buttons[1]
+	
 			ok_button.OnClicked = function()
 				message_box.Close()
 			end
+	
+			for key, value in pairs(has_load_completed_array) do
+				print(tostring(key) .. ": " .. tostring(value))
+			end
+
 		end
 	end
 end
