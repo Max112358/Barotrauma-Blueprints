@@ -1,8 +1,10 @@
 if SERVER then return end --prevents it from running on the server
 
+local recursion_breaker_on = true
+
 local path_to_loaded_file = nil
 local has_load_completed_array = {
-	["clear_circuitbox_complete"] = false,
+	["clear_components_complete"] = false,
 	["clear_IO_label_complete"] = false,
 	["clear_IO_position_complete"] = false,
 	["add_components_complete"] = false,
@@ -429,6 +431,29 @@ function blue_prints.add_wires_to_circuitbox_recursive(wires, index)
 		blue_prints.time_delay_between_loops)
 end
 
+-- Check if labels have been reset
+local function check_labels_changed(input_dict, output_dict)
+	local input_output_nodes = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").InputOutputNodes
+	local input_connection_node = blue_prints.getNthValue(input_output_nodes, 1)
+	local output_connection_node = blue_prints.getNthValue(input_output_nodes, 2)
+
+	-- Check if any actual inputs/outputs differ from expected
+	for key, value in pairs(input_connection_node.ConnectionLabelOverrides) do
+		if value ~= (input_dict[key] or "") then
+			return false
+		end
+	end
+
+	for key, value in pairs(output_connection_node.ConnectionLabelOverrides) do
+		if value ~= (output_dict[key] or "") then
+			return false
+		end
+	end
+
+	return true
+end
+
+
 function blue_prints.change_input_output_labels(input_dict, output_dict)
 	if blue_prints.most_recent_circuitbox == nil then
 		print("no circuitbox detected")
@@ -444,12 +469,20 @@ function blue_prints.change_input_output_labels(input_dict, output_dict)
 	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").SetConnectionLabelOverrides(
 	output_connection_node, output_dict)
 
-	--This function gets called twice, once to clear the box, one to change the IO
-	if has_load_completed_array["clear_IO_label_complete"] == false then
-		has_load_completed_array["clear_IO_label_complete"] = true
-	else 
-		has_load_completed_array["change_input_output_labels_complete"] = true
+	if check_labels_changed(input_dict, output_dict) then
+		--This function gets called twice, once to clear the box, one to change the IO
+		if has_load_completed_array["clear_IO_label_complete"] == false then
+			has_load_completed_array["clear_IO_label_complete"] = true
+		else 
+			has_load_completed_array["change_input_output_labels_complete"] = true
+		end
+	else
+		if not recursion_breaker_on then
+			Timer.Wait(function() blue_prints.change_input_output_labels(input_dict, output_dict) end,
+			blue_prints.time_delay_between_loops)
+		end
 	end
+
 end
 
 function blue_prints.add_advertisement_label(components, labels, inputNodePos, outputNodePos)
@@ -573,13 +606,18 @@ function blue_prints.resize_labels(labels_from_blueprint)
 		local amount_to_expand_x = label_in_blueprint.size.width - label_node.size.X
 		amount_to_expand_x = amount_to_expand_x
 		local amount_to_expand_y = label_in_blueprint.size.height - label_node.size.Y
-		--local resize_amount_y = Vector2(256, -amount_to_expand_y) --the 256 doesnt do anything, but if you send a 0 it doesnt work
 
 		local expansion_vector = Vector2(amount_to_expand_x, -amount_to_expand_y)
 
+
 		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").ResizeNode(label_node, 2, expansion_vector) --2 is expand right
 
-		Timer.Wait(function() resize_label(label_node, 1, expansion_vector) end, 200)                             --the commands override each other if sent too fast. 1 is expand down.
+		--I dont know why, but if you dont have enough delay here, the labels will not resize properly
+		--the second resize will somehow overwrite the other axis with its non-resized version.
+		--ie if you were to resize a 256x256 into a 512x512, it would become a 256x512.
+		local resize_delay = (blue_prints.time_delay_between_loops * 8)
+
+		Timer.Wait(function() resize_label(label_node, 1, expansion_vector) end, resize_delay) --the commands override each other if sent too fast. 1 is expand down.
 	end
 
 	has_load_completed_array["resize_labels_complete"] = true
@@ -695,6 +733,49 @@ function blue_prints.update_values_in_components(components_from_blueprint)
 	has_load_completed_array["update_values_in_components_complete"] = true
 end
 
+
+-- Check if input/output nodes have moved to correct positions
+local function check_input_output_positions(expected_input_pos, expected_output_pos)
+	local input_output_nodes = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").InputOutputNodes
+	local input_connection_node = blue_prints.getNthValue(input_output_nodes, 1)
+	local output_connection_node = blue_prints.getNthValue(input_output_nodes, 2)
+
+	local input_pos_str = ""
+	local output_pos_str = ""
+	local actual_input_pos_str = ""
+	local actual_output_pos_str = ""
+
+	--find the strings for the expected and actual positions
+	if input_connection_node and input_connection_node.Position then
+		input_pos_str = type(expected_input_pos) == "table" and string.format("{X:%d Y:%d}", expected_input_pos.x, expected_input_pos.y) or tostring(expected_input_pos)
+		output_pos_str = type(expected_output_pos) == "table" and string.format("{X:%d Y:%d}", expected_output_pos.x, expected_output_pos.y) or tostring(expected_output_pos)
+		actual_input_pos_str = tostring(input_connection_node.Position)
+		actual_output_pos_str = tostring(output_connection_node.Position)
+	end
+
+	--[[
+	if true then
+		print("infinite loop for debugging purposes")
+		print("recursion breaker: ", recursion_breaker_on)
+		return false
+	end
+	--]]
+	
+	if actual_input_pos_str == input_pos_str and actual_output_pos_str == output_pos_str then
+		--print("Input/output nodes moved to correct positions")
+		return true
+	else
+		--print("Input/output nodes not in correct positions")
+		--print("Expected input position: ", input_pos_str)
+		--print("Actual input position: ", actual_input_pos_str) 
+		--print("Expected output position: ", output_pos_str)
+		--print("Actual output position: ", actual_output_pos_str)
+	end
+	return false
+end
+
+
+
 function blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
 	if blue_prints.most_recent_circuitbox == nil then
 		print("no circuitbox detected")
@@ -731,14 +812,48 @@ function blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
 		output_connection_node_in_immutable_aray)
 
 	--this is used by both clear circuitbox and to reposition later
-	if has_load_completed_array["clear_IO_position_complete"] == false then
-		has_load_completed_array["clear_IO_position_complete"] = true
-	else 
-		has_load_completed_array["move_input_output_nodes_complete"] = true
+	if check_input_output_positions(inputNodePos, outputNodePos) then
+		if has_load_completed_array["clear_IO_position_complete"] == false then
+			has_load_completed_array["clear_IO_position_complete"] = true
+		else 
+
+			has_load_completed_array["move_input_output_nodes_complete"] = true
+		end
+	else
+		if not recursion_breaker_on then
+			Timer.Wait(function() blue_prints.move_input_output_nodes(inputNodePos, outputNodePos) end,
+				blue_prints.time_delay_between_loops)
+		end
 	end
 end
 
+function blue_prints.reset_io()
+    if blue_prints.most_recent_circuitbox == nil then
+        print("no circuitbox detected")
+        return false
+    end
+
+    -- Stage 1: Reset the labels on the input output panels
+	local empty_input = {
+		signal_in1 = "", signal_in2 = "", signal_in3 = "", signal_in4 = "",
+		signal_in5 = "", signal_in6 = "", signal_in7 = "", signal_in8 = ""
+	}
+	local empty_output = {
+		signal_out1 = "", signal_out2 = "", signal_out3 = "", signal_out4 = "",
+		signal_out5 = "", signal_out6 = "", signal_out7 = "", signal_out8 = ""
+	}
+	blue_prints.change_input_output_labels(empty_input, empty_output)
+
+    -- Stage 2: Move input/output nodes to default positions
+	local move_input_vector = Vector2(-512, 0)
+	local move_output_vector = Vector2(512, 0)
+	blue_prints.move_input_output_nodes(move_input_vector, move_output_vector)
+
+
+end
+
 function blue_prints.clear_circuitbox_recursive(batch_size)
+	--this function removes all components, but does not change IO
     if blue_prints.most_recent_circuitbox == nil then
         print("no circuitbox detected")
         return
@@ -812,50 +927,35 @@ function blue_prints.clear_circuitbox_recursive(batch_size)
     end
 
     -- If we cleared something, schedule next batch
-    if something_cleared then
+    if something_cleared and not recursion_breaker_on then
         Timer.Wait(function() 
             blue_prints.clear_circuitbox_recursive(batch_size)
         end, blue_prints.time_delay_between_loops)
     else
-        -- Everything is cleared, reset positions and labels
-        local move_input_vector = Vector2(-512, 0)
-        local move_output_vector = Vector2(512, 0)
-        blue_prints.move_input_output_nodes(move_input_vector, move_output_vector)
-
-        -- Reset the labels on the input output panels
-        local empty_input = {
-            signal_in1 = "", signal_in2 = "", signal_in3 = "", signal_in4 = "",
-            signal_in5 = "", signal_in6 = "", signal_in7 = "", signal_in8 = ""
-        }
-        local empty_output = {
-            signal_out1 = "", signal_out2 = "", signal_out3 = "", signal_out4 = "",
-            signal_out5 = "", signal_out6 = "", signal_out7 = "", signal_out8 = ""
-        }
-        blue_prints.change_input_output_labels(empty_input, empty_output)
-        has_load_completed_array["clear_circuitbox_complete"] = true
-		--print(os.time()) --print the system time
+        -- Everything is cleared
+        has_load_completed_array["clear_components_complete"] = true
     end
 end
 
 -- Update the original clear_circuitbox function to use the recursive version
 function blue_prints.clear_circuitbox()
+	-- Reset inputs and outputs to default simultaneously to clearing components
+	blue_prints.reset_io()
+	recursion_breaker_on = false --disable to allow otherwise potentially infinite recursion
+
 	--If you remove too fast it causes baro to have event system problems.
 	--without this you get unpredictable results
-    blue_prints.clear_circuitbox_recursive(blue_prints.component_batch_size)
+	blue_prints.clear_circuitbox_recursive(blue_prints.component_batch_size)
 end
-
-
-
-
-
-
-
+	
+	
 
 function blue_prints.construct_blueprint_steps(inputs, outputs, components, wires, labels, inputNodePos, outputNodePos)
     -- Reset all completion flags
     for key, _ in pairs(has_load_completed_array) do
         has_load_completed_array[key] = false
     end
+	recursion_breaker_on = false --disable to allow otherwise potentially infinite recursion
     
     -- Track which steps have been started
     local steps_started = {}
@@ -877,20 +977,25 @@ function blue_prints.construct_blueprint_steps(inputs, outputs, components, wire
         return false
     end
 
+	local function end_build_testing_and_cleanup()
+		recursion_breaker_on = true
+		blue_prints.delayed_loading_complete_array_check()
+        blue_prints.delayed_loading_complete_unit_test()
+    end
+
 
     local function check_progress()
 
 		-- Check for timeouts
 		if check_timeout() then
 			print("Step has timed out.")
-			blue_prints.delayed_loading_complete_array_check()
-        	blue_prints.delayed_loading_complete_unit_test()
+			end_build_testing_and_cleanup()
 			return
         end
 
         -- Step 1: Clear circuitbox must complete first
-        if not has_load_completed_array["clear_circuitbox_complete"] and 
-		not has_load_completed_array["clear_IO_position_complete"] and
+        if not has_load_completed_array["clear_components_complete"] or 
+		not has_load_completed_array["clear_IO_position_complete"] or
 		not has_load_completed_array["clear_IO_label_complete"] then
             if not steps_started["clear"] then
                 steps_started["clear"] = true
@@ -898,9 +1003,11 @@ function blue_prints.construct_blueprint_steps(inputs, outputs, components, wire
                 blue_prints.clear_circuitbox()
             end
             return Timer.Wait(check_progress, blue_prints.time_delay_between_loops)
-        end
+		end
 
         -- After clear is complete, these steps can run in parallel:
+
+
 
         -- Parallel Step: Add components
         if not has_load_completed_array["add_components_complete"] then
@@ -955,8 +1062,8 @@ function blue_prints.construct_blueprint_steps(inputs, outputs, components, wire
         if has_load_completed_array["add_labels_complete"] and 
            not has_load_completed_array["rename_labels_complete"] then
             if not steps_started["rename"] then
-                steps_started["rename"] = true
 				step_start_time = os.time()
+                steps_started["rename"] = true
                 blue_prints.rename_all_labels_in_circuitbox(labels)
             end
         end
@@ -965,8 +1072,8 @@ function blue_prints.construct_blueprint_steps(inputs, outputs, components, wire
         if has_load_completed_array["rename_labels_complete"] and 
            not has_load_completed_array["resize_labels_complete"] then
             if not steps_started["resize"] then
-                steps_started["resize"] = true
 				step_start_time = os.time()
+                steps_started["resize"] = true
                 blue_prints.resize_labels(labels)
             end
         end
@@ -975,8 +1082,8 @@ function blue_prints.construct_blueprint_steps(inputs, outputs, components, wire
         if has_load_completed_array["change_input_output_labels_complete"] and 
            not has_load_completed_array["move_input_output_nodes_complete"] then
             if not steps_started["move_nodes"] then
-                steps_started["move_nodes"] = true
 				step_start_time = os.time()
+                steps_started["move_nodes"] = true
                 blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
             end
         end
@@ -985,13 +1092,14 @@ function blue_prints.construct_blueprint_steps(inputs, outputs, components, wire
         if not (has_load_completed_array["move_input_output_nodes_complete"] and
                 has_load_completed_array["resize_labels_complete"] and
                 has_load_completed_array["update_values_in_components_complete"] and
-                has_load_completed_array["add_wires_complete"]) then
+                has_load_completed_array["add_wires_complete"]) and
+				not recursion_breaker_on
+				then
             return Timer.Wait(check_progress, blue_prints.time_delay_between_loops)
         end
 
         -- Final checks when everything is complete
-        blue_prints.delayed_loading_complete_array_check()
-        blue_prints.delayed_loading_complete_unit_test()
+		end_build_testing_and_cleanup()
     end
 
     -- Start the process
@@ -1028,9 +1136,6 @@ function blue_prints.construct_blueprint(provided_path)
 		GUI.AddMessage('Blueprint File Invalid', Color.Red)
 		return
 	end
-
-	wires_added_complete = false
-	labels_changed_complete = false
 
 	if Game.Paused then --the load will fail if you attempt it while paused. This fixes that.
 		print("Unpause the game to complete loading your circuit.")

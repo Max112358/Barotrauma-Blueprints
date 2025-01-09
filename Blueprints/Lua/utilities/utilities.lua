@@ -373,7 +373,7 @@ end
 
 
 
-function blue_prints.count_circuit_elements()
+function blue_prints.count_circuit_elements_in_box()
     if blue_prints.most_recent_circuitbox == nil then
         print("no circuitbox detected")
         return 0, 0, 0
