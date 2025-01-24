@@ -1,7 +1,5 @@
 if SERVER then return end -- we don't want server to run GUI code.
 
-local frame = GUI.Frame(GUI.RectTransform(Vector2(1, 1)), nil)
-
 local resolution = blue_prints.getScreenResolution()
 local run_once_at_start = false
 
@@ -9,13 +7,10 @@ local function check_and_rebuild_frame()
 	local new_resolution = blue_prints.getScreenResolution()
 	if new_resolution ~= resolution or run_once_at_start == false then
 
-		-- our main frame where we will put our custom GUI
-    	frame = GUI.Frame(GUI.RectTransform(Vector2(1, 1)), nil)
-		frame.CanBeFocused = false
+        local spacer = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.04), blue_prints.gui_button_frame_list.Content.RectTransform), "", nil, nil, GUI.Alignment.Center)
 
-		-- a button to right of our screen to open a sub-frame menu
-		local button = GUI.Button(GUI.RectTransform(Vector2(0.1, 0.2), frame.RectTransform, GUI.Anchor.CenterRight), "Clear Circuitbox", GUI.Alignment.Center, "GUIButtonSmall")
-		button.RectTransform.AbsoluteOffset = Point(25, 140)
+        local button = GUI.Button(GUI.RectTransform(Vector2(1, 0.1), blue_prints.gui_button_frame_list.Content.RectTransform), "Clear Circuitbox", GUI.Alignment.Center, "GUIButtonSmall")
+
 		button.OnClicked = function ()
 			
 			local message_box = GUI.MessageBox('Are you sure you want to clear the box?', 'This will remove all components, labels and wires.', {'Cancel', 'Clear Box'}) 
@@ -48,7 +43,6 @@ local function check_and_rebuild_frame()
 			
 		end
 
-
 		resolution = new_resolution
 		run_once_at_start = true
 	end
@@ -57,5 +51,4 @@ end
 
 Hook.Patch("Barotrauma.Items.Components.CircuitBox", "AddToGUIUpdateList", function()
 	check_and_rebuild_frame()
-    frame.AddToGUIUpdateList()
 end, Hook.HookMethodType.After)

@@ -23,7 +23,7 @@ end
 
 -- a button top right of our screen to open a sub-frame menu
 local button = GUI.Button(GUI.RectTransform(Vector2(0.2, 0.2), frame.RectTransform, GUI.Anchor.TopRight), "Custom GUI Example", GUI.Alignment.Center, "GUIButtonSmall")
-button.RectTransform.AbsoluteOffset = Point(25, 50)
+button.RectTransform.AbsoluteOffset = Point(25, 200)
 button.OnClicked = function ()
     menu.Visible = not menu.Visible
 end
@@ -96,7 +96,7 @@ image.ToolTip = "Bandages are pretty cool"
 
 local customImageFrame = GUI.Frame(GUI.RectTransform(Point(128, 128), menuList.Content.RectTransform), "GUITextBox")
 customImageFrame.RectTransform.MinSize = Point(138, 138)
-local customSprite = Sprite(modPath .. "/luasmall.png")
+--local customSprite = Sprite(modPath .. "/luasmall.png")
 GUI.Image(GUI.RectTransform(Point(65, 65), customImageFrame.RectTransform, GUI.Anchor.Center), customSprite)
 
 Hook.Patch("Barotrauma.GameScreen", "AddToGUIUpdateList", function()

@@ -1,7 +1,5 @@
 if SERVER then return end --prevents it from running on the server
 
-local recursion_breaker_on = true
-
 local path_to_loaded_file = nil
 local has_load_completed_array = {
 	["clear_components_complete"] = false,
@@ -454,7 +452,7 @@ local function check_labels_changed(input_dict, output_dict)
 end
 
 
-function blue_prints.change_input_output_labels(input_dict, output_dict)
+function blue_prints.change_input_output_labels(input_dict, output_dict, recursion_count)
 	if blue_prints.most_recent_circuitbox == nil then
 		print("no circuitbox detected")
 		return
@@ -477,9 +475,11 @@ function blue_prints.change_input_output_labels(input_dict, output_dict)
 			has_load_completed_array["change_input_output_labels_complete"] = true
 		end
 	else
-		if not recursion_breaker_on then
-			Timer.Wait(function() blue_prints.change_input_output_labels(input_dict, output_dict) end,
+		if recursion_count < 5 then
+			Timer.Wait(function() blue_prints.change_input_output_labels(input_dict, output_dict, recursion_count + 1) end,
 			blue_prints.time_delay_between_loops)
+		else
+			print("Error: Failed to change input/output labels")
 		end
 	end
 
@@ -753,14 +753,6 @@ local function check_input_output_positions(expected_input_pos, expected_output_
 		actual_output_pos_str = tostring(output_connection_node.Position)
 	end
 
-	--[[
-	if true then
-		print("infinite loop for debugging purposes")
-		print("recursion breaker: ", recursion_breaker_on)
-		return false
-	end
-	--]]
-	
 	if actual_input_pos_str == input_pos_str and actual_output_pos_str == output_pos_str then
 		--print("Input/output nodes moved to correct positions")
 		return true
@@ -776,7 +768,7 @@ end
 
 
 
-function blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
+function blue_prints.move_input_output_nodes(inputNodePos, outputNodePos, recursion_count)
 	if blue_prints.most_recent_circuitbox == nil then
 		print("no circuitbox detected")
 		return
@@ -812,7 +804,8 @@ function blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
 		output_connection_node_in_immutable_aray)
 
 	--this is used by both clear circuitbox and to reposition later
-	if check_input_output_positions(inputNodePos, outputNodePos) then
+	--clear IO label must be done first, otherwise the increased width will thrown the numbers off
+	if check_input_output_positions(inputNodePos, outputNodePos) and has_load_completed_array["clear_IO_label_complete"] then
 		if has_load_completed_array["clear_IO_position_complete"] == false then
 			has_load_completed_array["clear_IO_position_complete"] = true
 		else 
@@ -820,9 +813,12 @@ function blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
 			has_load_completed_array["move_input_output_nodes_complete"] = true
 		end
 	else
-		if not recursion_breaker_on then
-			Timer.Wait(function() blue_prints.move_input_output_nodes(inputNodePos, outputNodePos) end,
+		if recursion_count < 5 then
+			local new_recursion_count = recursion_count + 1
+			Timer.Wait(function() blue_prints.move_input_output_nodes(inputNodePos, outputNodePos, new_recursion_count) end,
 				blue_prints.time_delay_between_loops)
+		else
+			print("Error: Failed to move input/output nodes")
 		end
 	end
 end
@@ -842,17 +838,18 @@ function blue_prints.reset_io()
 		signal_out1 = "", signal_out2 = "", signal_out3 = "", signal_out4 = "",
 		signal_out5 = "", signal_out6 = "", signal_out7 = "", signal_out8 = ""
 	}
-	blue_prints.change_input_output_labels(empty_input, empty_output)
+	blue_prints.change_input_output_labels(empty_input, empty_output, 0)
 
     -- Stage 2: Move input/output nodes to default positions
 	local move_input_vector = Vector2(-512, 0)
 	local move_output_vector = Vector2(512, 0)
-	blue_prints.move_input_output_nodes(move_input_vector, move_output_vector)
+	local initial_recursion_count = 0
+	blue_prints.move_input_output_nodes(move_input_vector, move_output_vector, initial_recursion_count)
 
 
 end
 
-function blue_prints.clear_circuitbox_recursive(batch_size)
+function blue_prints.clear_circuitbox_recursive(batch_size, recursion_count)
 	--this function removes all components, but does not change IO
     if blue_prints.most_recent_circuitbox == nil then
         print("no circuitbox detected")
@@ -927,10 +924,12 @@ function blue_prints.clear_circuitbox_recursive(batch_size)
     end
 
     -- If we cleared something, schedule next batch
-    if something_cleared and not recursion_breaker_on then
+    if something_cleared and recursion_count < 20 then
         Timer.Wait(function() 
-            blue_prints.clear_circuitbox_recursive(batch_size)
+            blue_prints.clear_circuitbox_recursive(batch_size, recursion_count + 1)
         end, blue_prints.time_delay_between_loops)
+	elseif something_cleared and recursion_count >= 20 then
+		print("Recursion limit reached. Clearing circuitbox failed.")
     else
         -- Everything is cleared
         has_load_completed_array["clear_components_complete"] = true
@@ -941,11 +940,10 @@ end
 function blue_prints.clear_circuitbox()
 	-- Reset inputs and outputs to default simultaneously to clearing components
 	blue_prints.reset_io()
-	recursion_breaker_on = false --disable to allow otherwise potentially infinite recursion
 
 	--If you remove too fast it causes baro to have event system problems.
 	--without this you get unpredictable results
-	blue_prints.clear_circuitbox_recursive(blue_prints.component_batch_size)
+	blue_prints.clear_circuitbox_recursive(blue_prints.component_batch_size, 0)
 end
 	
 	
@@ -955,7 +953,6 @@ function blue_prints.construct_blueprint_steps(inputs, outputs, components, wire
     for key, _ in pairs(has_load_completed_array) do
         has_load_completed_array[key] = false
     end
-	recursion_breaker_on = false --disable to allow otherwise potentially infinite recursion
     
     -- Track which steps have been started
     local steps_started = {}
@@ -978,7 +975,6 @@ function blue_prints.construct_blueprint_steps(inputs, outputs, components, wire
     end
 
 	local function end_build_testing_and_cleanup()
-		recursion_breaker_on = true
 		blue_prints.delayed_loading_complete_array_check()
         blue_prints.delayed_loading_complete_unit_test()
     end
@@ -1084,7 +1080,8 @@ function blue_prints.construct_blueprint_steps(inputs, outputs, components, wire
             if not steps_started["move_nodes"] then
 				step_start_time = os.time()
                 steps_started["move_nodes"] = true
-                blue_prints.move_input_output_nodes(inputNodePos, outputNodePos)
+				local initial_recursion_count = 0
+                blue_prints.move_input_output_nodes(inputNodePos, outputNodePos, initial_recursion_count)
             end
         end
 
@@ -1092,8 +1089,7 @@ function blue_prints.construct_blueprint_steps(inputs, outputs, components, wire
         if not (has_load_completed_array["move_input_output_nodes_complete"] and
                 has_load_completed_array["resize_labels_complete"] and
                 has_load_completed_array["update_values_in_components_complete"] and
-                has_load_completed_array["add_wires_complete"]) and
-				not recursion_breaker_on
+                has_load_completed_array["add_wires_complete"])
 				then
             return Timer.Wait(check_progress, blue_prints.time_delay_between_loops)
         end
@@ -1222,7 +1218,7 @@ function blue_prints.delayed_loading_complete_array_check()
 		GUI.AddMessage('Loading Failed', Color.Red)
 
 		local message_box = GUI.MessageBox('Load Failed',
-		'Your circuit has failed to load. One of the load functions has failed to complete. Hit F3 for more details. \n \nTry loading it again. \n \nIf the problem persists please report this bug on the steam workshop page. Include a download link to your saved blueprint file and a screenshot of your console text (you can see that by hitting F3)',
+		'Your circuit has failed to load. One of the load functions has failed to complete. Hit F3 for more details. \n \nTry loading it again. \n\nBarotrauma circuitbox code is sensitive to sending too many commands too fast. Try slowing things down with the delay slider (above the load button) and try again. This can help on laggy servers. \n \nIf the problem persists please report this bug on the steam workshop page. Include a download link to your saved blueprint file and a screenshot of your console text (you can see that by hitting F3)',
 		{ 'OK' })
 
 		local ok_button = message_box.Buttons[0] or message_box.Buttons[1]
@@ -1250,7 +1246,7 @@ function blue_prints.delayed_loading_complete_unit_test()
 			GUI.AddMessage('Load Failed!', Color.Red)
 
 			local message_box = GUI.MessageBox('Load Failed',
-			'Your circuit has failed to load.\n\nYour blueprint file might be from an earlier version of Blueprints and nothing is actually wrong. Try saving it again (overwriting the original) to update your blueprint file to the latest version.\n\nIf you are certain your file is up to date try loading it again. Do not move or change anything during loading: the loaded circuit must match the blueprint file EXACTLY in order for you not to see this message.\n\nThis also means if the inputs change any values in any component the unit test will also fail. Same thing if you have some value that changes over time, like RGB or timing values from an oscillator. So the circuit might still be ok, it just does not match your save exactly.\n\nIf none of these exceptions apply and the problem persists please report this bug on the steam workshop page or the discord. Include a download link to your saved blueprint file and a screenshot of your console text (you can see that by hitting F3)',
+			'Your circuit has failed to load.\n\nYour blueprint file might be from an earlier version of Blueprints and nothing is actually wrong. Try saving it again (overwriting the original) to update your blueprint file to the latest version.\n\nIf you are certain your file is up to date try loading it again. Do not move or change anything during loading: the loaded circuit must match the blueprint file EXACTLY in order for you not to see this message.\n\nThis also means if the inputs change any values in any component the unit test will also fail. Same thing if you have some value that changes over time, like RGB or timing values from an oscillator. So the circuit might still be ok, it just does not match your save exactly.\n\nBarotrauma circuitbox code is sensitive to sending too many commands too fast. Try slowing things down with the delay slider (above the load button) and try again.\n\nIf none of these exceptions apply and the problem persists please report this bug on the steam workshop page or the discord. Include a download link to your saved blueprint file and a screenshot of your console text (you can see that by hitting F3)',
 			{ 'OK' })
 	
 			local ok_button = message_box.Buttons[0] or message_box.Buttons[1]

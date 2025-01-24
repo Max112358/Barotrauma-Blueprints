@@ -37,8 +37,11 @@ if CSActive then --CSActive is if csharp scripts are enabled. This mod requires 
     dofile(blue_prints.path .. "/Lua/unit_tests.lua")
     
     --gui
+    dofile(blue_prints.path .. "/Lua/gui/gui_buttons_frame.lua")
     dofile(blue_prints.path .. "/Lua/gui/load_gui.lua")
     dofile(blue_prints.path .. "/Lua/gui/save_gui.lua")
     dofile(blue_prints.path .. "/Lua/gui/clear_gui.lua")
+    dofile(blue_prints.path .. "/Lua/gui/delay_slider.lua")
     dofile(blue_prints.path .. "/Lua/gui/popup_gui.lua")
+    --dofile(blue_prints.path .. "/Lua/gui/custom_gui_example.lua")
 end

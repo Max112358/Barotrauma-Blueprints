@@ -1,6 +1,5 @@
 if SERVER then return end
 
-local frame = GUI.Frame(GUI.RectTransform(Vector2(1, 1)), nil)
 local resolution = blue_prints.getScreenResolution()
 local run_once_at_start = false
 local folder_states = {} -- Track collapsed state of folders
@@ -85,7 +84,7 @@ local function formatFolderHeaderText(folderName, isExpanded, blueprintCount)
 end
 
 local function generate_load_gui()
-    blue_prints.current_gui_page = GUI.Frame(GUI.RectTransform(Vector2(1, 1), frame.RectTransform, GUI.Anchor.Center),
+    blue_prints.current_gui_page = GUI.Frame(GUI.RectTransform(Vector2(1, 1), blue_prints.gui_button_frame.RectTransform, GUI.Anchor.Center),
         nil)
     blue_prints.current_gui_page.CanBeFocused = false
     blue_prints.current_gui_page.Visible = false
@@ -287,12 +286,11 @@ end
 local function check_and_rebuild_frame()
     local new_resolution = blue_prints.getScreenResolution()
     if new_resolution ~= resolution or run_once_at_start == false then
-        frame = GUI.Frame(GUI.RectTransform(Vector2(1, 1)), nil)
-        frame.CanBeFocused = false
 
-        local button = GUI.Button(GUI.RectTransform(Vector2(0.1, 0.2), frame.RectTransform, GUI.Anchor.CenterRight),
-            "Load Blueprint", GUI.Alignment.Center, "GUIButtonSmall")
-        button.RectTransform.AbsoluteOffset = Point(25, 0)
+        local spacer = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.04), blue_prints.gui_button_frame_list.Content.RectTransform), "", nil, nil, GUI.Alignment.Center)
+
+        local button = GUI.Button(GUI.RectTransform(Vector2(1, 0.1), blue_prints.gui_button_frame_list.Content.RectTransform), "Load Blueprint", GUI.Alignment.Center, "GUIButtonSmall")
+
         button.OnClicked = function()
             if blue_prints.current_gui_page then
                 blue_prints.current_gui_page.Visible = false
@@ -308,5 +306,4 @@ end
 
 Hook.Patch("Barotrauma.Items.Components.CircuitBox", "AddToGUIUpdateList", function()
     check_and_rebuild_frame()
-    frame.AddToGUIUpdateList()
 end, Hook.HookMethodType.After)
