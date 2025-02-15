@@ -10,7 +10,7 @@ local generate_save_gui
 
 create_folder_modal = function()
     -- Create a new modal frame that covers the entire screen
-    local modalFrame = GUI.Frame(GUI.RectTransform(Vector2(1, 1), frame.RectTransform, GUI.Anchor.Center), nil)
+    local modalFrame = GUI.Frame(GUI.RectTransform(Vector2(1, 1), blue_prints.gui_button_frame.RectTransform, GUI.Anchor.Center), nil)
     modalFrame.CanBeFocused = false
 
     -- Darkened background
