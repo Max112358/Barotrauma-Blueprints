@@ -93,24 +93,29 @@ end
 -- Write file with platform compatibility
 function blue_prints.writeFile(path, content)
     path = blue_prints.normalizePath(path)
+    path = path:gsub("%s", "_") -- Replace spaces with underscores
 
-    local file = io.open(path, "w")
+    local file, err = io.open(path, "w")
     if file then
         file:write(content)
         file:close()
         return true
     end
+
+    -- Log the error
+    print("Failed to write file: " .. path .. " with error: " .. tostring(err))
 
     -- Try alternate path if direct write fails
     local alt_path = path:gsub("LocalMods/", "local_mods/")
-    file = io.open(alt_path, "w")
+    file, err = io.open(alt_path, "w")
     if file then
         file:write(content)
         file:close()
         return true
     end
 
-    print("Failed to write file: " .. path)
+    -- Log the error
+    print("Failed to write file: " .. alt_path .. " with error: " .. tostring(err))
     return false
 end
 
