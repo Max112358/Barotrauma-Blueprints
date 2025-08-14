@@ -194,14 +194,8 @@ generate_save_gui = function()
 
             --print("Selected index:", selectedIndex)  -- Debug print
             --print("Selected folder:", selectedFolder)  -- Debug print
+            blue_prints.save_blueprint(filenameTextBox.Text, selectedFolder)
 
-            if selectedFolder == "[Root Directory]" then
-                --print("Saving to root directory")
-                blue_prints.save_blueprint(filenameTextBox.Text)
-            else
-                --print("Saving to folder:", selectedFolder)
-                blue_prints.save_blueprint(filenameTextBox.Text, selectedFolder)
-            end
             blue_prints.current_gui_page.Visible = false
             GUI.AddMessage('File Saved', Color.White)
         else
