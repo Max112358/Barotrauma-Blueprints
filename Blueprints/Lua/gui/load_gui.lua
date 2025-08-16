@@ -110,7 +110,7 @@ local function generate_load_gui()
     -- Instructions
     local instruction_text = GUI.TextBlock(GUI.RectTransform(Vector2(1, 0.25), mainList.Content.RectTransform),
         'Click a button to load. Hover over the button to see its description. Click folder headers to expand/collapse.\n\n' ..
-        'If the base component is not available, FPGAs will be used instead. These components must be in your main inventory, not a toolbelt/backpack etc.\n\n' ..
+        'If the base component is not available, FPGAs will be used instead.\n\n' ..
         'Click anywhere outside this box to cancel.',
         nil, nil, GUI.Alignment.TopLeft)
     instruction_text.Wrap = true

@@ -251,35 +251,37 @@ local function swap_lines_in_string(xmlContent, line1, line2)
 end
 
 
-
 local function put_components_in_order(xmlContent)
-	
-	local something_in_xml_changed = false
-	local number_of_components = count_component_number(xmlContent)
-	
-	for i = 1, number_of_components-1 do
-		local first_line_number, first_line_content = find_specific_component(xmlContent, i)
-		local second_line_number, second_line_content = find_specific_component(xmlContent, i+1)
-		
-		--print(first_line_content)
-		--print(second_line_content)
-		--print("-----")
-		
-		local first_id = find_id_within_component(first_line_content)
-		local second_id = find_id_within_component(second_line_content)
-		
-		if tonumber(first_id) > tonumber(second_id) then
-			--print("comparing" .. first_id .. " to " .. second_id)
-			xmlContent = swap_lines_in_string(xmlContent, first_line_number, second_line_number)
-			something_in_xml_changed = true
-		end
-	end
-	
-	if something_in_xml_changed then return put_components_in_order(xmlContent) end
-	
-	--print(xmlContent)
-	
-	return xmlContent
+    
+    local number_of_components = count_component_number(xmlContent)
+    
+    
+    -- Define the pattern to match the component
+    local pattern = "<Component.-/->"
+    
+    -- Split the XML content into lines
+    local beforeLines = {}
+    local componentLines = {}
+    local afterLines = {}
+    for line in string.gmatch(xmlContent, "[^\r\n]+") do
+        if string.find(line, pattern) then
+            -- Found a component line
+            table.insert(componentLines, line)
+        else
+            table.insert(#componentLines == 0 and beforeLines or afterLines, line)
+        end
+    end
+    
+    table.sort(componentLines, function(a, b)
+    return tonumber(find_id_within_component(a)) < tonumber(find_id_within_component(b))
+    end)
+    
+    -- Join the lines back into a single string
+    local xmlNew = table.concat(beforeLines, "\n") .. table.concat(componentLines, "\n") .. table.concat(afterLines, "\n")
+    
+    --print(xmlNew)
+    
+    return xmlNew
 
 end
 

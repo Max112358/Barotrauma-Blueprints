@@ -266,17 +266,27 @@ function blue_prints.check_inventory_for_requirements(components)
 		end
 	end
 
-
-
-	-- First pass: count regular items and fpgacircuits
-	for inventory_item in character.Inventory.AllItems do
-		local identifier = tostring(inventory_item.Prefab.Identifier)
-		if identifier == "fpgacircuit" then
-			fpgacircuit_count = fpgacircuit_count + 1
-		elseif missing_components[identifier] and missing_components[identifier] > 0 then
-			missing_components[identifier] = missing_components[identifier] - 1
-		end
-	end
+    -- First pass: count regular items and fpgacircuits
+    for inventory_item in character.Inventory.AllItems do
+        local identifier = tostring(inventory_item.Prefab.Identifier)
+        if identifier == "fpgacircuit" then
+            fpgacircuit_count = fpgacircuit_count + 1
+        elseif missing_components[identifier] and missing_components[identifier] > 0 then
+            missing_components[identifier] = missing_components[identifier] - 1
+        end
+        
+        -- Check for items inside an inventory container
+        if inventory_item.OwnInventory then
+            for container_item in inventory_item.OwnInventory.AllItems do
+                local identifier = tostring(container_item.Prefab.Identifier)
+                if identifier == "fpgacircuit" then
+                    fpgacircuit_count = fpgacircuit_count + 1
+                elseif missing_components[identifier] and missing_components[identifier] > 0 then
+                    missing_components[identifier] = missing_components[identifier] - 1
+                end
+            end
+        end
+    end
 
 	-- Second pass: use fpgacircuits as wildcards only for remaining missing items
 	for identifier, count in pairs(missing_components) do
