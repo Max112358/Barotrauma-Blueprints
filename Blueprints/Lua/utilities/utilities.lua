@@ -233,25 +233,33 @@ end
 
 
 function blue_prints.print_all_saved_files()
-    local saved_files = blue_prints.getFiles(blue_prints.save_path)
-    
-    for name, value in pairs(saved_files) do
-        if string.match(value, "%.txt$") then
-            local filename = value:match("([^/\\]+)$") -- Match after last slash or backslash
-            local filename = string.gsub(filename, "%.txt$", "") --cut out the .txt at the end
-            
-            local xml_of_file = blue_prints.readFileContents(value)
-            local description_of_file = blue_prints.get_description_from_xml(xml_of_file)
-            local number_of_components_in_file = blue_prints.get_component_count_from_xml(xml_of_file)
-            
-            print("-------------")
-            
-            local print_string = '‖color:white‖' .. filename ..  '‖end‖' .. "  -  (" .. number_of_components_in_file .. " fpgas) "
-            
-            if description_of_file ~= nil then
-                print_string = print_string .. " -  " ..  '‖color:yellow‖' .. description_of_file ..  '‖end‖'
+    local folders = blue_prints.getFolderList()
+    for _, folderName in ipairs(folders) do
+        local folderPath = folderName == "[Root Directory]" and "" or folderName
+        local fullFolderPath = blue_prints.normalizePath(blue_prints.save_path .. "/" .. folderPath)
+
+        print("‖color:green‖" .. folderName .. "‖end‖")
+        print("‖color:green‖=============‖end‖")
+
+        local files = blue_prints.getFiles(fullFolderPath)
+        for name, value in pairs(files) do
+            if string.match(value, "%.txt$") then
+                local filename = value:match("([^/\\]+)$") -- Match after last slash or backslash
+                local filename = string.gsub(filename, "%.txt$", "") --cut out the .txt at the end
+
+                local xml_of_file = blue_prints.readFileContents(value)
+                local description_of_file = blue_prints.get_description_from_xml(xml_of_file)
+                local number_of_components_in_file = blue_prints.get_component_count_from_xml(xml_of_file)
+
+                local print_string = '‖color:white‖' .. filename ..  '‖end‖' .. "  -  (" .. number_of_components_in_file .. " fpgas) "
+
+                if description_of_file ~= nil then
+                    print_string = print_string .. " -  " ..  '‖color:yellow‖' .. description_of_file ..  '‖end‖'
+                end
+
+                print(print_string)
+                print("-------------")
             end
-            print(print_string)
         end
     end
 end
