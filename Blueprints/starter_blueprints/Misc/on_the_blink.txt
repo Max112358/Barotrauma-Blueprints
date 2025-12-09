@@ -1,6 +1,6 @@
 <Root>
-  <Item name="" identifier="circuitbox" ID="1013" markedfordeconstruction="false" flippedx="true" rect="208,-8,32,32" NonInteractable="False" NonPlayerTeamInteractable="False" AllowSwapping="True" Rotation="0" Scale="0.5" SpriteColor="255,255,255,255" InventoryIconColor="255,255,255,255" ContainerColor="255,255,255,255" InvulnerableToDamage="False" Tags="smallitem" DisplaySideBySideWhenLinked="False" DisallowedUpgrades="" SpriteDepth="0.8" HiddenInGame="False" conditionpercentage="100">
-    <Holdable Attached="True" SpriteDepthWhenDropped="0.55" PickingTime="5" CanBePicked="True" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgDetachWrench">
+  <Item name="" identifier="circuitbox" ID="1004" markedfordeconstruction="false" flippedx="true" rect="208,-8,32,32" NonInteractable="False" NonPlayerTeamInteractable="False" AllowSwapping="True" Rotation="0" ImpactTolerance="0" ImpactDamage="0" ImpactDamageProbability="1" Scale="0.5" SpriteColor="255,255,255,255" InventoryIconColor="255,255,255,255" ContainerColor="255,255,255,255" HasBeenInstantiatedOnce="True" InvulnerableToDamage="False" Tags="smallitem" DisplaySideBySideWhenLinked="False" DisallowedUpgrades="" SpriteDepth="0.8" HiddenInGame="False" conditionpercentage="100">
+    <Holdable Attached="True" DisallowAttachingOverTags="" DisallowAttachingOverSize="0,0" SpriteDepthWhenDropped="0.55" MsgWhenDropped="ItemMsgPickupSelect" PickingTime="5" CanBePicked="True" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgDetachWrench">
       <requireditem items="wrench" type="Equipped" characterinventoryslottype="None" optional="false" ignoreineditor="false" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" />
     </Holdable>
     <ConnectionPanel Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgRewireScrewdriver">
@@ -21,38 +21,44 @@
       <output name="signal_out6" />
       <output name="signal_out7" />
       <output name="signal_out8" />
+      <input name="signal_in0" />
+      <input name="signal_in9" />
+      <output name="signal_out0" />
+      <output name="signal_out9" />
     </ConnectionPanel>
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1138,1139,1140,1182,1183,1184,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
-    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1185;1186;2928;2929;2931;2932,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1117,1118,1119,1160,1161,1162,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,," ExtraStackSize="0" />
+    <ItemContainer QuickUseMovesItemsInside="False" ContainableRestrictions="" AutoFill="True" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="" contained="1163;1164;3027;3028;3029;3101,,,,,,,,," ExtraStackSize="0" />
     <CircuitBox Locked="False" PickingTime="0" CanBePicked="False" LockGuiFramePosition="False" GuiFrameOffset="0,0" AllowInGameEditing="True" Msg="ItemMsgInteractSelect">
       <requireditem items="idcard" type="Picked" characterinventoryslottype="None" optional="false" ignoreineditor="true" excludebroken="true" requireempty="false" excludefullcondition="false" targetslot="-1" allowvariants="true" rotation="0" setactive="false" msg="UNAUTHORIZED ACCESS" />
       <InputNode pos="-2158,283">
-        <ConnectionLabelOverride name="signal_in3" value="Condition_out_3" />
-        <ConnectionLabelOverride name="signal_in1" value="Condition_out_1" />
-        <ConnectionLabelOverride name="signal_in2" value="Condition_out_2" />
-        <ConnectionLabelOverride name="signal_in5" value="Condition_out_5" />
-        <ConnectionLabelOverride name="signal_in4" value="Condition_out_4" />
-        <ConnectionLabelOverride name="signal_in6" value="Condition_out_6" />
-        <ConnectionLabelOverride name="signal_in7" value="Condition_out_7" />
-        <ConnectionLabelOverride name="signal_in8" value="Condition_out_8" />
+        <ConnectionLabelOverride name="signal_in2" value="<<<STRINGSTART>>>Condition_out_2<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_in3" value="<<<STRINGSTART>>>Condition_out_3<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_in1" value="<<<STRINGSTART>>>Condition_out_1<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_in5" value="<<<STRINGSTART>>>Condition_out_5<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_in4" value="<<<STRINGSTART>>>Condition_out_4<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_in6" value="<<<STRINGSTART>>>Condition_out_6<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_in7" value="<<<STRINGSTART>>>Condition_out_7<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_in8" value="<<<STRINGSTART>>>Condition_out_8<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_in0" value="<<<STRINGSTART>>>Condition_out_0<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_in9" value="<<<STRINGSTART>>>Condition_out_9<<<STRINGEND>>>" />
       </InputNode>
       <OutputNode pos="1593,269">
-        <ConnectionLabelOverride name="signal_out1" value="Light_1_Set_State" />
-        <ConnectionLabelOverride name="signal_out2" value="Light_2_Set_State" />
-        <ConnectionLabelOverride name="signal_out3" value="Light_3_Set_State" />
-        <ConnectionLabelOverride name="signal_out4" value="Light_4_Set_State" />
-        <ConnectionLabelOverride name="signal_out5" value="Light_5_Set_State" />
-        <ConnectionLabelOverride name="signal_out6" value="Light_6_Set_State" />
-        <ConnectionLabelOverride name="signal_out7" value="Light_7_Set_State" />
-        <ConnectionLabelOverride name="signal_out8" value="Light_8_Set_State" />
-      </OutputNode>
-      <Component id="0" position="-501,790" backingitemid="0,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>RegExFindComponent<<<STRINGEND>>> Output=<<<STRINGSTART>>>1<<<STRINGEND>>> UseCaptureGroup=<<<STRINGSTART>>>false<<<STRINGEND>>> OutputEmptyCaptureGroup=<<<STRINGSTART>>>false<<<STRINGEND>>> FalseOutput=<<<STRINGSTART>>>0<<<STRINGEND>>> ContinuousOutput=<<<STRINGSTART>>>true<<<STRINGEND>>> Expression=<<<STRINGSTART>>>^([0-9]|1[0-9])(?:\.[0-9]*)?$<<<STRINGEND>>> item=<<<STRINGSTART>>>regexcomponent<<<STRINGEND>>> />
+        <ConnectionLabelOverride name="signal_out2" value="<<<STRINGSTART>>>Light_2_Set_State<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_out1" value="<<<STRINGSTART>>>Light_1_Set_State<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_out3" value="<<<STRINGSTART>>>Light_3_Set_State<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_out4" value="<<<STRINGSTART>>>Light_4_Set_State<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_out5" value="<<<STRINGSTART>>>Light_5_Set_State<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_out6" value="<<<STRINGSTART>>>Light_6_Set_State<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_out7" value="<<<STRINGSTART>>>Light_7_Set_State<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_out8" value="<<<STRINGSTART>>>Light_8_Set_State<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_out0" value="<<<STRINGSTART>>>Light_0_Set_State<<<STRINGEND>>>" />
+        <ConnectionLabelOverride name="signal_out9" value="<<<STRINGSTART>>>Light_9_Set_State<<<STRINGEND>>>" />
+      </OutputNode>      <Component id="0" position="-501,790" backingitemid="0,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>RegExFindComponent<<<STRINGEND>>> Output=<<<STRINGSTART>>>1<<<STRINGEND>>> UseCaptureGroup=<<<STRINGSTART>>>false<<<STRINGEND>>> OutputEmptyCaptureGroup=<<<STRINGSTART>>>false<<<STRINGEND>>> FalseOutput=<<<STRINGSTART>>>0<<<STRINGEND>>> ContinuousOutput=<<<STRINGSTART>>>true<<<STRINGEND>>> Expression=<<<STRINGSTART>>>^([0-9]|1[0-9])(?:\.[0-9]*)?$<<<STRINGEND>>> item=<<<STRINGSTART>>>regexcomponent<<<STRINGEND>>> />
       <Component id="1" position="157,818" backingitemid="1,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>AndComponent<<<STRINGEND>>> TimeFrame=<<<STRINGSTART>>>0<<<STRINGEND>>> Output=<<<STRINGSTART>>>1<<<STRINGEND>>> FalseOutput=<<<STRINGSTART>>>0<<<STRINGEND>>> item=<<<STRINGSTART>>>andcomponent<<<STRINGEND>>> />
       <Component id="2" position="-493,971" backingitemid="2,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>OscillatorComponent<<<STRINGEND>>> OutputType=<<<STRINGSTART>>>Square<<<STRINGEND>>> Frequency=<<<STRINGSTART>>>1<<<STRINGEND>>> item=<<<STRINGSTART>>>oscillator<<<STRINGEND>>> />
-      <Component id="3" position="-1456,222" backingitemid="3,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>MultiplexerComponent<<<STRINGEND>>> SelectedConnection=<<<STRINGSTART>>>0<<<STRINGEND>>> WrapAround=<<<STRINGSTART>>>true<<<STRINGEND>>> SkipEmptyConnections=<<<STRINGSTART>>>true<<<STRINGEND>>> item=<<<STRINGSTART>>>multiplexercomponent<<<STRINGEND>>> />
+      <Component id="3" position="-1456,222" backingitemid="3,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>MultiplexerComponent<<<STRINGEND>>> SelectedConnection=<<<STRINGSTART>>>9<<<STRINGEND>>> WrapAround=<<<STRINGSTART>>>true<<<STRINGEND>>> SkipEmptyConnections=<<<STRINGSTART>>>true<<<STRINGEND>>> item=<<<STRINGSTART>>>multiplexercomponent<<<STRINGEND>>> />
       <Component id="4" position="-2199,-41" backingitemid="4,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>OscillatorComponent<<<STRINGEND>>> OutputType=<<<STRINGSTART>>>Pulse<<<STRINGEND>>> Frequency=<<<STRINGSTART>>>200<<<STRINGEND>>> item=<<<STRINGSTART>>>oscillator<<<STRINGEND>>> />
-      <Component id="5" position="932,222" backingitemid="5,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>DemultiplexerComponent<<<STRINGEND>>> SelectedConnection=<<<STRINGSTART>>>4<<<STRINGEND>>> WrapAround=<<<STRINGSTART>>>true<<<STRINGEND>>> SkipEmptyConnections=<<<STRINGSTART>>>true<<<STRINGEND>>> item=<<<STRINGSTART>>>demultiplexercomponent<<<STRINGEND>>> />
-      <Wire id="0" backingitemid="0,0" prefab="brownwire">
+      <Component id="5" position="932,222" backingitemid="5,0" usedresource="fpgacircuit" Class=<<<STRINGSTART>>>DemultiplexerComponent<<<STRINGEND>>> SelectedConnection=<<<STRINGSTART>>>6<<<STRINGEND>>> WrapAround=<<<STRINGSTART>>>true<<<STRINGEND>>> SkipEmptyConnections=<<<STRINGSTART>>>true<<<STRINGEND>>> item=<<<STRINGSTART>>>demultiplexercomponent<<<STRINGEND>>> />      <Wire id="0" backingitemid="0,0" prefab="brownwire">
         <From name="signal_out" target="2" />
         <To name="signal_in1" target="1" />
       </Wire>
@@ -61,11 +67,11 @@
         <To name="signal_in2" target="1" />
       </Wire>
       <Wire id="2" backingitemid="" prefab="brownwire">
-        <From name="signal_in1" target="" />
+        <From name="signal_in0" target="" />
         <To name="signal_in0" target="3" />
       </Wire>
       <Wire id="3" backingitemid="" prefab="brownwire">
-        <From name="signal_in2" target="" />
+        <From name="signal_in1" target="" />
         <To name="signal_in1" target="3" />
       </Wire>
       <Wire id="4" backingitemid="0,2" prefab="brownwire">
@@ -85,65 +91,81 @@
         <To name="signal_in" target="5" />
       </Wire>
       <Wire id="8" backingitemid="" prefab="brownwire">
-        <From name="signal_in3" target="" />
+        <From name="signal_in2" target="" />
         <To name="signal_in2" target="3" />
       </Wire>
       <Wire id="9" backingitemid="" prefab="brownwire">
-        <From name="signal_in4" target="" />
+        <From name="signal_in3" target="" />
         <To name="signal_in3" target="3" />
       </Wire>
       <Wire id="10" backingitemid="" prefab="brownwire">
-        <From name="signal_in5" target="" />
+        <From name="signal_in4" target="" />
         <To name="signal_in4" target="3" />
       </Wire>
       <Wire id="11" backingitemid="" prefab="brownwire">
-        <From name="signal_in6" target="" />
+        <From name="signal_in5" target="" />
         <To name="signal_in5" target="3" />
       </Wire>
       <Wire id="12" backingitemid="" prefab="brownwire">
-        <From name="signal_in7" target="" />
+        <From name="signal_in6" target="" />
         <To name="signal_in6" target="3" />
       </Wire>
       <Wire id="13" backingitemid="" prefab="brownwire">
-        <From name="signal_in8" target="" />
+        <From name="signal_in7" target="" />
         <To name="signal_in7" target="3" />
       </Wire>
       <Wire id="14" backingitemid="" prefab="brownwire">
         <From name="signal_out0" target="5" />
-        <To name="signal_out1" target="" />
+        <To name="signal_out0" target="" />
       </Wire>
       <Wire id="15" backingitemid="" prefab="brownwire">
         <From name="signal_out1" target="5" />
-        <To name="signal_out2" target="" />
+        <To name="signal_out1" target="" />
       </Wire>
       <Wire id="16" backingitemid="" prefab="brownwire">
         <From name="signal_out2" target="5" />
-        <To name="signal_out3" target="" />
+        <To name="signal_out2" target="" />
       </Wire>
       <Wire id="17" backingitemid="" prefab="brownwire">
         <From name="signal_out3" target="5" />
-        <To name="signal_out4" target="" />
+        <To name="signal_out3" target="" />
       </Wire>
       <Wire id="18" backingitemid="" prefab="brownwire">
         <From name="signal_out4" target="5" />
-        <To name="signal_out5" target="" />
+        <To name="signal_out4" target="" />
       </Wire>
       <Wire id="19" backingitemid="" prefab="brownwire">
         <From name="signal_out5" target="5" />
-        <To name="signal_out6" target="" />
+        <To name="signal_out5" target="" />
       </Wire>
       <Wire id="20" backingitemid="" prefab="brownwire">
         <From name="signal_out6" target="5" />
-        <To name="signal_out7" target="" />
+        <To name="signal_out6" target="" />
       </Wire>
       <Wire id="21" backingitemid="" prefab="brownwire">
         <From name="signal_out7" target="5" />
+        <To name="signal_out7" target="" />
+      </Wire>
+      <Wire id="22" backingitemid="" prefab="brownwire">
+        <From name="signal_in8" target="" />
+        <To name="signal_in8" target="3" />
+      </Wire>
+      <Wire id="23" backingitemid="" prefab="brownwire">
+        <From name="signal_in9" target="" />
+        <To name="signal_in9" target="3" />
+      </Wire>
+      <Wire id="24" backingitemid="" prefab="brownwire">
+        <From name="signal_out8" target="5" />
         <To name="signal_out8" target="" />
       </Wire>
-      <Label id="0" color="#7ED3E0" position="-497,548" size="531,148" header="regex" body="any number between 0 and 19.999 including decimals" />
-      <Label id="1" color="#7ED3E0" position="-191,953" size="1322,535" header="Blinker and condition check" body="Is the selected part below 20 condition? If yes, blink." />
-      <Label id="2" color="#7ED3E0" position="-1722,1037" size="597,476" header="Description" body="This circuit will blink a light when the condition of a device its attached to falls below 20." />
-      <Label id="3" color="#0082FF" position="2233,269" size="512,256" header="Blueprints" body="Circuit made with Blueprints. &#xA; &#xA; Get it now on the steam workshop!" />
+      <Wire id="25" backingitemid="" prefab="brownwire">
+        <From name="signal_out9" target="5" />
+        <To name="signal_out9" target="" />
+      </Wire>
+      <Label id="0" color="#7ED3E0" position="-497,548" size="531,148" header="<<<STRINGSTART>>>regex<<<STRINGEND>>>" body="any number between 0 and 19.999 including decimals" />
+      <Label id="1" color="#7ED3E0" position="-191,953" size="1322,535" header="<<<STRINGSTART>>>Blinker and condition check<<<STRINGEND>>>" body="Is the selected part below 20 condition? If yes, blink." />
+      <Label id="2" color="#7ED3E0" position="-1722,1037" size="597,476" header="<<<STRINGSTART>>>Description<<<STRINGEND>>>" body="This circuit will blink a light when the condition of a device its attached to falls below 20." />
+      <Label id="3" color="#0082FF" position="2233,269" size="512,256" header="<<<STRINGSTART>>>Blueprints<<<STRINGEND>>>" body="Circuit made with Blueprints. &#xA; &#xA; Get it now on the steam workshop!" />
     </CircuitBox>
     <itemstats />
   </Item>

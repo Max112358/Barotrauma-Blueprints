@@ -422,12 +422,12 @@ function blue_prints.add_wires_to_circuitbox_recursive(wires, index)
 
 	if wire.from.target == nil then
 		local input_to_target = string.match(tostring(wire.from.name), "%d+")
-		first_connection = input_connections[tonumber(input_to_target) - 1]
+		first_connection = input_connections[tonumber(input_to_target)]
 	end
 
 	if wire.to.target == nil then
 		local input_to_target = string.match(tostring(wire.to.name), "%d+")
-		second_connection = output_connections[tonumber(input_to_target) - 1]
+		second_connection = output_connections[tonumber(input_to_target)]
 	end
 
 	if first_connection and second_connection then
@@ -471,6 +471,11 @@ function blue_prints.change_input_output_labels(input_dict, output_dict, recursi
 	local input_output_nodes = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").InputOutputNodes
 	local input_connection_node = blue_prints.getNthValue(input_output_nodes, 1)
 	local output_connection_node = blue_prints.getNthValue(input_output_nodes, 2)
+
+	--for k, v in pairs(input_dict) do
+	--	print(k, v)
+	--end
+
 
 	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").SetConnectionLabelOverrides(
 	input_connection_node, input_dict)
@@ -840,14 +845,25 @@ function blue_prints.reset_io()
     end
 
     -- Stage 1: Reset the labels on the input output panels
-	local empty_input = {
-		signal_in1 = "", signal_in2 = "", signal_in3 = "", signal_in4 = "",
-		signal_in5 = "", signal_in6 = "", signal_in7 = "", signal_in8 = ""
-	}
-	local empty_output = {
-		signal_out1 = "", signal_out2 = "", signal_out3 = "", signal_out4 = "",
-		signal_out5 = "", signal_out6 = "", signal_out7 = "", signal_out8 = ""
-	}
+	-- get the length of the inputs and outputs, and use that to make a generic empty dictionary
+	local input_output_nodes = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").InputOutputNodes
+	local input_connection_node = blue_prints.getNthValue(input_output_nodes, 1)
+	local output_connection_node = blue_prints.getNthValue(input_output_nodes, 2)
+	
+	local input_connection_node_connector_count = #input_connection_node.Connectors
+	local output_connection_node_connector_count = #output_connection_node.Connectors
+	
+	local empty_input = {}
+	local empty_output = {}
+
+	for i = 0, input_connection_node_connector_count - 1 do
+		empty_input["signal_in" .. i] = ""
+	end
+	
+	for i = 0, output_connection_node_connector_count - 1 do
+		empty_output["signal_out" .. i] = ""
+	end
+	
 	blue_prints.change_input_output_labels(empty_input, empty_output, 0)
 
     -- Stage 2: Move input/output nodes to default positions
