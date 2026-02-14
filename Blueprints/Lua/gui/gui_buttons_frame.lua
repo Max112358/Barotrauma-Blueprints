@@ -14,6 +14,7 @@ local function check_and_rebuild_frame()
     if new_resolution ~= resolution or run_once_at_start == false then
         blue_prints.gui_button_frame = GUI.Frame(GUI.RectTransform(Vector2(1, 1)), nil)
         blue_prints.gui_button_frame.CanBeFocused = false
+        blue_prints.gui_button_frame.RectTransform.NonScaledSize = Point(new_resolution.X, new_resolution.Y)
 
         blue_prints.gui_button_frame_content = GUI.Frame(GUI.RectTransform(Vector2(0.1, 0.15), blue_prints.gui_button_frame.RectTransform, GUI.Anchor.CenterRight))
         blue_prints.gui_button_frame_list = GUI.ListBox(GUI.RectTransform(Vector2(1, 1), blue_prints.gui_button_frame_content.RectTransform, GUI.Anchor.BottomCenter))
