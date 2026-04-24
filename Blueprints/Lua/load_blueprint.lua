@@ -564,37 +564,43 @@ function blue_prints.add_labels_to_circuitbox_recursive(labels, index)
 		blue_prints.time_delay_between_loops)
 end
 
-function blue_prints.rename_all_labels_in_circuitbox(labels)
+function blue_prints.rename_all_labels_in_circuitbox(labels, index)
 	if blue_prints.most_recent_circuitbox == nil then
 		print("no circuitbox detected")
 		return
 	end
 
-	local label_nodes = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Labels
-
-	for i, label in ipairs(labels) do
-		--print(string.format("  Label %d:", i))
-		--print(string.format("    ID: %s", label.id))
-		--print(string.format("    Color: %s", label.color))
-		--print(string.format("    Position: (%.2f, %.2f)", label.position.x, label.position.y))
-		--print(string.format("    Size: %.2f x %.2f", label.size.width, label.size.height))
-		--print(string.format("    Header: %s", label.header))
-		--print(string.format("    Body: %s", label.body))
-
-		if label.header == nil then label.header = "" end
-		if label.body == nil then label.body = "" end
-
-		local label_node = blue_prints.getNthValue(label_nodes, i)
-		local label_header = blue_prints.net_limited_string_type(tostring(label.header))
-		local label_body = blue_prints.net_limited_string_type(tostring(label.body))
-		local label_color = blue_prints.hexToRGBA(label.color)
-
-		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").RenameLabel(label_node, label_color,
-			label_header, label_body)
+	-- Base case: if we've processed all labels, return
+	if index > #labels then
+		has_load_completed_array["rename_labels_complete"] = true
+		return
 	end
 
-	--print("All labels added.")
-	has_load_completed_array["rename_labels_complete"] = true
+	local label_nodes = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Labels
+	local label = labels[index]
+
+	--print(string.format("  Label %d:", i))
+	--print(string.format("    ID: %s", label.id))
+	--print(string.format("    Color: %s", label.color))
+	--print(string.format("    Position: (%.2f, %.2f)", label.position.x, label.position.y))
+	--print(string.format("    Size: %.2f x %.2f", label.size.width, label.size.height))
+	--print(string.format("    Header: %s", label.header))
+	--print(string.format("    Body: %s", label.body))
+
+	if label.header == nil then label.header = "" end
+	if label.body == nil then label.body = "" end
+
+	local label_node = blue_prints.getNthValue(label_nodes, index)
+	local label_header = blue_prints.net_limited_string_type(tostring(label.header))
+	local label_body = blue_prints.net_limited_string_type(tostring(label.body))
+	local label_color = blue_prints.hexToRGBA(label.color)
+
+	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").RenameLabel(label_node, label_color,
+		label_header, label_body)
+	
+	-- Recursive call to process the next label
+	Timer.Wait(function() blue_prints.rename_all_labels_in_circuitbox(labels, index + 1) end,
+		blue_prints.time_delay_between_loops)
 end
 
 local function resize_label(label_node, direction, resize_vector)
@@ -607,35 +613,36 @@ local function resize_label(label_node, direction, resize_vector)
 end
 
 
-function blue_prints.resize_labels(labels_from_blueprint)
+function blue_prints.resize_labels(labels_from_blueprint, index)
 	if blue_prints.most_recent_circuitbox == nil then
 		print("no circuitbox detected")
 		return
 	end
 
-	local label_nodes_in_box = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Labels
-
-	for i, label_in_blueprint in ipairs(labels_from_blueprint) do
-		local label_node = blue_prints.getNthValue(label_nodes_in_box, i)
-
-		local amount_to_expand_x = label_in_blueprint.size.width - label_node.size.X
-		amount_to_expand_x = amount_to_expand_x
-		local amount_to_expand_y = label_in_blueprint.size.height - label_node.size.Y
-
-		local expansion_vector = Vector2(amount_to_expand_x, -amount_to_expand_y)
-
-
-		blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").ResizeNode(label_node, 2, expansion_vector) --2 is expand right
-
-		--I dont know why, but if you dont have enough delay here, the labels will not resize properly
-		--the second resize will somehow overwrite the other axis with its non-resized version.
-		--ie if you were to resize a 256x256 into a 512x512, it would become a 256x512.
-		local resize_delay = (blue_prints.time_delay_between_loops * 8)
-
-		Timer.Wait(function() resize_label(label_node, 1, expansion_vector) end, resize_delay) --the commands override each other if sent too fast. 1 is expand down.
+	local resize_delay = (blue_prints.time_delay_between_loops * 4)
+	-- Base case: if we've processed all labels, return
+	if index > #labels_from_blueprint then
+		--we wait for actual last resize operation to complete
+		Timer.Wait(function() has_load_completed_array["resize_labels_complete"] = true end, resize_delay)
+		return
 	end
 
-	has_load_completed_array["resize_labels_complete"] = true
+	local label_nodes_in_box = blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").Labels
+	local label_in_blueprint = labels_from_blueprint[index]
+
+	local label_node = blue_prints.getNthValue(label_nodes_in_box, index)
+
+	local amount_to_expand_x = label_in_blueprint.size.width - label_node.size.X
+	local amount_to_expand_y = label_in_blueprint.size.height - label_node.size.Y
+	local expansion_vector = Vector2(amount_to_expand_x, -amount_to_expand_y)
+
+	blue_prints.most_recent_circuitbox.GetComponentString("CircuitBox").ResizeNode(label_node, 2, expansion_vector) --2 is expand right
+	--I dont know why, but if you dont have enough delay here, the labels will not resize properly
+	--the second resize will somehow overwrite the other axis with its non-resized version.
+	--ie if you were to resize a 256x256 into a 512x512, it would become a 256x512.
+	Timer.Wait(function() resize_label(label_node, 1, expansion_vector) end, resize_delay) --the commands override each other if sent too fast. 1 is expand down.
+	
+	Timer.Wait(function() blue_prints.resize_labels(labels_from_blueprint, index + 1) end, resize_delay + blue_prints.time_delay_between_loops)
 end
 
 function blue_prints.update_values_in_components(components_from_blueprint)
@@ -983,7 +990,7 @@ function blue_prints.construct_blueprint_steps(inputs, outputs, components, wire
     -- Track which steps have been started
     local steps_started = {}
     
-	local largest_component_count = math.max(#components, #wires, #labels) --it resets every time, so you can just use largest
+	local largest_component_count = math.max(#components, #wires, #labels * 8) --it resets every time, so you can just use largest, each label does 2 calls with x4 timeouts due to hacks
 
     -- Maximum time to wait for each step (in milliseconds)
     local TIMEOUT_PER_STEP = ((blue_prints.time_delay_between_loops * largest_component_count) / 1000) + 2  -- if wait longer than this, something has gone wrong
@@ -1086,17 +1093,7 @@ function blue_prints.construct_blueprint_steps(inputs, outputs, components, wire
             if not steps_started["rename"] then
 				step_start_time = os.time()
                 steps_started["rename"] = true
-                blue_prints.rename_all_labels_in_circuitbox(labels)
-            end
-        end
-
-        -- Resize labels (needs rename labels)
-        if has_load_completed_array["rename_labels_complete"] and 
-           not has_load_completed_array["resize_labels_complete"] then
-            if not steps_started["resize"] then
-				step_start_time = os.time()
-                steps_started["resize"] = true
-                blue_prints.resize_labels(labels)
+                blue_prints.rename_all_labels_in_circuitbox(labels, 1)
             end
         end
 
@@ -1111,12 +1108,22 @@ function blue_prints.construct_blueprint_steps(inputs, outputs, components, wire
             end
         end
 
+		-- Resize labels (needs rename labels)
+		-- Resize seems weirdly bugged and might corrupt actuall wiring and components, so postpone it to the very end
+        if has_load_completed_array["rename_labels_complete"] and 
+		   has_load_completed_array["move_input_output_nodes_complete"] and
+		   has_load_completed_array["update_values_in_components_complete"] and
+		   has_load_completed_array["add_wires_complete"] and
+		   not has_load_completed_array["resize_labels_complete"] then
+            if not steps_started["resize"] then
+				step_start_time = os.time()
+                steps_started["resize"] = true
+                blue_prints.resize_labels(labels, 1)
+            end
+        end
+
         -- Continue checking progress
-        if not (has_load_completed_array["move_input_output_nodes_complete"] and
-                has_load_completed_array["resize_labels_complete"] and
-                has_load_completed_array["update_values_in_components_complete"] and
-                has_load_completed_array["add_wires_complete"])
-				then
+        if not (has_load_completed_array["resize_labels_complete"])	then
             return Timer.Wait(check_progress, blue_prints.time_delay_between_loops)
         end
 
